@@ -1,3 +1,5 @@
+pub mod color;
+
 use std::marker::PhantomData;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
@@ -16,12 +18,8 @@ pub struct PointType;
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub struct DirectionType;
 
-#[derive(PartialEq, Eq, Debug, Copy, Clone)]
-pub struct ColorType;
-
 // Type aliases.
 pub type Point3 = Vec3<PointType>;
-pub type Color = Vec3<ColorType>;
 pub type Direction = Vec3<DirectionType>;
 
 impl<T> Vec3<T> {
@@ -53,10 +51,6 @@ impl<T> Vec3<T> {
             self.x * rhs.y - self.y * rhs.x,
         )
     }
-
-    // pub fn unit_vector(&self) -> Vec3<T> {
-    //     Vec3::new(self.x, self.y, self.z) / self.length()
-    // }
 }
 
 impl<T: Copy + Clone> Vec3<T> {
@@ -83,7 +77,7 @@ macro_rules! impl_sub_same_type {
     };
 }
 
-impl_sub_same_type!(ColorType);
+impl_sub_same_type!(color::ColorType);
 impl_sub_same_type!(DirectionType);
 
 impl<T> Neg for Vec3<T> {
@@ -130,6 +124,7 @@ pub fn approx_eq<T>(a: Vec3<T>, b: Vec3<T>, epsilon: f64) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
+    use color::ColorType;
 
     #[test]
     fn add_direction_to_point() {
@@ -145,14 +140,6 @@ mod tests {
         let b = Point3::new(1.0, 1.0, 1.0);
         let result = a - b;
         assert!(approx_eq(result, Direction::new(2.0, 1.0, 0.0), 0.0001));
-    }
-
-    #[test]
-    fn color_addition() {
-        let a = Color::new(0.1, 0.2, 0.3);
-        let b = Color::new(0.2, 0.3, 0.4);
-        let result = a + b;
-        assert!(approx_eq(result, Color::new(0.3, 0.5, 0.7), 0.0001));
     }
 
     #[test]

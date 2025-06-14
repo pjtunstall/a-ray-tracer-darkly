@@ -3,7 +3,7 @@ use std::{
     io::{self, BufWriter, Write},
 };
 
-use rt::progress;
+use rt::{progress, vec3::color::Color};
 
 fn main() -> io::Result<()> {
     let image_width = 256;
@@ -21,11 +21,10 @@ fn main() -> io::Result<()> {
             let g = i as f64 / (image_height - 1) as f64;
             let b = 0.0;
 
-            let r = (255.999 * r) as i32;
-            let g = (255.999 * g) as i32;
-            let b = (255.999 * b) as i32;
-
-            writeln!(writer, "{} {} {}", r, g, b)?;
+            let pixel_color = Color::new(r, g, b);
+            pixel_color
+                .write(&mut writer)
+                .expect("Failed to write pixel color");
         }
     }
 

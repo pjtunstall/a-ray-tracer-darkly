@@ -1,7 +1,11 @@
 pub mod color;
+pub mod direction;
 
 use std::marker::PhantomData;
 use std::ops::{Add, Div, Mul, Neg, Sub};
+
+pub use color::{Color, ColorType};
+pub use direction::{Direction, DirectionType};
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Vec3<T> {
@@ -15,15 +19,20 @@ pub struct Vec3<T> {
 #[derive(PartialEq, Eq, Debug, Copy, Clone)]
 pub struct PointType;
 
-#[derive(PartialEq, Eq, Debug, Copy, Clone)]
-pub struct DirectionType;
-
 // Type aliases.
 pub type Point3 = Vec3<PointType>;
-pub type Direction = Vec3<DirectionType>;
 
 impl<T> Vec3<T> {
     pub fn new(x: f64, y: f64, z: f64) -> Self {
+        Self {
+            x,
+            y,
+            z,
+            _marker: PhantomData,
+        }
+    }
+
+    pub fn new_direction(x: f64, y: f64, z: f64) -> Self {
         Self {
             x,
             y,
@@ -78,7 +87,7 @@ macro_rules! impl_sub_same_type {
 }
 
 impl_sub_same_type!(color::ColorType);
-impl_sub_same_type!(DirectionType);
+impl_sub_same_type!(direction::DirectionType);
 
 impl<T> Neg for Vec3<T> {
     type Output = Vec3<T>;

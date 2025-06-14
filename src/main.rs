@@ -3,9 +3,32 @@ use std::{
     io::{self, BufWriter, Write},
 };
 
-use rt::{progress, vec3::color::Color};
+use rt::{
+    image::Image,
+    progress,
+    vec3::{Point3, color::Color},
+    viewport::Viewport,
+};
 
 fn main() -> io::Result<()> {
+    first_example()?;
+
+    let eye_point = Point3::new(0., 0., 0.);
+    let focal_length = 1.0;
+
+    Ok(())
+}
+
+pub fn make_image_and_viewport() -> (Image, Viewport) {
+    let aspect_ratio = 16.0 / 9.0;
+    let image = Image::new(400, aspect_ratio);
+    let viewport_height = 2.0;
+    let viewport_width = viewport_height * (image.width as f64 / image.height as f64);
+    let viewport = Viewport::new(viewport_width, viewport_height);
+    (image, viewport)
+}
+
+fn first_example() -> io::Result<()> {
     let image_width = 256;
     let image_height = 256;
 

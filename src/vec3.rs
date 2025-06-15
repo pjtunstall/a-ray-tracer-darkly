@@ -1,12 +1,26 @@
 pub mod color;
-pub mod direction;
 pub mod phantom;
-pub mod point3;
 
 use std::marker::PhantomData;
 use std::ops::{Add, Div, Mul, Neg, Sub};
 
 use phantom::{ColorType, DirectionType, PointType};
+
+pub type Point3 = Vec3<PointType>;
+pub type Direction = Vec3<DirectionType>;
+pub type Color = Vec3<ColorType>;
+
+pub fn point3(x: f64, y: f64, z: f64) -> Vec3<PointType> {
+    Vec3::new(x, y, z)
+}
+
+pub fn direction(x: f64, y: f64, z: f64) -> Vec3<DirectionType> {
+    Vec3::new(x, y, z)
+}
+
+pub fn color(r: f64, g: f64, b: f64) -> Vec3<ColorType> {
+    Vec3::new(r, g, b)
+}
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Vec3<T> {
@@ -14,10 +28,6 @@ pub struct Vec3<T> {
     pub y: f64,
     pub z: f64,
     _marker: PhantomData<T>,
-}
-
-pub trait IntoVec3<T> {
-    fn into_inner(self) -> Vec3<T>;
 }
 
 impl<T> Vec3<T> {
@@ -135,20 +145,22 @@ pub fn approx_eq<T>(a: Vec3<T>, b: Vec3<T>, epsilon: f64) -> bool {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::vec3::direction::Direction;
-    use crate::vec3::phantom::ColorType;
-    use crate::vec3::point3::Point3;
+
+    #[test]
+    fn scalar_multiplation_for_direction() {
+        let v = direction(1.0, 2.0, 3.0);
+        let result = v * 2.0;
+        assert!(approx_eq(result, Vec3::new(2.0, 4.0, 6.0), 0.0001));
+        let result = 2.0 * v;
+        assert!(approx_eq(result, Vec3::new(2.0, 4.0, 6.0), 0.0001));
+    }
 
     #[test]
     fn add_direction_to_point() {
         let p = Point3::new(1.0, 2.0, 3.0);
         let d = Direction::new(0.5, -1.0, 2.0);
         let result = p + d;
-        assert!(approx_eq(
-            result.into_inner(),
-            Point3::new(1.5, 1.0, 5.0).into_inner(),
-            0.0001
-        ));
+        assert!(approx_eq(result, Vec3::new(1.5, 1.0, 5.0), 0.0001));
     }
 
     #[test]
@@ -156,11 +168,7 @@ mod tests {
         let a = Point3::new(3.0, 2.0, 1.0);
         let b = Point3::new(1.0, 1.0, 1.0);
         let result = a - b;
-        assert!(approx_eq(
-            result.into_inner(),
-            Direction::new(2.0, 1.0, 0.0).into_inner(),
-            0.0001
-        ));
+        assert!(approx_eq(result, Vec3::new(2.0, 1.0, 0.0), 0.0001));
     }
 
     #[test]

@@ -3,17 +3,12 @@ use std::{
     io::{self, BufWriter, Write},
 };
 
-use rt::{
-    image::Image,
-    progress,
-    vec3::{color::Color, point3::Point3},
-    viewport::Viewport,
-};
+use rt::{image::Image, progress, vec3, viewport::Viewport};
 
 fn main() -> io::Result<()> {
     first_example()?;
 
-    let _eye_point = Point3::new(0., 0., 0.);
+    let _eye_point = vec3::point3(0., 0., 0.);
     let _focal_length = 1.0;
 
     Ok(())
@@ -44,7 +39,7 @@ fn first_example() -> io::Result<()> {
             let g = i as f64 / (image_height - 1) as f64;
             let b = 0.0;
 
-            let pixel_color = Color::new(r, g, b);
+            let pixel_color = vec3::color(r, g, b);
             pixel_color
                 .write(&mut writer)
                 .expect("Failed to write pixel color");

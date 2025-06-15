@@ -1,4 +1,4 @@
-use crate::vec3::{Direction, DirectionType, Vec3};
+use crate::vec3::direction::Direction;
 
 pub struct Viewport {
     pub width: f64,
@@ -9,8 +9,8 @@ pub struct Viewport {
 
 impl Viewport {
     pub fn new(width: f64, height: f64) -> Self {
-        let u = Vec3::<DirectionType>::new(width, 0.0, 0.0);
-        let v = Vec3::<DirectionType>::new(0.0, -height, 0.0);
+        let u = Direction::new(width, 0.0, 0.0);
+        let v = Direction::new(0.0, -height, 0.0);
         Self {
             width,
             height,

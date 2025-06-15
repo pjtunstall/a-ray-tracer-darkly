@@ -6,15 +6,15 @@ use std::{
 use rt::{
     image::Image,
     progress,
-    vec3::{Point3, color::Color},
+    vec3::{color::Color, point3::Point3},
     viewport::Viewport,
 };
 
 fn main() -> io::Result<()> {
     first_example()?;
 
-    let eye_point = Point3::new(0., 0., 0.);
-    let focal_length = 1.0;
+    let _eye_point = Point3::new(0., 0., 0.);
+    let _focal_length = 1.0;
 
     Ok(())
 }

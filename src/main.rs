@@ -45,8 +45,8 @@ fn first_example() -> io::Result<()> {
             let g = i as f64 / (image_height - 1) as f64;
             let b = 0.0;
 
-            let pixel_color = Color::new(r, g, b);
-            pixel_color
+            let pixel = Color::new(r, g, b);
+            pixel
                 .write(&mut writer)
                 .expect("Failed to write pixel color");
         }
@@ -88,7 +88,7 @@ fn red_sphere(r: &Ray) -> Color {
     }
 }
 
-fn render(image_path: &str, pixel_color: fn(r: &Ray) -> Color) -> io::Result<()> {
+fn render(image_path: &str, calculate_pixel_color: fn(r: &Ray) -> Color) -> io::Result<()> {
     let (image, viewport) = make_image_and_viewport();
     let focal_length = 1.0;
     let camera_center = Point3::new(0., 0., 0.);
@@ -110,7 +110,7 @@ fn render(image_path: &str, pixel_color: fn(r: &Ray) -> Color) -> io::Result<()>
             let ray_direction = pixel_center - camera_center;
             let r = Ray::new(camera_center, ray_direction);
 
-            pixel_color(&r)
+            calculate_pixel_color(&r)
                 .write(&mut writer)
                 .expect("Failed to write pixel color");
         }

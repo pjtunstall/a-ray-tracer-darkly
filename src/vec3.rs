@@ -113,14 +113,22 @@ impl Sub for Vec3<DirectionType> {
 impl Add for Vec3<ColorType> {
     type Output = Vec3<ColorType>;
     fn add(self, rhs: Vec3<ColorType>) -> Vec3<ColorType> {
-        Vec3::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
+        let x = (self.x + rhs.x).clamp(0.0, 1.0);
+        let y = (self.y + rhs.y).clamp(0.0, 1.0);
+        let z = (self.z + rhs.z).clamp(0.0, 1.0);
+
+        Vec3::new(x, y, z)
     }
 }
 
 impl Sub for Vec3<ColorType> {
     type Output = Vec3<ColorType>;
     fn sub(self, rhs: Vec3<ColorType>) -> Vec3<ColorType> {
-        Vec3::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
+        let x = (self.x - rhs.x).clamp(0.0, 1.0);
+        let y = (self.y - rhs.y).clamp(0.0, 1.0);
+        let z = (self.z - rhs.z).clamp(0.0, 1.0);
+
+        Vec3::new(x, y, z)
     }
 }
 
@@ -147,7 +155,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn scalar_multiplation_for_direction() {
+    fn scalar_multiplication_for_direction() {
         let v = direction(1.0, 2.0, 3.0);
         let result = v * 2.0;
         assert!(approx_eq(result, Vec3::new(2.0, 4.0, 6.0), 0.0001));

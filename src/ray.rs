@@ -1,8 +1,8 @@
 use crate::vec3::{self, Color, Direction, Point3};
 
 pub struct Ray {
-    origin: Point3,
-    direction: Direction,
+    pub origin: Point3,
+    pub direction: Direction,
 }
 
 impl Ray {
@@ -14,16 +14,8 @@ impl Ray {
         self.origin + self.direction * t
     }
 
-    pub fn origin(&self) -> &Point3 {
-        &self.origin
-    }
-
-    pub fn direction(&self) -> &Direction {
-        &self.direction
-    }
-
     pub fn color(&self) -> Color {
-        let unit = self.direction().normalize();
+        let unit = self.direction.normalize();
         let a = 0.5 * (unit.y + 1.0);
         return (1.0 - a) * vec3::color(1.0, 1.0, 1.0) + a * vec3::color(0.5, 0.7, 1.0);
     }

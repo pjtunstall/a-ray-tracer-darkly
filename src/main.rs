@@ -7,7 +7,7 @@ use rt::{
     image::Image,
     progress,
     ray::Ray,
-    vec3::{self, Direction, Point3},
+    vec3::{self, Color, Direction, Point3},
     viewport::Viewport,
 };
 
@@ -57,6 +57,18 @@ fn first_example() -> io::Result<()> {
 }
 
 fn second_example() -> io::Result<()> {
+    render("image2", simple_gradient)?;
+    Ok(())
+}
+
+fn simple_gradient(r: &Ray) -> Color {
+    let color_1 = vec3::color(1.0, 1.0, 1.0);
+    let color_2 = vec3::color(0.5, 0.7, 1.0);
+    let a = 0.5 * (r.direction.normalize().y + 1.0);
+    lerp(color_1, color_2, a)
+}
+
+fn render(image_path: &str, pixel_color: fn(r: &Ray) -> Color) -> io::Result<()> {
     let (image, viewport) = make_image_and_viewport();
     let focal_length = 1.0;
     let camera_center = Point3::new(0., 0., 0.);
@@ -66,7 +78,7 @@ fn second_example() -> io::Result<()> {
         camera_center - Direction::new(0., 0., focal_length) - viewport.u / 2. - viewport.v / 2.;
     let pixel00_loc = viewport_upper_left + 0.5 * (pixel_du + pixel_dv);
 
-    let file = File::create("image2.ppm")?;
+    let file = File::create(image_path.to_string() + ".ppm")?;
     let mut writer = BufWriter::new(file);
 
     writeln!(writer, "P3\n{} {}\n255", image.width, image.height)?;
@@ -78,8 +90,7 @@ fn second_example() -> io::Result<()> {
             let ray_direction = pixel_center - camera_center;
             let r = Ray::new(camera_center, ray_direction);
 
-            let pixel_color = r.color();
-            pixel_color
+            pixel_color(&r)
                 .write(&mut writer)
                 .expect("Failed to write pixel color");
         }
@@ -89,4 +100,8 @@ fn second_example() -> io::Result<()> {
     println!();
 
     Ok(())
+}
+
+fn lerp(color_1: Color, color_2: Color, a: f64) -> Color {
+    return (1.0 - a) * color_1 + a * color_2;
 }

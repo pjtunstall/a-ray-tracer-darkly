@@ -7,7 +7,7 @@ use rt::{
     image::Image,
     progress,
     ray::Ray,
-    vec3::{self, Point3},
+    vec3::{self, Direction, Point3},
     viewport::Viewport,
 };
 
@@ -58,16 +58,12 @@ fn first_example() -> io::Result<()> {
 
 fn second_example() -> io::Result<()> {
     let (image, viewport) = make_image_and_viewport();
-    render(&image, &viewport)?;
-    Ok(())
-}
-
-fn render(image: &Image, viewport: &Viewport) -> io::Result<()> {
-    let _focal_length = 1.0;
+    let focal_length = 1.0;
     let camera_center = Point3::new(0., 0., 0.);
     let pixel_du = viewport.u / image.width as f64;
     let pixel_dv = viewport.v / image.height as f64;
-    let viewport_upper_left = camera_center - viewport.u / 2. - viewport.v / 2.;
+    let viewport_upper_left =
+        camera_center - Direction::new(0., 0., focal_length) - viewport.u / 2. - viewport.v / 2.;
     let pixel00_loc = viewport_upper_left + 0.5 * (pixel_du + pixel_dv);
 
     let file = File::create("image2.ppm")?;
@@ -78,7 +74,7 @@ fn render(image: &Image, viewport: &Viewport) -> io::Result<()> {
     for i in 0..image.height {
         progress::show(i as usize, image.height as usize, "Rendering");
         for j in 0..image.width {
-            let pixel_center = pixel00_loc + (i as f64 * pixel_du) + (j as f64 * pixel_dv);
+            let pixel_center = pixel00_loc + (j as f64 * pixel_du) + (i as f64 * pixel_dv);
             let ray_direction = pixel_center - camera_center;
             let r = Ray::new(camera_center, ray_direction);
 

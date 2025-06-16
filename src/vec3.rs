@@ -1,28 +1,22 @@
-pub mod color;
-pub mod phantom;
+use std::{
+    marker::PhantomData,
+    ops::{Add, Div, Mul, Neg, Sub},
+};
 
-use std::marker::PhantomData;
-use std::ops::{Add, Div, Mul, Neg, Sub};
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct DirectionType;
 
-use phantom::{ColorType, DirectionType, PointType};
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PointType;
 
 pub type Point3 = Vec3<PointType>;
 pub type Direction = Vec3<DirectionType>;
-pub type Color = Vec3<ColorType>;
 
 pub fn point3(x: f64, y: f64, z: f64) -> Vec3<PointType> {
     Vec3::new(x, y, z)
 }
 
 pub fn direction(x: f64, y: f64, z: f64) -> Vec3<DirectionType> {
-    Vec3::new(x, y, z)
-}
-
-pub fn color(r: f64, g: f64, b: f64) -> Vec3<ColorType> {
-    let x = r.clamp(0.0, 1.0);
-    let y = g.clamp(0.0, 1.0);
-    let z = b.clamp(0.0, 1.0);
-
     Vec3::new(x, y, z)
 }
 
@@ -114,28 +108,6 @@ impl Sub for Vec3<DirectionType> {
     }
 }
 
-impl Add for Vec3<ColorType> {
-    type Output = Vec3<ColorType>;
-    fn add(self, rhs: Vec3<ColorType>) -> Vec3<ColorType> {
-        let x = (self.x + rhs.x).clamp(0.0, 1.0);
-        let y = (self.y + rhs.y).clamp(0.0, 1.0);
-        let z = (self.z + rhs.z).clamp(0.0, 1.0);
-
-        Vec3::new(x, y, z)
-    }
-}
-
-impl Sub for Vec3<ColorType> {
-    type Output = Vec3<ColorType>;
-    fn sub(self, rhs: Vec3<ColorType>) -> Vec3<ColorType> {
-        let x = (self.x - rhs.x).clamp(0.0, 1.0);
-        let y = (self.y - rhs.y).clamp(0.0, 1.0);
-        let z = (self.z - rhs.z).clamp(0.0, 1.0);
-
-        Vec3::new(x, y, z)
-    }
-}
-
 impl Add<Vec3<DirectionType>> for Vec3<PointType> {
     type Output = Vec3<PointType>;
     fn add(self, rhs: Vec3<DirectionType>) -> Vec3<PointType> {
@@ -209,14 +181,11 @@ mod tests {
     fn test_normalize_for_markers() {
         let point = Point3::new(3.0, 0.0, 4.0);
         let dir = Direction::new(0.0, 5.0, 12.0);
-        let color = Color::new(0.1, 0.2, 0.2);
 
         let point_unit = point.normalize();
         let dir_unit = dir.normalize();
-        let color_unit = color.normalize();
 
         assert!((point_unit.length() - 1.0).abs() < 1e-6);
         assert!((dir_unit.length() - 1.0).abs() < 1e-6);
-        assert!((color_unit.length() - 1.0).abs() < 1e-6);
     }
 }

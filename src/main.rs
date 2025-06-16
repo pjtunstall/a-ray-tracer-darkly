@@ -4,10 +4,11 @@ use std::{
 };
 
 use rt::{
+    color::Color,
     image::Image,
     progress,
     ray::Ray,
-    vec3::{self, Color, Direction, Point3},
+    vec3::{Direction, Point3},
     viewport::Viewport,
 };
 
@@ -43,7 +44,7 @@ fn first_example() -> io::Result<()> {
             let g = i as f64 / (image_height - 1) as f64;
             let b = 0.0;
 
-            let pixel_color = vec3::color(r, g, b);
+            let pixel_color = Color::new(r, g, b);
             pixel_color
                 .write(&mut writer)
                 .expect("Failed to write pixel color");
@@ -62,10 +63,14 @@ fn second_example() -> io::Result<()> {
 }
 
 fn simple_gradient(r: &Ray) -> Color {
-    let color_1 = vec3::color(1.0, 1.0, 1.0);
-    let color_2 = vec3::color(0.5, 0.7, 1.0);
+    let color_1 = Color::new(1.0, 1.0, 1.0);
+    let color_2 = Color::new(0.5, 0.7, 1.0);
     let a = 0.5 * (r.direction.normalize().y + 1.0);
     lerp(color_1, color_2, a)
+}
+
+fn lerp(color_1: Color, color_2: Color, a: f64) -> Color {
+    return (1.0 - a) * color_1 + a * color_2;
 }
 
 fn render(image_path: &str, pixel_color: fn(r: &Ray) -> Color) -> io::Result<()> {
@@ -100,8 +105,4 @@ fn render(image_path: &str, pixel_color: fn(r: &Ray) -> Color) -> io::Result<()>
     println!();
 
     Ok(())
-}
-
-fn lerp(color_1: Color, color_2: Color, a: f64) -> Color {
-    return (1.0 - a) * color_1 + a * color_2;
 }

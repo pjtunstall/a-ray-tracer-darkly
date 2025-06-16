@@ -183,6 +183,14 @@ mod tests {
     }
 
     #[test]
+    fn subtract_direction_from_point() {
+        let p = Point3::new(1.0, 2.0, 3.0);
+        let d = Direction::new(0.5, -1.0, 2.0);
+        let result = p - d;
+        assert!(approx_eq(result, Vec3::new(0.5, 3.0, 1.0), 0.0001));
+    }
+
+    #[test]
     fn subtract_points_gives_direction() {
         let a = Point3::new(3.0, 2.0, 1.0);
         let b = Point3::new(1.0, 1.0, 1.0);

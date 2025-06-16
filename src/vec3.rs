@@ -19,7 +19,11 @@ pub fn direction(x: f64, y: f64, z: f64) -> Vec3<DirectionType> {
 }
 
 pub fn color(r: f64, g: f64, b: f64) -> Vec3<ColorType> {
-    Vec3::new(r, g, b)
+    let x = r.clamp(0.0, 1.0);
+    let y = g.clamp(0.0, 1.0);
+    let z = b.clamp(0.0, 1.0);
+
+    Vec3::new(x, y, z)
 }
 
 #[derive(Debug, Clone, Copy, PartialEq)]
@@ -136,6 +140,13 @@ impl Add<Vec3<DirectionType>> for Vec3<PointType> {
     type Output = Vec3<PointType>;
     fn add(self, rhs: Vec3<DirectionType>) -> Vec3<PointType> {
         Vec3::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
+    }
+}
+
+impl Sub<Vec3<DirectionType>> for Vec3<PointType> {
+    type Output = Vec3<PointType>;
+    fn sub(self, rhs: Vec3<DirectionType>) -> Vec3<PointType> {
+        Vec3::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
     }
 }
 

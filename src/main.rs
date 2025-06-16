@@ -3,13 +3,24 @@ use std::{
     io::{self, BufWriter, Write},
 };
 
-use rt::{image::Image, progress, vec3, viewport::Viewport};
+use rt::{
+    image::Image,
+    progress,
+    vec3::{self, Point3},
+    viewport::Viewport,
+};
 
 fn main() -> io::Result<()> {
     first_example()?;
 
-    let _eye_point = vec3::point3(0., 0., 0.);
+    let camera_center = Point3::new(0., 0., 0.);
     let _focal_length = 1.0;
+
+    let (image, viewport) = make_image_and_viewport();
+    let _pixel_du = viewport.u / image.width as f64;
+    let _pixel_dv = viewport.v / image.height as f64;
+
+    let _viewport_upper_left = camera_center - viewport.u / 2. - viewport.v / 2.;
 
     Ok(())
 }

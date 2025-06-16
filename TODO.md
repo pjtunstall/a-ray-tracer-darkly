@@ -1,3 +1,2 @@
-- Be consistent about whether to use `Color::new` or `Vec3::color` to construct a `Color` etc. The latter could enforce clamping. Better yet, make Color a completely independent type from Vec3; then there will be no danger of using Color::new and thereby bypassing clamping.
-- Ensure Color components are clamped on creating a new color and on all operations.
+
 - Link to and credit [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html).

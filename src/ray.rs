@@ -1,4 +1,4 @@
-use crate::vec3::{Color, Direction, Point3};
+use crate::vec3::{self, Color, Direction, Point3};
 
 pub struct Ray {
     origin: Point3,
@@ -23,7 +23,9 @@ impl Ray {
     }
 
     pub fn color(&self) -> Color {
-        Color::new(0.0, 0.0, 0.0)
+        let unit = self.direction().normalize();
+        let a = 0.5 * (unit.y + 1.0);
+        return (1.0 - a) * vec3::color(1.0, 1.0, 1.0) + a * vec3::color(0.5, 0.7, 1.0);
     }
 }
 

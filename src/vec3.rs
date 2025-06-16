@@ -66,7 +66,7 @@ impl<T> Vec3<T> {
 }
 
 impl<T: Copy> Vec3<T> {
-    pub fn unit_vector(&self) -> Vec3<T> {
+    pub fn normalize(&self) -> Vec3<T> {
         *self / self.length()
     }
 }
@@ -206,14 +206,14 @@ mod tests {
     }
 
     #[test]
-    fn test_unit_vector_for_markers() {
-        let point = Vec3::<PointType>::new(3.0, 0.0, 4.0);
-        let dir = Vec3::<DirectionType>::new(0.0, 5.0, 12.0);
-        let color = Vec3::<ColorType>::new(0.1, 0.2, 0.2);
+    fn test_normalize_for_markers() {
+        let point = Point3::new(3.0, 0.0, 4.0);
+        let dir = Direction::new(0.0, 5.0, 12.0);
+        let color = Color::new(0.1, 0.2, 0.2);
 
-        let point_unit = point.unit_vector();
-        let dir_unit = dir.unit_vector();
-        let color_unit = color.unit_vector();
+        let point_unit = point.normalize();
+        let dir_unit = dir.normalize();
+        let color_unit = color.normalize();
 
         assert!((point_unit.length() - 1.0).abs() < 1e-6);
         assert!((dir_unit.length() - 1.0).abs() < 1e-6);

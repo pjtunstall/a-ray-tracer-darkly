@@ -1,7 +1,8 @@
 use rt::{color::Color, ray::Ray, vec3::Point3};
 
 pub fn red_sphere(r: &Ray) -> Color {
-    if is_hit_sphere(Point3::new(0., 0., -1.), 0.5, r) {
+    // The center is at -1 because the negative z-axis points into the viewport.
+    if hit_sphere(Point3::new(0., 0., -1.), 0.5, r) {
         Color::new(1., 0., 0.)
     } else {
         let unit_direction = r.direction.normalize();
@@ -10,7 +11,7 @@ pub fn red_sphere(r: &Ray) -> Color {
     }
 }
 
-fn is_hit_sphere(center: Point3, radius: f64, r: &Ray) -> bool {
+fn hit_sphere(center: Point3, radius: f64, r: &Ray) -> bool {
     let origin_to_center = center - r.origin;
     let a = r.direction.dot(&r.direction);
     let b = -2.0 * r.direction.dot(&origin_to_center);

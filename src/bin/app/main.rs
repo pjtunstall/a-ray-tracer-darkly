@@ -1,4 +1,5 @@
 mod examples;
+mod trace;
 
 use std::io;
 

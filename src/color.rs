@@ -70,3 +70,7 @@ impl Div<f64> for Color {
         self * (1.0 / t)
     }
 }
+
+pub fn lerp(color_1: Color, color_2: Color, a: f64) -> Color {
+    (1.0 - a) * color_1 + a * color_2
+}

@@ -8,6 +8,7 @@ fn main() -> io::Result<()> {
 
     trace!(_2, simple_gradient)?;
     trace!(_3, red_sphere)?;
+    trace!(_4, color_map_sphere)?;
 
     Ok(())
 }

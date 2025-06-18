@@ -6,7 +6,7 @@ use std::{
 
 use rt::{color::Color, progress, render};
 
-pub fn demo_ppm() -> io::Result<()> {
+pub fn gradient() -> io::Result<()> {
     let image_width = 256;
     let image_height = 256;
 

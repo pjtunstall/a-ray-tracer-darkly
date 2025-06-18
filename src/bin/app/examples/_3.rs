@@ -6,7 +6,7 @@ pub fn red_sphere(ray: &Ray) -> Color {
     if hit_sphere(Point3::new(0., 0., -1.), 0.5, ray) {
         Color::new(1., 0., 0.)
     } else {
-        _2::simple_gradient(ray)
+        _2::sky(ray)
     }
 }
 

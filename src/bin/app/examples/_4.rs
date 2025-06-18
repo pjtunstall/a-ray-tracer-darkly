@@ -10,7 +10,7 @@ pub fn color_map_sphere(ray: &Ray) -> Color {
         let n = (ray.at(t) - center).normalize();
         0.5 * Color::new(n.x + 1., n.y + 1., n.z + 1.) // Map each component (necessarily in the range [-1, 1] because `n` is a unit vector), to the range [0, 1].
     } else {
-        _2::simple_gradient(ray)
+        _2::sky(ray)
     }
 }
 

@@ -3,6 +3,8 @@ use std::{
     ops::{Add, Div, Mul, Neg, Sub},
 };
 
+use crate::color::Color;
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DirectionType;
 
@@ -126,6 +128,13 @@ impl Sub<Vec3<PointType>> for Vec3<PointType> {
     type Output = Vec3<DirectionType>;
     fn sub(self, rhs: Vec3<PointType>) -> Vec3<DirectionType> {
         Vec3::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
+    }
+}
+
+impl Direction {
+    pub fn to_color(&self) -> Color {
+        // Map each component (necessarily in the range [-1, 1] because `n` is a unit vector), to the range [0, 1].
+        0.5 * Color::new(self.x + 1., self.y + 1., self.z + 1.)
     }
 }
 

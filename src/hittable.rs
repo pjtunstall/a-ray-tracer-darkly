@@ -17,6 +17,14 @@ impl HitRecord {
         }
     }
 
+    pub fn default() -> Self {
+        Self::new(
+            crate::vec3::Point3::new(0.0, 0.0, 0.0),
+            crate::vec3::Direction::new(0.0, 0.0, 0.0),
+            0.0,
+        )
+    }
+
     pub fn set_face_normal(&mut self, ray: &Ray, outward_normal: crate::vec3::Direction) {
         self.front_face = if ray.direction.dot(&outward_normal) < 0. {
             outward_normal

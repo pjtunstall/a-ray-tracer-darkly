@@ -3,6 +3,8 @@ use std::{
     ops::{Add, Div, Mul, Sub},
 };
 
+use crate::interval::Interval;
+
 pub struct Color {
     r: f64,
     g: f64,
@@ -15,15 +17,13 @@ impl Color {
     }
 
     pub fn write<W: Write>(&self, out: &mut W) -> std::io::Result<()> {
-        let r = self.r.clamp(0.0, 1.0);
-        let g = self.g.clamp(0.0, 1.0);
-        let b = self.b.clamp(0.0, 1.0);
+        let intensity = Interval::new(0.0, 0.999);
 
-        let r_byte = (255.999 * r) as u8;
-        let g_byte = (255.999 * g) as u8;
-        let b_byte = (255.999 * b) as u8;
+        let r = (256.0 * intensity.clamp(self.r)) as u8;
+        let g = (256.0 * intensity.clamp(self.g)) as u8;
+        let b = (256.0 * intensity.clamp(self.b)) as u8;
 
-        writeln!(out, "{} {} {}", r_byte, g_byte, b_byte)
+        writeln!(out, "{} {} {}", r, g, b)
     }
 }
 

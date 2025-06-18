@@ -1,3 +1,4 @@
+use rand::Rng;
 use std::io::{self, Write};
 
 use crate::{
@@ -20,7 +21,9 @@ pub struct Camera {
     center_of_top_left_pixel: Point3,
     pixel_du: Direction, // offset to pixel on the right
     pixel_dv: Direction, // offset to pixel below
-                         // focal_length: f64,
+    // focal_length: f64,
+    rng: rand::rngs::ThreadRng,
+    samples_per_pixel: usize,
 }
 
 impl Camera {
@@ -45,11 +48,13 @@ impl Camera {
             center_of_top_left_pixel,
             center: Point3::new(0., 0., 0.),
             // focal_length: 1.0,
+            rng: rand::rng(),
+            samples_per_pixel: 10,
         }
     }
 
     // image_name without extension
-    pub fn render<T: Hittable>(&self, world: &T, image_name: &str) -> io::Result<()> {
+    pub fn render<T: Hittable>(&mut self, world: &T, image_name: &str) -> io::Result<()> {
         let image_width = self.image.width;
         let image_height = self.image.height;
         let center_of_top_left_pixel = self.center_of_top_left_pixel;
@@ -67,8 +72,13 @@ impl Camera {
                     center_of_top_left_pixel + (j as f64 * pixel_du) + (i as f64 * pixel_dv);
                 let ray_direction = pixel_center - camera_center;
                 let ray = Ray::new(camera_center, ray_direction);
+                let mut pixel_color = Color::new(0.0, 0.0, 0.0);
+                for _sample in 0..self.samples_per_pixel {
+                    let ray = self.get_ray(i, j);
+                    pixel_color = pixel_color + self.ray_color(&ray, world);
+                }
 
-                self.ray_color(&ray, world)
+                (pixel_color / self.samples_per_pixel as f64)
                     .write(&mut writer)
                     .expect("Failed to write pixel color");
             }
@@ -87,5 +97,27 @@ impl Camera {
         } else {
             examples::sky(ray)
         }
+    }
+
+    fn get_ray(&mut self, i: u32, j: u32) -> Ray {
+        // Construct a camera ray originating from the origin and directed at randomly sampled
+        // point around the pixel location i, j.
+        let offset = self.sample_square();
+        let pixel_sample = self.center_of_top_left_pixel
+            + ((j as f64 + offset.x) * self.pixel_du)
+            + ((i as f64 + offset.y) * self.pixel_dv);
+
+        let ray_origin = self.center;
+        let ray_direction = pixel_sample - ray_origin;
+
+        Ray::new(ray_origin, ray_direction)
+    }
+
+    fn sample_square(&mut self) -> Direction {
+        Direction::new(
+            self.rng.random_range(-0.5..0.5),
+            self.rng.random_range(-0.5..0.5),
+            0.,
+        )
     }
 }

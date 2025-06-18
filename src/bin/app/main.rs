@@ -14,7 +14,7 @@ fn main() -> io::Result<()> {
 
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
-    let camera = Camera::new(aspect_ratio, image_width);
+    let mut camera = Camera::new(aspect_ratio, image_width);
     let world = examples::_5::ground();
     camera.render(&world, "example_5")?;
 

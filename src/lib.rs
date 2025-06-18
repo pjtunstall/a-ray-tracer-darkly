@@ -1,6 +1,7 @@
 pub mod color;
 pub mod hittable;
 pub mod image;
+pub mod interval;
 pub mod progress;
 pub mod ray;
 pub mod render;

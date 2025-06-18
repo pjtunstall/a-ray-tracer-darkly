@@ -28,7 +28,7 @@ impl Interval {
         value >= self.min && value <= self.max
     }
 
-    pub fn includes(&self, value: f64) -> bool {
+    pub fn surrounds(&self, value: f64) -> bool {
         value > self.min && value < self.max
     }
 }

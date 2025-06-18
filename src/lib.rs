@@ -1,4 +1,7 @@
+pub mod camera;
 pub mod color;
+pub mod examples;
+pub mod file;
 pub mod hittable;
 pub mod image;
 pub mod interval;

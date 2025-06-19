@@ -34,8 +34,8 @@ impl Material for Lambertian {
     }
 }
 
-struct Metal {
-    albedo: Color,
+pub struct Metal {
+    pub albedo: Color,
 }
 
 impl Material for Metal {
@@ -51,11 +51,3 @@ impl Material for Metal {
         Some((scattered, attenuation))
     }
 }
-
-// bool scatter(const ray& r_in, const hit_record& rec, color& attenuation, ray& scattered)
-//     const override {
-//         vec3 reflected = reflect(r_in.direction(), rec.normal);
-//         scattered = ray(rec.p, reflected);
-//         attenuation = albedo;
-//         return true;
-//     }

@@ -19,10 +19,10 @@ fn main() -> io::Result<()> {
     let mut world;
 
     world = examples::_5::gamma();
-    camera.render(&world, "example_5")?; // antialiasing, shadow acne, Lambertian reflection, gamma correction
+    camera.render(&world, "example_5", 10)?; // antialiasing, shadow acne, Lambertian reflection, gamma correction
 
     world = examples::_6::metal();
-    camera.render(&world, "example_6")?;
+    camera.render(&world, "example_6", 10)?;
 
     Ok(())
 }

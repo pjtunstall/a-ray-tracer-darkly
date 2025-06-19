@@ -24,7 +24,6 @@ pub struct Camera {
     pixel_dv: Direction, // offset to pixel below
     // focal_length: f64,
     rng: ThreadRng,
-    samples_per_pixel: usize,
     max_depth: u32,
 }
 
@@ -51,13 +50,17 @@ impl Camera {
             center: Point3::new(0., 0., 0.),
             // focal_length: 1.0,
             rng: rand::rng(),
-            samples_per_pixel: 10,
             max_depth: 10,
         }
     }
 
     // image_name without extension
-    pub fn render<T: Hittable>(&mut self, world: &T, image_name: &str) -> io::Result<()> {
+    pub fn render<T: Hittable>(
+        &mut self,
+        world: &T,
+        image_name: &str,
+        samples_per_pixel: usize,
+    ) -> io::Result<()> {
         let image_width = self.image.width;
         let image_height = self.image.height;
 
@@ -68,12 +71,12 @@ impl Camera {
             progress::show(i as usize, image_height as usize, "Rendering");
             for j in 0..image_width {
                 let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-                for _ in 0..self.samples_per_pixel {
+                for _ in 0..samples_per_pixel {
                     let ray = self.get_ray(i, j);
                     pixel_color = pixel_color + self.ray_color(&ray, world, self.max_depth);
                 }
 
-                (pixel_color / self.samples_per_pixel as f64)
+                (pixel_color / samples_per_pixel as f64)
                     .write(&mut writer)
                     .expect("Failed to write pixel color");
             }

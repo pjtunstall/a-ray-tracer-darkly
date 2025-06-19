@@ -15,11 +15,11 @@ pub struct PointType;
 pub type Point3 = Vec3<PointType>;
 pub type Direction = Vec3<DirectionType>;
 
-pub fn point3(x: f64, y: f64, z: f64) -> Vec3<PointType> {
+pub fn point3(x: f64, y: f64, z: f64) -> Point3 {
     Vec3::new(x, y, z)
 }
 
-pub fn direction(x: f64, y: f64, z: f64) -> Vec3<DirectionType> {
+pub fn direction(x: f64, y: f64, z: f64) -> Direction {
     Vec3::new(x, y, z)
 }
 
@@ -97,37 +97,37 @@ impl<T> Div<f64> for Vec3<T> {
     }
 }
 
-impl Add for Vec3<DirectionType> {
-    type Output = Vec3<DirectionType>;
-    fn add(self, rhs: Vec3<DirectionType>) -> Vec3<DirectionType> {
+impl Add for Direction {
+    type Output = Direction;
+    fn add(self, rhs: Direction) -> Direction {
         Vec3::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
     }
 }
 
-impl Sub for Vec3<DirectionType> {
-    type Output = Vec3<DirectionType>;
-    fn sub(self, rhs: Vec3<DirectionType>) -> Vec3<DirectionType> {
+impl Sub for Direction {
+    type Output = Direction;
+    fn sub(self, rhs: Direction) -> Direction {
         Vec3::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
     }
 }
 
-impl Add<Vec3<DirectionType>> for Vec3<PointType> {
-    type Output = Vec3<PointType>;
-    fn add(self, rhs: Vec3<DirectionType>) -> Vec3<PointType> {
+impl Add<Direction> for Point3 {
+    type Output = Point3;
+    fn add(self, rhs: Direction) -> Point3 {
         Vec3::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
     }
 }
 
-impl Sub<Vec3<DirectionType>> for Vec3<PointType> {
-    type Output = Vec3<PointType>;
-    fn sub(self, rhs: Vec3<DirectionType>) -> Vec3<PointType> {
+impl Sub<Direction> for Point3 {
+    type Output = Point3;
+    fn sub(self, rhs: Direction) -> Point3 {
         Vec3::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
     }
 }
 
-impl Sub<Vec3<PointType>> for Vec3<PointType> {
-    type Output = Vec3<DirectionType>;
-    fn sub(self, rhs: Vec3<PointType>) -> Vec3<DirectionType> {
+impl Sub<Point3> for Point3 {
+    type Output = Direction;
+    fn sub(self, rhs: Point3) -> Direction {
         Vec3::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
     }
 }
@@ -138,15 +138,15 @@ impl Direction {
         0.5 * Color::new(self.x + 1., self.y + 1., self.z + 1.)
     }
 
-    // pub fn reflect(&self, normal: &Vec3<DirectionType>) -> Vec3<DirectionType> {
+    // pub fn reflect(&self, normal: &Direction) -> Direction {
     //     *self - 2.0 * self.dot(normal) * *normal
     // }
 
     // pub fn refract(
     //     &self,
-    //     normal: &Vec3<DirectionType>,
+    //     normal: &Direction,
     //     etai_over_etat: f64,
-    // ) -> Vec3<DirectionType> {
+    // ) -> Direction {
     //     let cos_theta = (-*self).dot(normal).min(1.0);
     //     let r_out_perp = etai_over_etat * (*self + cos_theta * *normal);
     //     let r_out_parallel = -((1.0 - r_out_perp.length_squared()).abs().sqrt()) * *normal;

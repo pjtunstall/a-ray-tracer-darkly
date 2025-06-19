@@ -4,4 +4,5 @@
 - Note that `Rc<dyn Hittable>` give us the option of sharing objects between worlds.
 - Decide if it's worth giving the functions that return random items access to a common rng, created in advance, as I originally did by making them methods `camera`.
 - Keep track of the previous hit record material so that the next refraction index can be calculated rather than leaving it to the user of the library to get it right in advance.
-- Discuss the notion of negative radius, along with the use of absolute value in `hit` in `Hittable` for `Sphere`, that was needed to make the hollow sphere work.
+- Handle 0. radius being passed to `Sphere` constructor.
+- Note reversal of definition of `refraction_index` in `scatter` in `Material` for `Dielectric` from the book.

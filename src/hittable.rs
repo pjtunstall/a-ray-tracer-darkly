@@ -13,26 +13,23 @@ pub struct HitRecord {
 impl HitRecord {
     pub fn new(
         point: crate::vec3::Point3,
-        normal: crate::vec3::Direction,
+        outward_normal: Direction,
         t: f64,
         material: Rc<dyn Material>,
+        ray: &Ray,
     ) -> Self {
+        let front_face = ray.direction.dot(&outward_normal) < 0.;
         Self {
             point,
-            normal,
+            normal: if front_face {
+                outward_normal
+            } else {
+                -outward_normal
+            },
             t,
             material,
-            front_face: false,
+            front_face,
         }
-    }
-
-    pub fn set_face_normal(&mut self, ray: &Ray, outward_normal: Direction) {
-        self.front_face = ray.direction.dot(&outward_normal) < 0.;
-        self.normal = if self.front_face {
-            outward_normal
-        } else {
-            -outward_normal
-        };
     }
 }
 

@@ -80,7 +80,6 @@ impl Material for Dielectric {
     ) -> Option<(Ray, Color)> {
         let attenuation = Color::new(1., 1., 1.);
 
-        // Definition reversed from that of the book. Necessary along with negative radius for the bubble, and taking the absolute value of the radius in `hit` in `Hittable` for `Sphere`, otherwise I didn't see the bubble inside the glass sphere.
         let refraction_index = if front_face {
             self.refraction_index
         } else {

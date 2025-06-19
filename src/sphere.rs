@@ -49,19 +49,8 @@ impl Hittable for Sphere {
 
         let t = root;
         let point = ray.at(root);
-
-        // Handle negative radius properly
-        let outward_normal = (point - self.center) / self.radius.abs();
-
-        let mut record = HitRecord::new(point, outward_normal, t, self.material.clone());
-        record.set_face_normal(
-            ray,
-            if self.radius < 0.0 {
-                -outward_normal
-            } else {
-                outward_normal
-            },
-        );
+        let outward_normal = (point - self.center) / self.radius;
+        let record = HitRecord::new(point, outward_normal, t, self.material.clone(), ray);
 
         Some(record)
     }

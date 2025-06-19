@@ -40,7 +40,7 @@ pub fn hollow_glass() -> HittableList {
     ));
     let bubble = Box::new(Sphere::new(
         Point3::new(-1., 0., -1.),
-        -0.4, // An AI suggestion. Without this, and taking the absolute value of the radius in `hit` in `Hittable` for `Sphere`, and reversing the definition of refraction_index in `scatter` in `Material` for `Dielectric`, I didn't see the bubble inside the glass sphere.
+        0.4,
         material_bubble.clone(),
     ));
     let right = Box::new(Sphere::new(

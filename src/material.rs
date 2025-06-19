@@ -1,3 +1,5 @@
+use rand::Rng;
+
 use crate::{
     color::Color,
     ray::Ray,
@@ -10,11 +12,12 @@ pub trait Material {
         incident_ray: &Ray,
         point: &Point3,
         normal: &Direction,
+        front_face: bool,
     ) -> Option<(Ray, Color)>;
 }
 
 pub struct Lambertian {
-    albedo: Color,
+    pub albedo: Color,
 }
 
 impl Material for Lambertian {
@@ -23,6 +26,7 @@ impl Material for Lambertian {
         _incident_ray: &Ray,
         point: &Point3,
         normal: &Direction,
+        _front_face: bool,
     ) -> Option<(Ray, Color)> {
         let mut scatter_direction = *normal + Direction::random_unit();
         if scatter_direction.near_zero() {
@@ -37,7 +41,6 @@ impl Material for Lambertian {
 pub struct Metal {
     pub albedo: Color,
     pub fuzz: f64, // in the range [0.0, 1.0]
-    rng: ThreadRng,
 }
 
 impl Metal {
@@ -53,6 +56,7 @@ impl Material for Metal {
         incident_ray: &Ray,
         point: &Point3,
         normal: &Direction,
+        _front_face: bool,
     ) -> Option<(Ray, Color)> {
         let mut reflected = incident_ray.direction.reflect(normal);
         reflected = reflected.normalize() + self.fuzz * Direction::random_unit();
@@ -63,8 +67,7 @@ impl Material for Metal {
 }
 
 pub struct Dielectric {
-    pub albedo: f64,
-    pub reflectance_index: f64,
+    pub refraction_index: f64,
 }
 
 impl Material for Dielectric {
@@ -73,13 +76,15 @@ impl Material for Dielectric {
         incident_ray: &Ray,
         point: &Point3,
         normal: &Direction,
+        front_face: bool,
     ) -> Option<(Ray, Color)> {
         let attenuation = Color::new(1., 1., 1.);
 
+        // Definition reversed from that of the book. Necessary along with negative radius for the bubble, and taking the absolute value of the radius in `hit` in `Hittable` for `Sphere`, otherwise I didn't see the bubble inside the glass sphere.
         let refraction_index = if front_face {
-            1. / refraction_index
+            self.refraction_index
         } else {
-            refraction_index
+            1. / self.refraction_index
         };
 
         let unit_direction = incident_ray.direction.normalize();
@@ -87,15 +92,16 @@ impl Material for Dielectric {
         let sin_theta = (1. - cos_theta * cos_theta).sqrt();
         let cannot_refract = refraction_index * sin_theta > 1.;
 
+        let mut rng = rand::rng();
         let direction = if cannot_refract
-            || Self::reflectance(cos_theta, refraction_index) > self.rng.random_range(0.0..1.0)
+            || Self::reflectance(cos_theta, refraction_index) > rng.random_range(0.0..1.0)
         {
             unit_direction.reflect(normal)
         } else {
-            unit_direction = unit_direction.refract(normal, refraction_index)
+            unit_direction.refract(normal, refraction_index)
         };
 
-        let scattered = Ray::new(point, direction);
+        let scattered = Ray::new(*point, direction);
         Some((scattered, attenuation))
     }
 }

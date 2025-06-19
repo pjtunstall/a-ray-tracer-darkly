@@ -12,7 +12,7 @@ fn main() -> io::Result<()> {
     trace!(_3, red_sphere)?;
     trace!(_4, color_map_sphere)?;
 
-    // Now we start using the new `render` method in `Camera`.
+    // Now we start using the `render` method in `Camera`.
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let mut camera = Camera::new(aspect_ratio, image_width);
@@ -26,6 +26,9 @@ fn main() -> io::Result<()> {
 
     world = examples::_7::fuzzy_metal();
     camera.render(&world, "example_7", 10)?;
+
+    world = examples::_8::hollow_glass();
+    camera.render(&world, "example_8", 10)?;
 
     Ok(())
 }

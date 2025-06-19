@@ -31,12 +31,17 @@ impl Hittable for Sphere {
         let h = ray.direction.dot(&origin_to_center);
         let c = origin_to_center.dot(&origin_to_center) - self.radius * self.radius;
         let discriminant = h * h - a * c;
+
+        if discriminant < 0.0 {
+            return None;
+        }
+
         let sqrt_d = discriminant.sqrt();
 
         // Find the nearest root that lies in the acceptable range.
-        let root = (h - sqrt_d) / a;
+        let mut root = (h - sqrt_d) / a;
         if !ray_t.surrounds(root) {
-            let root = (h + sqrt_d) / a;
+            root = (h + sqrt_d) / a;
             if !ray_t.surrounds(root) {
                 return None;
             }
@@ -44,10 +49,19 @@ impl Hittable for Sphere {
 
         let t = root;
         let point = ray.at(root);
-        let normal = (point - self.center) / self.radius;
 
-        let mut record = HitRecord::new(point, normal, t, self.material.clone());
-        record.set_face_normal(ray, record.normal);
+        // Handle negative radius properly
+        let outward_normal = (point - self.center) / self.radius.abs();
+
+        let mut record = HitRecord::new(point, outward_normal, t, self.material.clone());
+        record.set_face_normal(
+            ray,
+            if self.radius < 0.0 {
+                -outward_normal
+            } else {
+                outward_normal
+            },
+        );
 
         Some(record)
     }

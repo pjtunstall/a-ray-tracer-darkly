@@ -94,7 +94,9 @@ impl Camera {
         }
         if let Some(record) = world.hit(ray, &Interval::new(0.001, f64::INFINITY)) {
             if let Some((scattered, attenuation)) =
-                record.material.scatter(&ray, &record.point, &record.normal)
+                record
+                    .material
+                    .scatter(&ray, &record.point, &record.normal, record.front_face)
             {
                 attenuation * self.ray_color(&scattered, world, depth - 1)
             } else {

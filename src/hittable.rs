@@ -7,7 +7,7 @@ pub struct HitRecord {
     pub normal: crate::vec3::Direction,
     pub t: f64,
     pub material: Rc<dyn Material>,
-    pub front_face: Direction,
+    pub front_face: bool,
 }
 
 impl HitRecord {
@@ -22,12 +22,13 @@ impl HitRecord {
             normal,
             t,
             material,
-            front_face: Direction::new(0.0, 0.0, 0.0),
+            front_face: false,
         }
     }
 
-    pub fn set_face_normal(&mut self, ray: &Ray, outward_normal: crate::vec3::Direction) {
-        self.front_face = if ray.direction.dot(&outward_normal) < 0. {
+    pub fn set_face_normal(&mut self, ray: &Ray, outward_normal: Direction) {
+        self.front_face = ray.direction.dot(&outward_normal) < 0.;
+        self.normal = if self.front_face {
             outward_normal
         } else {
             -outward_normal

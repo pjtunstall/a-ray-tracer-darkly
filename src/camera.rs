@@ -57,10 +57,6 @@ impl Camera {
     pub fn render<T: Hittable>(&mut self, world: &T, image_name: &str) -> io::Result<()> {
         let image_width = self.image.width;
         let image_height = self.image.height;
-        let center_of_top_left_pixel = self.center_of_top_left_pixel;
-        let camera_center = self.center;
-        let pixel_du = self.pixel_du;
-        let pixel_dv = self.pixel_dv;
 
         let mut writer = file::writer(image_name)?;
         writeln!(writer, "P3\n{} {}\n255", image_width, image_height)?;
@@ -68,10 +64,6 @@ impl Camera {
         for i in 0..image_height {
             progress::show(i as usize, image_height as usize, "Rendering");
             for j in 0..image_width {
-                let pixel_center =
-                    center_of_top_left_pixel + (j as f64 * pixel_du) + (i as f64 * pixel_dv);
-                let ray_direction = pixel_center - camera_center;
-                let ray = Ray::new(camera_center, ray_direction);
                 let mut pixel_color = Color::new(0.0, 0.0, 0.0);
                 for _sample in 0..self.samples_per_pixel {
                     let ray = self.get_ray(i, j);
@@ -100,7 +92,7 @@ impl Camera {
     }
 
     fn get_ray(&mut self, i: u32, j: u32) -> Ray {
-        // Construct a camera ray originating from the origin and directed at randomly sampled
+        // Construct a camera ray from the origin and directed at randomly sampled
         // point around the pixel location i, j.
         let offset = self.sample_square();
         let pixel_sample = self.center_of_top_left_pixel

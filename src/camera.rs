@@ -1,10 +1,11 @@
-use rand::Rng;
 use std::io::{self, Write};
+
+use rand::Rng;
 
 use crate::{
     color::Color,
     examples, file,
-    hittable::{HitRecord, Hittable},
+    hittable::Hittable,
     image::Image,
     interval::Interval,
     progress,
@@ -88,11 +89,14 @@ impl Camera {
         if depth == 0 {
             return Color::new(0., 0., 0.);
         }
-        let mut record = HitRecord::default();
-        if world.hit(ray, &Interval::new(0.001, f64::INFINITY), &mut record) {
-            let direction = record.normal + self.random_unit_vector();
-            let scattered = Ray::new(record.point, direction).clone();
-            0.5 * self.ray_color(&scattered, world, depth - 1)
+        if let Some(record) = world.hit(ray, &Interval::new(0.001, f64::INFINITY)) {
+            if let Some((scattered, attenuation)) =
+                record.material.scatter(&ray, &record.point, &record.normal)
+            {
+                attenuation * self.ray_color(&scattered, world, depth - 1)
+            } else {
+                Color::new(0., 0., 0.)
+            }
         } else {
             examples::sky(ray)
         }

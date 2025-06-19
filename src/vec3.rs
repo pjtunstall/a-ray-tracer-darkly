@@ -4,6 +4,8 @@ use std::{
     ops::{Add, Div, Mul, Neg, Sub},
 };
 
+use rand::Rng;
+
 use crate::color::Color;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -59,6 +61,11 @@ impl<T> Vec3<T> {
             self.z * rhs.x - self.x * rhs.z,
             self.x * rhs.y - self.y * rhs.x,
         )
+    }
+
+    pub fn near_zero(&self) -> bool {
+        let epsilon = 1e-8;
+        self.x.abs() < epsilon && self.y < epsilon && self.z < epsilon
     }
 }
 
@@ -133,14 +140,32 @@ impl Sub<Point3> for Point3 {
 }
 
 impl Direction {
+    pub fn random_unit() -> Self {
+        loop {
+            let v = Self::random(-1., 1.);
+            let len_sq = v.length_squared();
+            if 1e-160 < len_sq && len_sq <= 1. {
+                return v / f64::sqrt(len_sq);
+            }
+        }
+    }
+
+    pub fn random(min: f64, max: f64) -> Self {
+        let mut rng = rand::rng();
+        let a = rng.random_range(min..max);
+        let b = rng.random_range(min..max);
+        let c = rng.random_range(min..max);
+        Direction::new(a, b, c)
+    }
+
     pub fn to_color(&self) -> Color {
         // Map each component (necessarily in the range [-1, 1] because `n` is a unit vector), to the range [0, 1].
         0.5 * Color::new(self.x + 1., self.y + 1., self.z + 1.)
     }
 
-    // pub fn reflect(&self, normal: &Direction) -> Direction {
-    //     *self - 2.0 * self.dot(normal) * *normal
-    // }
+    pub fn reflect(&self, normal: &Direction) -> Direction {
+        *self - 2.0 * self.dot(normal) * *normal
+    }
 
     // pub fn refract(
     //     &self,

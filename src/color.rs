@@ -45,7 +45,6 @@ impl Add for Color {
         let r = self.r + rhs.r;
         let g = self.g + rhs.g;
         let b = self.b + rhs.b;
-
         Color::new(r, g, b)
     }
 }
@@ -56,7 +55,16 @@ impl Sub for Color {
         let r = self.r - rhs.r;
         let g = self.g - rhs.g;
         let b = self.b - rhs.b;
+        Color::new(r, g, b)
+    }
+}
 
+impl Mul for Color {
+    type Output = Color;
+    fn mul(self, rhs: Color) -> Color {
+        let r = self.r * rhs.r;
+        let g = self.g * rhs.g;
+        let b = self.b * rhs.b;
         Color::new(r, g, b)
     }
 }

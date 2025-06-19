@@ -1,2 +1,3 @@
 - Link to and credit [Ray Tracing in One Weekend](https://raytracing.github.io/books/RayTracingInOneWeekend.html).
 - Note that negative z-axis points into the viewport.
+- Change Vec3 to an array; it's natural to associate 0 with x, 1 with y, and 2 with z. This will be more performant and simpler to iterate.

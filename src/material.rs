@@ -20,6 +20,12 @@ pub struct Lambertian {
     pub albedo: Color,
 }
 
+impl Lambertian {
+    pub fn new(albedo: Color) -> Self {
+        Lambertian { albedo }
+    }
+}
+
 impl Material for Lambertian {
     fn scatter(
         &self,
@@ -44,9 +50,11 @@ pub struct Metal {
 }
 
 impl Metal {
-    pub fn new(albedo: Color, mut fuzz: f64) -> Self {
-        fuzz = if fuzz > 1. { 1. } else { fuzz };
-        Metal { albedo, fuzz }
+    pub fn new(albedo: Color, fuzz: f64) -> Self {
+        Metal {
+            albedo,
+            fuzz: fuzz.clamp(0., 1.),
+        }
     }
 }
 
@@ -68,6 +76,14 @@ impl Material for Metal {
 
 pub struct Dielectric {
     pub refraction_index: f64,
+}
+
+impl Dielectric {
+    pub fn new(refraction_index: f64) -> Self {
+        Dielectric {
+            refraction_index: refraction_index.max(f64::EPSILON),
+        }
+    }
 }
 
 impl Material for Dielectric {

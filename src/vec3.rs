@@ -187,9 +187,9 @@ mod tests {
     fn scalar_multiplication_for_direction() {
         let v = direction(1.0, 2.0, 3.0);
         let result = v * 2.0;
-        assert!(approx_eq(result, Vec3::new(2.0, 4.0, 6.0), 0.0001));
+        assert!(approx_eq(result, Vec3::new(2.0, 4.0, 6.0), f64::EPSILON));
         let result = 2.0 * v;
-        assert!(approx_eq(result, Vec3::new(2.0, 4.0, 6.0), 0.0001));
+        assert!(approx_eq(result, Vec3::new(2.0, 4.0, 6.0), f64::EPSILON));
     }
 
     #[test]
@@ -197,7 +197,7 @@ mod tests {
         let p = Point3::new(1.0, 2.0, 3.0);
         let d = Direction::new(0.5, -1.0, 2.0);
         let result = p + d;
-        assert!(approx_eq(result, Vec3::new(1.5, 1.0, 5.0), 0.0001));
+        assert!(approx_eq(result, Vec3::new(1.5, 1.0, 5.0), f64::EPSILON));
     }
 
     #[test]
@@ -205,7 +205,7 @@ mod tests {
         let p = Point3::new(1.0, 2.0, 3.0);
         let d = Direction::new(0.5, -1.0, 2.0);
         let result = p - d;
-        assert!(approx_eq(result, Vec3::new(0.5, 3.0, 1.0), 0.0001));
+        assert!(approx_eq(result, Vec3::new(0.5, 3.0, 1.0), f64::EPSILON));
     }
 
     #[test]
@@ -213,7 +213,7 @@ mod tests {
         let a = Point3::new(3.0, 2.0, 1.0);
         let b = Point3::new(1.0, 1.0, 1.0);
         let result = a - b;
-        assert!(approx_eq(result, Vec3::new(2.0, 1.0, 0.0), 0.0001));
+        assert!(approx_eq(result, Vec3::new(2.0, 1.0, 0.0), f64::EPSILON));
     }
 
     #[test]
@@ -231,7 +231,7 @@ mod tests {
         let point_unit = point.normalize();
         let dir_unit = dir.normalize();
 
-        assert!((point_unit.length() - 1.0).abs() < 1e-6);
-        assert!((dir_unit.length() - 1.0).abs() < 1e-6);
+        assert!((point_unit.length() - 1.0).abs() < f64::EPSILON);
+        assert!((dir_unit.length() - 1.0).abs() < f64::EPSILON);
     }
 }

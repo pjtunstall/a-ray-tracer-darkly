@@ -18,7 +18,7 @@ impl Sphere {
     pub fn new(center: Point3, radius: f64, material: Rc<dyn Material>) -> Sphere {
         Sphere {
             center,
-            radius,
+            radius: radius.max(f64::EPSILON),
             material,
         }
     }

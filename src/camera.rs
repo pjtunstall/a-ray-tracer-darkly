@@ -24,6 +24,7 @@ pub struct Camera {
     // focal_length: f64,
     rng: rand::rngs::ThreadRng,
     samples_per_pixel: usize,
+    max_depth: u32,
 }
 
 impl Camera {
@@ -50,6 +51,7 @@ impl Camera {
             // focal_length: 1.0,
             rng: rand::rng(),
             samples_per_pixel: 10,
+            max_depth: 10,
         }
     }
 
@@ -65,9 +67,9 @@ impl Camera {
             progress::show(i as usize, image_height as usize, "Rendering");
             for j in 0..image_width {
                 let mut pixel_color = Color::new(0.0, 0.0, 0.0);
-                for _sample in 0..self.samples_per_pixel {
+                for _ in 0..self.samples_per_pixel {
                     let ray = self.get_ray(i, j);
-                    pixel_color = pixel_color + self.ray_color(&ray, world);
+                    pixel_color = pixel_color + self.ray_color(&ray, world, self.max_depth);
                 }
 
                 (pixel_color / self.samples_per_pixel as f64)
@@ -82,10 +84,15 @@ impl Camera {
         Ok(())
     }
 
-    fn ray_color<T: Hittable>(&self, ray: &Ray, world: &T) -> Color {
+    fn ray_color<T: Hittable>(&mut self, ray: &Ray, world: &T, depth: u32) -> Color {
+        if depth == 0 {
+            return Color::new(0., 0., 0.);
+        }
         let mut record = HitRecord::default();
-        if world.hit(ray, &Interval::new(0., f64::INFINITY), &mut record) {
-            record.normal.to_color()
+        if world.hit(ray, &Interval::new(0.001, f64::INFINITY), &mut record) {
+            let direction = record.normal + self.random_unit_vector();
+            let scattered = Ray::new(record.point, direction).clone();
+            0.5 * self.ray_color(&scattered, world, depth - 1)
         } else {
             examples::sky(ray)
         }
@@ -112,4 +119,30 @@ impl Camera {
             0.,
         )
     }
+
+    fn random_direction(&mut self, min: f64, max: f64) -> Direction {
+        let a = self.rng.random_range(min..max);
+        let b = self.rng.random_range(min..max);
+        let c = self.rng.random_range(min..max);
+        Direction::new(a, b, c)
+    }
+
+    fn random_unit_vector(&mut self) -> Direction {
+        loop {
+            let v = self.random_direction(-1., 1.);
+            let len_sq = v.length_squared();
+            if 1e-160 < len_sq && len_sq <= 1. {
+                return v / f64::sqrt(len_sq);
+            }
+        }
+    }
+
+    // fn random_on_hemisphere(&mut self, normal: &Direction) -> Direction {
+    //     let on_unit_sphere = self.random_unit_vector();
+    //     if on_unit_sphere.dot(normal) > 0.0 {
+    //         on_unit_sphere // In the same hemisphere as the normal.
+    //     } else {
+    //         -on_unit_sphere
+    //     }
+    // }
 }

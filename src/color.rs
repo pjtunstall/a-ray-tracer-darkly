@@ -5,10 +5,19 @@ use std::{
 
 use crate::interval::Interval;
 
+#[derive(Clone)]
 pub struct Color {
     r: f64,
     g: f64,
     b: f64,
+}
+
+fn linear_to_gamma(linear_component: f64) -> f64 {
+    if linear_component > 0. {
+        linear_component.sqrt()
+    } else {
+        0.
+    }
 }
 
 impl Color {
@@ -17,11 +26,14 @@ impl Color {
     }
 
     pub fn write<W: Write>(&self, out: &mut W) -> std::io::Result<()> {
-        let intensity = Interval::new(0.0, 0.999);
+        let r = linear_to_gamma(self.r);
+        let g = linear_to_gamma(self.g);
+        let b = linear_to_gamma(self.b);
 
-        let r = (256.0 * intensity.clamp(self.r)) as u8;
-        let g = (256.0 * intensity.clamp(self.g)) as u8;
-        let b = (256.0 * intensity.clamp(self.b)) as u8;
+        let intensity = Interval::new(0.0, 0.999);
+        let r = (256.0 * intensity.clamp(r)) as u8;
+        let g = (256.0 * intensity.clamp(g)) as u8;
+        let b = (256.0 * intensity.clamp(b)) as u8;
 
         writeln!(out, "{} {} {}", r, g, b)
     }

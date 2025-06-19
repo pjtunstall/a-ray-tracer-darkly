@@ -1,3 +1,5 @@
+use std::rc::Rc;
+
 use crate::{interval::Interval, material::Material, ray::Ray, vec3::Direction};
 
 pub struct HitRecord {
@@ -37,10 +39,8 @@ pub trait Hittable {
     fn hit(&self, ray: &Ray, ray_t: &Interval) -> Option<HitRecord>;
 }
 
-use std::rc::Rc;
-
 pub struct HittableList {
-    pub objects: Vec<Rc<dyn Hittable>>,
+    pub objects: Vec<Box<dyn Hittable>>,
 }
 
 impl HittableList {
@@ -48,7 +48,7 @@ impl HittableList {
         Self { objects: vec![] }
     }
 
-    pub fn add(&mut self, object: Rc<dyn Hittable>) {
+    pub fn add(&mut self, object: Box<dyn Hittable>) {
         self.objects.push(object);
     }
 }

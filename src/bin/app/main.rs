@@ -16,8 +16,13 @@ fn main() -> io::Result<()> {
     let aspect_ratio = 16.0 / 9.0;
     let image_width = 400;
     let mut camera = Camera::new(aspect_ratio, image_width);
-    let world = examples::_5::ground();
-    camera.render(&world, "example_5")?; // antialiasing, Lambertian reflection, gamma correction
+    let mut world;
+
+    world = examples::_5::gamma();
+    camera.render(&world, "example_5")?; // antialiasing, shadow acne, Lambertian reflection, gamma correction
+
+    world = examples::_6::metal();
+    camera.render(&world, "example_6")?;
 
     Ok(())
 }

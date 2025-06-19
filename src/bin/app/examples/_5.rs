@@ -1,28 +1,21 @@
 use std::rc::Rc;
 
 use rt::{
-    color::Color,
-    hittable::HittableList,
-    material::{Lambertian, Metal},
-    sphere::Sphere,
-    vec3::Point3,
+    color::Color, hittable::HittableList, material::Lambertian, sphere::Sphere, vec3::Point3,
 };
 
-pub fn ground() -> HittableList {
+pub fn gamma() -> HittableList {
     let lambertian = Rc::new(Lambertian {
-        albedo: Color::new(0.5, 0.5, 0.5),
-    });
-    let metal = Rc::new(Metal {
         albedo: Color::new(0.5, 0.5, 0.5),
     });
 
     let mut world = HittableList::new();
-    world.add(Rc::new(Sphere::new(
+    world.add(Box::new(Sphere::new(
         Point3::new(0.1, 0., -1.),
         0.5,
-        metal.clone(),
+        lambertian.clone(),
     )));
-    world.add(Rc::new(Sphere::new(
+    world.add(Box::new(Sphere::new(
         Point3::new(0., -100.5, -1.),
         100.,
         lambertian.clone(),

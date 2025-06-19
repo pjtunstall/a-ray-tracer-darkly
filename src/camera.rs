@@ -1,6 +1,6 @@
 use std::io::{self, Write};
 
-use rand::Rng;
+use rand::{Rng, rngs::ThreadRng};
 
 use crate::{
     color::Color,
@@ -23,7 +23,7 @@ pub struct Camera {
     pixel_du: Direction, // offset to pixel on the right
     pixel_dv: Direction, // offset to pixel below
     // focal_length: f64,
-    rng: rand::rngs::ThreadRng,
+    rng: ThreadRng,
     samples_per_pixel: usize,
     max_depth: u32,
 }
@@ -123,30 +123,4 @@ impl Camera {
             0.,
         )
     }
-
-    fn random_direction(&mut self, min: f64, max: f64) -> Direction {
-        let a = self.rng.random_range(min..max);
-        let b = self.rng.random_range(min..max);
-        let c = self.rng.random_range(min..max);
-        Direction::new(a, b, c)
-    }
-
-    fn random_unit_vector(&mut self) -> Direction {
-        loop {
-            let v = self.random_direction(-1., 1.);
-            let len_sq = v.length_squared();
-            if 1e-160 < len_sq && len_sq <= 1. {
-                return v / f64::sqrt(len_sq);
-            }
-        }
-    }
-
-    // fn random_on_hemisphere(&mut self, normal: &Direction) -> Direction {
-    //     let on_unit_sphere = self.random_unit_vector();
-    //     if on_unit_sphere.dot(normal) > 0.0 {
-    //         on_unit_sphere // In the same hemisphere as the normal.
-    //     } else {
-    //         -on_unit_sphere
-    //     }
-    // }
 }

@@ -167,16 +167,12 @@ impl Direction {
         *self - 2.0 * self.dot(normal) * *normal
     }
 
-    // pub fn refract(
-    //     &self,
-    //     normal: &Direction,
-    //     etai_over_etat: f64,
-    // ) -> Direction {
-    //     let cos_theta = (-*self).dot(normal).min(1.0);
-    //     let r_out_perp = etai_over_etat * (*self + cos_theta * *normal);
-    //     let r_out_parallel = -((1.0 - r_out_perp.length_squared()).abs().sqrt()) * *normal;
-    //     r_out_perp + r_out_parallel
-    // }
+    pub fn refract(&self, normal: &Direction, refraction_index: f64) -> Direction {
+        let cos_theta = (-*self).dot(normal).min(1.0);
+        let r_out_perp = refraction_index * (*self + cos_theta * *normal);
+        let r_out_parallel = -((1.0 - r_out_perp.length_squared()).abs().sqrt()) * *normal;
+        r_out_perp + r_out_parallel
+    }
 }
 
 pub fn approx_eq<T>(a: Vec3<T>, b: Vec3<T>, epsilon: f64) -> bool {

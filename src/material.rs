@@ -14,7 +14,7 @@ pub trait Material {
 }
 
 pub struct Lambertian {
-    pub albedo: Color,
+    albedo: Color,
 }
 
 impl Material for Lambertian {
@@ -37,6 +37,7 @@ impl Material for Lambertian {
 pub struct Metal {
     pub albedo: Color,
     pub fuzz: f64, // in the range [0.0, 1.0]
+    rng: ThreadRng,
 }
 
 impl Metal {
@@ -58,5 +59,52 @@ impl Material for Metal {
         let scattered = Ray::new(point.clone(), reflected);
         let attenuation = self.albedo.clone();
         Some((scattered, attenuation))
+    }
+}
+
+pub struct Dielectric {
+    pub albedo: f64,
+    pub reflectance_index: f64,
+}
+
+impl Material for Dielectric {
+    fn scatter(
+        &self,
+        incident_ray: &Ray,
+        point: &Point3,
+        normal: &Direction,
+    ) -> Option<(Ray, Color)> {
+        let attenuation = Color::new(1., 1., 1.);
+
+        let refraction_index = if front_face {
+            1. / refraction_index
+        } else {
+            refraction_index
+        };
+
+        let unit_direction = incident_ray.direction.normalize();
+        let cos_theta = -unit_direction.dot(normal).min(1.);
+        let sin_theta = (1. - cos_theta * cos_theta).sqrt();
+        let cannot_refract = refraction_index * sin_theta > 1.;
+
+        let direction = if cannot_refract
+            || Self::reflectance(cos_theta, refraction_index) > self.rng.random_range(0.0..1.0)
+        {
+            unit_direction.reflect(normal)
+        } else {
+            unit_direction = unit_direction.refract(normal, refraction_index)
+        };
+
+        let scattered = Ray::new(point, direction);
+        Some((scattered, attenuation))
+    }
+}
+
+impl Dielectric {
+    fn reflectance(cosine: f64, refraction_index: f64) -> f64 {
+        // Schick approximation
+        let mut r_0 = (1. - refraction_index) / (1. + refraction_index);
+        r_0 *= r_0;
+        r_0 + (1. - r_0) * (1. - cosine).powf(5.)
     }
 }

@@ -1,10 +1,10 @@
 use std::rc::Rc;
 
-use rt::{
+use crate::{
     color::Color, hittable::HittableList, material::Lambertian, sphere::Sphere, vec3::Point3,
 };
 
-pub fn gamma() -> HittableList {
+pub fn make() -> HittableList {
     let lambertian = Rc::new(Lambertian {
         albedo: Color::new(0.5, 0.5, 0.5),
     });

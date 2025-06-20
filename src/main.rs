@@ -1,9 +1,8 @@
-mod examples;
-
 use std::{f64::consts::PI, io};
 
 use rt::{
     camera::Camera,
+    examples,
     vec3::{Direction, Point3},
 };
 
@@ -12,8 +11,8 @@ fn main() -> io::Result<()> {
     let image_width = 400;
     let mut vertical_fov = PI / 2.;
     let mut look_from = Point3::new(0., 0., 0.);
-    let mut up = Direction::new(0., 1., 0.);
     let mut look_at = Point3::new(0., 0., -1.);
+    let mut up = Direction::new(0., 1., 0.);
     let mut camera = Camera::new(
         aspect_ratio,
         image_width,
@@ -24,16 +23,16 @@ fn main() -> io::Result<()> {
     );
     let mut world;
 
-    world = examples::lambertian::gamma();
+    world = examples::lambertian::make();
     camera.render(&world, "example_1", 10)?; // antialiasing, fixing shadow acne, Lambertian reflection, gamma correction
 
-    world = examples::shiny_metal::shiny_metal();
+    world = examples::shiny_metal::make();
     camera.render(&world, "example_2", 10)?;
 
-    world = examples::dull_metal::fuzzy_metal();
+    world = examples::dull_metal::make();
     camera.render(&world, "example_3", 10)?;
 
-    world = examples::glass::hollow_glass();
+    world = examples::glass::make();
     camera.render(&world, "example_4", 10)?;
 
     look_from = Point3::new(-2., 2., 1.);
@@ -47,7 +46,7 @@ fn main() -> io::Result<()> {
         look_at,
         up,
     );
-    world = examples::glass::hollow_glass();
+    world = examples::glass::make();
     camera.render(&world, "example_5", 10)?;
 
     vertical_fov = PI / 9.;
@@ -59,7 +58,7 @@ fn main() -> io::Result<()> {
         look_at,
         up,
     );
-    world = examples::glass::hollow_glass();
+    world = examples::glass::make();
     camera.render(&world, "example_6", 10)?;
 
     Ok(())

@@ -13,7 +13,7 @@ use crate::{
     vec3::{Direction, Point3},
 };
 
-pub fn book_1() -> io::Result<()> {
+pub fn book_1(samples_per_pixel_for_the_big_picture: usize) -> io::Result<()> {
     let mut world;
     let background = examples::sky::color;
     let mut camera = set_up_camera();
@@ -39,7 +39,7 @@ pub fn book_1() -> io::Result<()> {
     camera = defocus();
     camera.render(&world, "example_7", 10, background)?;
 
-    random_spheres::render(500)?;
+    random_spheres::render(samples_per_pixel_for_the_big_picture)?;
 
     Ok(())
 }

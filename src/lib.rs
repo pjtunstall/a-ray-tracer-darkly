@@ -8,7 +8,6 @@ pub mod interval;
 pub mod material;
 pub mod progress;
 pub mod ray;
-pub mod render;
 pub mod sphere;
 pub mod vec3;
 pub mod viewport;

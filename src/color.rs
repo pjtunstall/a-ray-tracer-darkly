@@ -1,3 +1,5 @@
+use rand::Rng;
+use std::ops::Range;
 use std::{
     io::Write,
     ops::{Add, Div, Mul, Sub},
@@ -25,6 +27,14 @@ impl Color {
         Color { r, g, b }
     }
 
+    pub fn random(range: Range<f64>) -> Color {
+        let mut rng = rand::rng();
+        Color::new(
+            rng.random_range(range.clone()),
+            rng.random_range(range.clone()),
+            rng.random_range(range),
+        )
+    }
     pub fn write<W: Write>(&self, out: &mut W) -> std::io::Result<()> {
         let r = linear_to_gamma(self.r);
         let g = linear_to_gamma(self.g);

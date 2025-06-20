@@ -1,6 +1,7 @@
 pub mod dull_metal;
 pub mod glass;
 pub mod lambertian;
+pub mod random_spheres;
 pub mod shiny_metal;
 pub mod sky;
 
@@ -37,6 +38,8 @@ pub fn book_1() -> io::Result<()> {
 
     camera = defocus();
     camera.render(&world, "example_7", 10, background)?;
+
+    random_spheres::make()?;
 
     Ok(())
 }

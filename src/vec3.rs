@@ -1,5 +1,4 @@
 use std::{
-    // f64::consts::PI,
     marker::PhantomData,
     ops::{Add, Div, Mul, Neg, Sub},
 };
@@ -144,7 +143,7 @@ impl Direction {
         loop {
             let v = Self::random(-1., 1., rng);
             let len_sq = v.length_squared();
-            if 1e-160 < len_sq && len_sq <= 1. {
+            if f64::EPSILON < len_sq && len_sq <= 1. {
                 return v / f64::sqrt(len_sq);
             }
         }

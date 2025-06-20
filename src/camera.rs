@@ -22,6 +22,9 @@ pub struct Camera {
     pixel_dv: Direction, // offset to pixel below
     rng: ThreadRng,
     max_depth: u32,
+    defocus_disk_u: Direction,
+    defocus_disk_v: Direction,
+    defocus_angle: f64,
 }
 
 impl Camera {
@@ -32,20 +35,27 @@ impl Camera {
         look_from: Point3,
         look_at: Point3,
         up: Direction,
+        focus_dist: f64,
+        defocus_angle: f64,
     ) -> Self {
         let w = (look_from - look_at).normalize();
         let v = up.normalize();
         let u = v.cross(&w);
-        let focal_length = (look_from - look_at).length();
+
         let h = (vertical_fov / 2.).tan();
-        let viewport_height = 2. * h * focal_length;
+
+        let viewport_height = 2. * h * focus_dist;
         let image = Image::new(image_width, aspect_ratio);
         let viewport = Viewport::new(viewport_height, &image, &u, &v);
         let pixel_du = viewport.u / image.width as f64;
         let pixel_dv = viewport.v / image.height as f64;
         let viewport_top_left_corner =
-            look_from - focal_length * w - viewport.u / 2. - viewport.v / 2.;
+            look_from - focus_dist * w - viewport.u / 2. - viewport.v / 2.;
         let center_of_top_left_pixel = viewport_top_left_corner + 0.5 * (pixel_du + pixel_dv);
+
+        let defocus_radius = focus_dist * (defocus_angle / 2. as f64).tan();
+        let defocus_disk_u = u * defocus_radius;
+        let defocus_disk_v = v * defocus_radius;
 
         Camera {
             image,
@@ -55,6 +65,9 @@ impl Camera {
             look_from,
             rng: rand::rng(),
             max_depth: 10,
+            defocus_disk_u,
+            defocus_disk_v,
+            defocus_angle,
         }
     }
 
@@ -114,14 +127,18 @@ impl Camera {
     }
 
     fn get_ray(&mut self, i: u32, j: u32) -> Ray {
-        // Construct a camera ray from the origin and directed at randomly sampled
-        // point around the pixel location i, j.
+        // Construct a camera ray originating from the defocus disk and directed at a randomly
+        // sampled point around the pixel location i, j.
         let offset = self.sample_square();
         let pixel_sample = self.center_of_top_left_pixel
             + ((j as f64 + offset.x) * self.pixel_du)
             + ((i as f64 + offset.y) * self.pixel_dv);
 
-        let ray_origin = self.look_from;
+        let ray_origin = if self.defocus_angle <= 0. {
+            self.look_from
+        } else {
+            self.defocus_disk_sample()
+        };
         let ray_direction = pixel_sample - ray_origin;
 
         Ray::new(ray_origin, ray_direction)
@@ -133,5 +150,11 @@ impl Camera {
             self.rng.random_range(-0.5..0.5),
             0.,
         )
+    }
+
+    fn defocus_disk_sample(&mut self) -> Point3 {
+        // Returns a random point in the camera defocus disk.
+        let p = Direction::random_in_unit_disk(&mut self.rng);
+        self.look_from + (p.x * self.defocus_disk_u) + (p.y * self.defocus_disk_v)
     }
 }

@@ -8,6 +8,9 @@ use rt::{
 
 fn main() -> io::Result<()> {
     let aspect_ratio = 16.0 / 9.0;
+    let focus_dist = 10.;
+    let defocus_angle = 0.;
+
     let image_width = 400;
     let mut vertical_fov = PI / 2.;
     let mut look_from = Point3::new(0., 0., 0.);
@@ -20,6 +23,8 @@ fn main() -> io::Result<()> {
         look_from,
         look_at,
         up,
+        focus_dist,
+        defocus_angle,
     );
     let mut world;
 
@@ -45,6 +50,8 @@ fn main() -> io::Result<()> {
         look_from,
         look_at,
         up,
+        focus_dist,
+        defocus_angle,
     );
     world = examples::glass::make();
     camera.render(&world, "example_5", 10)?;
@@ -57,9 +64,24 @@ fn main() -> io::Result<()> {
         look_from,
         look_at,
         up,
+        focus_dist,
+        defocus_angle,
     );
     world = examples::glass::make();
     camera.render(&world, "example_6", 10)?;
+
+    camera = Camera::new(
+        aspect_ratio,
+        image_width,
+        vertical_fov,
+        look_from,
+        look_at,
+        up,
+        10.,
+        (3.4 as f64).to_radians(),
+    );
+    world = examples::glass::make();
+    camera.render(&world, "example_7", 50)?;
 
     Ok(())
 }

@@ -150,6 +150,19 @@ impl Direction {
         }
     }
 
+    pub fn random_in_unit_disk(rng: &mut ThreadRng) -> Point3 {
+        loop {
+            let p = Self::random(-1., 1., rng);
+            if p.length_squared() < 1. {
+                return p.to_point();
+            }
+        }
+    }
+
+    fn to_point(&self) -> Point3 {
+        Point3::new(self.x, self.y, self.z)
+    }
+
     pub fn random(min: f64, max: f64, rng: &mut ThreadRng) -> Self {
         let a = rng.random_range(min..max);
         let b = rng.random_range(min..max);

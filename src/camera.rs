@@ -15,47 +15,50 @@ use crate::{
 };
 
 pub struct Camera {
-    // aspect_ratio: f64, // image_width / image_height
     image: Image,
-    // viewport: Viewport,
-    center: Point3,
+    look_from: Point3,
     center_of_top_left_pixel: Point3,
     pixel_du: Direction, // offset to pixel on the right
     pixel_dv: Direction, // offset to pixel below
-    // focal_length: f64,
     rng: ThreadRng,
     max_depth: u32,
 }
 
 impl Camera {
-    pub fn new(aspect_ratio: f64, image_width: u32, vertical_fov: f64) -> Self {
-        let focal_length = 1.0;
+    pub fn new(
+        aspect_ratio: f64,
+        image_width: u32,
+        vertical_fov: f64,
+        look_from: Point3,
+        look_at: Point3,
+        up: Direction,
+    ) -> Self {
+        let w = (look_from - look_at).normalize();
+        let v = up.normalize();
+        let u = v.cross(&w);
+        let focal_length = (look_from - look_at).length();
         let h = (vertical_fov / 2.).tan();
         let viewport_height = 2. * h * focal_length;
         let image = Image::new(image_width, aspect_ratio);
-        let viewport = Viewport::new(viewport_height, &image);
+        let viewport = Viewport::new(viewport_height, &image, &u, &v);
         let pixel_du = viewport.u / image.width as f64;
         let pixel_dv = viewport.v / image.height as f64;
-        let center = Point3::new(0., 0., 0.);
         let viewport_top_left_corner =
-            center - Direction::new(0., 0., focal_length) - viewport.u / 2. - viewport.v / 2.;
+            look_from - focal_length * w - viewport.u / 2. - viewport.v / 2.;
         let center_of_top_left_pixel = viewport_top_left_corner + 0.5 * (pixel_du + pixel_dv);
 
         Camera {
-            // aspect_ratio,
             image,
-            // viewport,
             pixel_du,
             pixel_dv,
             center_of_top_left_pixel,
-            center: Point3::new(0., 0., 0.),
-            // focal_length: 1.0,
+            look_from,
             rng: rand::rng(),
             max_depth: 10,
         }
     }
 
-    // Specify `image_name` without extension.
+    // Specify `image_name` without extension, thus "example" rather than "example.ppm".
     pub fn render<T: Hittable>(
         &mut self,
         world: &T,
@@ -116,7 +119,7 @@ impl Camera {
             + ((j as f64 + offset.x) * self.pixel_du)
             + ((i as f64 + offset.y) * self.pixel_dv);
 
-        let ray_origin = self.center;
+        let ray_origin = self.look_from;
         let ray_direction = pixel_sample - ray_origin;
 
         Ray::new(ray_origin, ray_direction)

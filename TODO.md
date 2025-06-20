@@ -1,4 +1,5 @@
-- Maybe remove the early, simple examples: gradient, sky (already preserved), and red_sphere.
+- Refactor examples and camera.
+- Parametrize depth and samples per pixel.
 - Credit Peter Shirley, Trevor David Black, Steve Hollasch: [_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html), originally published in 2018. I used Version 4.0.2, 2025-04-25.
 - Note that negative z-axis points into the viewport.
 - Change Vec3 to be based on an array.

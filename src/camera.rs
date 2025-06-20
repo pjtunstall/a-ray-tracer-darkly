@@ -28,14 +28,15 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(aspect_ratio: f64, image_width: u32) -> Self {
+    pub fn new(aspect_ratio: f64, image_width: u32, vertical_fov: f64) -> Self {
         let focal_length = 1.0;
-        let center = Point3::new(0., 0., 0.);
+        let h = (vertical_fov / 2.).tan();
+        let viewport_height = 2. * h * focal_length;
         let image = Image::new(image_width, aspect_ratio);
-        let viewport = Viewport::new(2.0, &image);
-
+        let viewport = Viewport::new(viewport_height, &image);
         let pixel_du = viewport.u / image.width as f64;
         let pixel_dv = viewport.v / image.height as f64;
+        let center = Point3::new(0., 0., 0.);
         let viewport_top_left_corner =
             center - Direction::new(0., 0., focal_length) - viewport.u / 2. - viewport.v / 2.;
         let center_of_top_left_pixel = viewport_top_left_corner + 0.5 * (pixel_du + pixel_dv);
@@ -54,7 +55,7 @@ impl Camera {
         }
     }
 
-    // image_name without extension
+    // Specify `image_name` without extension.
     pub fn render<T: Hittable>(
         &mut self,
         world: &T,

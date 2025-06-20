@@ -9,7 +9,29 @@ use crate::material::{Dielectric, Lambertian, Metal};
 use crate::sphere::Sphere;
 use crate::vec3::{Direction, Point3};
 
-pub fn make() -> io::Result<()> {
+pub fn render(samples_per_pixel: usize) -> io::Result<()> {
+    let world = make();
+    let mut camera = camera::Camera::new(
+        16. / 9.,
+        1200,
+        20.,
+        Point3::new(13., 2., 3.),
+        Point3::new(0., 0., 0.),
+        Direction::new(0., 1., 0.),
+        10.,
+        0.6,
+        50,
+    );
+    camera.render(
+        &world,
+        "random_spheres",
+        samples_per_pixel,
+        examples::sky::color,
+    )?;
+    Ok(())
+}
+
+fn make() -> HittableList {
     let mut world = HittableList::new();
 
     let ground_material = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
@@ -70,17 +92,5 @@ pub fn make() -> io::Result<()> {
         material_3.clone(),
     )));
 
-    let mut camera = camera::Camera::new(
-        16. / 9.,
-        1200,
-        20.,
-        Point3::new(13., 2., 3.),
-        Point3::new(0., 0., 0.),
-        Direction::new(0., 1., 0.),
-        10.,
-        0.6,
-    );
-    camera.render(&world, "random_spheres", 10, examples::sky::color)?;
-
-    Ok(())
+    world
 }

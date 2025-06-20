@@ -39,7 +39,7 @@ pub fn book_1() -> io::Result<()> {
     camera = defocus();
     camera.render(&world, "example_7", 10, background)?;
 
-    random_spheres::make()?;
+    random_spheres::render(500)?;
 
     Ok(())
 }
@@ -54,6 +54,7 @@ fn set_up_camera() -> Camera {
         Direction::new(0., 1., 0.),
         10.,
         0.,
+        10,
     )
 }
 
@@ -67,6 +68,7 @@ fn zoom_out() -> Camera {
         Direction::new(0., 1., 0.),
         10.,
         0.,
+        10,
     )
 }
 
@@ -80,6 +82,7 @@ fn reduce_fov() -> Camera {
         Direction::new(0., 1., 0.),
         10.,
         0.,
+        10,
     )
 }
 
@@ -93,5 +96,6 @@ fn defocus() -> Camera {
         Direction::new(0., 1., 0.),
         10.,
         (3.4 as f64).to_radians(),
+        10,
     )
 }

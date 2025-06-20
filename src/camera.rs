@@ -37,6 +37,7 @@ impl Camera {
         up: Direction,
         focus_dist: f64,
         defocus_angle: f64,
+        max_depth: u32,
     ) -> Self {
         let w = (look_from - look_at).normalize();
         let v = up.normalize();
@@ -64,7 +65,7 @@ impl Camera {
             center_of_top_left_pixel,
             look_from,
             rng: rand::rng(),
-            max_depth: 10,
+            max_depth,
             defocus_disk_u,
             defocus_disk_v,
             defocus_angle,

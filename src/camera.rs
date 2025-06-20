@@ -4,7 +4,7 @@ use rand::{Rng, rngs::ThreadRng};
 
 use crate::{
     color::Color,
-    examples, file,
+    file,
     hittable::Hittable,
     image::Image,
     interval::Interval,
@@ -77,6 +77,7 @@ impl Camera {
         world: &T,
         image_name: &str,
         samples_per_pixel: usize,
+        background: fn(&Ray) -> Color,
     ) -> io::Result<()> {
         let image_width = self.image.width;
         let image_height = self.image.height;
@@ -90,7 +91,8 @@ impl Camera {
                 let mut pixel_color = Color::new(0.0, 0.0, 0.0);
                 for _ in 0..samples_per_pixel {
                     let ray = self.get_ray(i, j);
-                    pixel_color = pixel_color + self.ray_color(&ray, world, self.max_depth);
+                    pixel_color =
+                        pixel_color + self.ray_color(&ray, world, self.max_depth, background);
                 }
 
                 (pixel_color / samples_per_pixel as f64)
@@ -105,7 +107,13 @@ impl Camera {
         Ok(())
     }
 
-    fn ray_color<T: Hittable>(&mut self, ray: &Ray, world: &T, depth: u32) -> Color {
+    fn ray_color<T: Hittable>(
+        &mut self,
+        ray: &Ray,
+        world: &T,
+        depth: u32,
+        background: fn(&Ray) -> Color,
+    ) -> Color {
         if depth == 0 {
             return Color::new(0., 0., 0.);
         }
@@ -117,12 +125,12 @@ impl Camera {
                 record.front_face,
                 &mut self.rng,
             ) {
-                attenuation * self.ray_color(&scattered, world, depth - 1)
+                attenuation * self.ray_color(&scattered, world, depth - 1, background)
             } else {
                 Color::new(0., 0., 0.)
             }
         } else {
-            examples::sky(ray)
+            background(&ray)
         }
     }
 

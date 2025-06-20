@@ -1,4 +1,4 @@
-use rand::Rng;
+use rand::{Rng, rngs::ThreadRng};
 
 use crate::{
     color::Color,
@@ -13,6 +13,7 @@ pub trait Material {
         point: &Point3,
         normal: &Direction,
         front_face: bool,
+        rngs: &mut ThreadRng,
     ) -> Option<(Ray, Color)>;
 }
 
@@ -33,8 +34,9 @@ impl Material for Lambertian {
         point: &Point3,
         normal: &Direction,
         _front_face: bool,
+        rng: &mut ThreadRng,
     ) -> Option<(Ray, Color)> {
-        let mut scatter_direction = *normal + Direction::random_unit();
+        let mut scatter_direction = *normal + Direction::random_unit(rng);
         if scatter_direction.near_zero() {
             scatter_direction = normal.clone();
         }
@@ -65,9 +67,10 @@ impl Material for Metal {
         point: &Point3,
         normal: &Direction,
         _front_face: bool,
+        rng: &mut ThreadRng,
     ) -> Option<(Ray, Color)> {
         let mut reflected = incident_ray.direction.reflect(normal);
-        reflected = reflected.normalize() + self.fuzz * Direction::random_unit();
+        reflected = reflected.normalize() + self.fuzz * Direction::random_unit(rng);
         let scattered = Ray::new(point.clone(), reflected);
         let attenuation = self.albedo.clone();
         Some((scattered, attenuation))
@@ -93,6 +96,7 @@ impl Material for Dielectric {
         point: &Point3,
         normal: &Direction,
         front_face: bool,
+        rng: &mut ThreadRng,
     ) -> Option<(Ray, Color)> {
         let attenuation = Color::new(1., 1., 1.);
 
@@ -107,7 +111,6 @@ impl Material for Dielectric {
         let sin_theta = (1. - cos_theta * cos_theta).sqrt();
         let cannot_refract = refraction_index * sin_theta > 1.;
 
-        let mut rng = rand::rng();
         let direction = if cannot_refract
             || Self::reflectance(cos_theta, refraction_index) > rng.random_range(0.0..1.0)
         {

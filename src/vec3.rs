@@ -4,7 +4,7 @@ use std::{
     ops::{Add, Div, Mul, Neg, Sub},
 };
 
-use rand::Rng;
+use rand::{Rng, rngs::ThreadRng};
 
 use crate::color::Color;
 
@@ -140,9 +140,9 @@ impl Sub<Point3> for Point3 {
 }
 
 impl Direction {
-    pub fn random_unit() -> Self {
+    pub fn random_unit(rng: &mut ThreadRng) -> Self {
         loop {
-            let v = Self::random(-1., 1.);
+            let v = Self::random(-1., 1., rng);
             let len_sq = v.length_squared();
             if 1e-160 < len_sq && len_sq <= 1. {
                 return v / f64::sqrt(len_sq);
@@ -150,8 +150,7 @@ impl Direction {
         }
     }
 
-    pub fn random(min: f64, max: f64) -> Self {
-        let mut rng = rand::rng();
+    pub fn random(min: f64, max: f64, rng: &mut ThreadRng) -> Self {
         let a = rng.random_range(min..max);
         let b = rng.random_range(min..max);
         let c = rng.random_range(min..max);

@@ -25,16 +25,16 @@ fn main() -> io::Result<()> {
     let mut world;
 
     world = examples::lambertian::gamma();
-    camera.render(&world, "example_5", 10)?; // antialiasing, fixing shadow acne, Lambertian reflection, gamma correction
+    camera.render(&world, "example_1", 10)?; // antialiasing, fixing shadow acne, Lambertian reflection, gamma correction
 
     world = examples::shiny_metal::shiny_metal();
-    camera.render(&world, "example_6", 10)?;
+    camera.render(&world, "example_2", 10)?;
 
     world = examples::dull_metal::fuzzy_metal();
-    camera.render(&world, "example_7", 10)?;
+    camera.render(&world, "example_3", 10)?;
 
     world = examples::glass::hollow_glass();
-    camera.render(&world, "example_8", 10)?;
+    camera.render(&world, "example_4", 10)?;
 
     look_from = Point3::new(-2., 2., 1.);
     up = Direction::new(0., 1., 0.);
@@ -48,7 +48,7 @@ fn main() -> io::Result<()> {
         up,
     );
     world = examples::glass::hollow_glass();
-    camera.render(&world, "example_9", 10)?;
+    camera.render(&world, "example_5", 10)?;
 
     vertical_fov = PI / 9.;
     camera = Camera::new(
@@ -60,7 +60,7 @@ fn main() -> io::Result<()> {
         up,
     );
     world = examples::glass::hollow_glass();
-    camera.render(&world, "example_10", 10)?;
+    camera.render(&world, "example_6", 10)?;
 
     Ok(())
 }

@@ -21,7 +21,7 @@ pub fn make() -> HittableList {
         material_ground.clone(),
     ));
     let center = Box::new(Sphere::new(
-        Point3::new(0.1, 0., -1.),
+        Point3::new(0.0, 0., -1.),
         0.5,
         material_center.clone(),
     ));

@@ -10,16 +10,16 @@ use crate::{
 
 pub struct Cube {
     center: Point3,
-    size: f64, // Half the side length (distance from center to face)
+    size: f64, // Half the side length (distance from center to face).
     material: Arc<dyn Material>,
-    // Local coordinate system - three orthonormal vectors
+    // Local coordinate system - three orthonormal vectors.
     u: Direction, // Right vector
     v: Direction, // Up vector
     w: Direction, // Forward vector
 }
 
 impl Cube {
-    // Create an axis-aligned cube
+    // Create a cube aligned with world coordinates.
     pub fn new(center: Point3, size: f64, material: Arc<dyn Material>) -> Cube {
         Cube {
             center,

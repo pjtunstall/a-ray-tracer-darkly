@@ -89,12 +89,12 @@ fn set_up_camera() -> Camera {
     let params = CameraParameters {
         aspect_ratio: 16.0 / 9.0,
         image_width: 400,
-        look_from: Point3::new(0., 0., 0.),
+        look_from: Point3::new(0., 0., 4.),
         look_at: Point3::new(0., 0., -1.),
         up: Direction::new(0., 1., 0.),
         focal_distance: 10.,
         defocus_angle_in_degrees: 0.,
-        vertical_fov_in_degrees: 90.,
+        vertical_fov_in_degrees: 20.,
     };
     Camera::new(params)
 }

@@ -11,7 +11,7 @@ pub fn make() -> HittableList {
 
     let mut world = HittableList::new();
     world.add(Box::new(Sphere::new(
-        Point3::new(0.1, 0., -1.),
+        Point3::new(0.0, 0., -1.),
         0.5,
         lambertian.clone(),
     )));

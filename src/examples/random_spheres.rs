@@ -19,7 +19,7 @@ pub fn render(samples_per_pixel: usize) -> io::Result<()> {
         Point3::new(0., 0., 0.),
         Direction::new(0., 1., 0.),
         10.,
-        0.6,
+        (0.6 as f64).to_radians(),
         50,
     );
     camera.render(

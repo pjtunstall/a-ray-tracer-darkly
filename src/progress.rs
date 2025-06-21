@@ -31,6 +31,6 @@ pub fn show(current: usize, total: usize, label: &str) {
         bar
     };
 
-    print!("\r     \x1b[1m{}\x1b[0m [{}] {:>3}%", label, bar, percent);
+    print!("\r     \x1b[1m{}\x1b[0m [{}] {:>3}%\r", label, bar, percent);
     io::stdout().flush().unwrap();
 }

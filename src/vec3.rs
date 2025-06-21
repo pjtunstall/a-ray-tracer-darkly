@@ -1,28 +1,11 @@
 use std::{
     marker::PhantomData,
-    ops::{Add, Div, Mul, Neg, Sub},
+    ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub},
 };
 
 use rand::{Rng, rngs::SmallRng};
 
 use crate::color::Color;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct DirectionType;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct PointType;
-
-pub type Point3 = Vec3<PointType>;
-pub type Direction = Vec3<DirectionType>;
-
-pub fn point3(x: f64, y: f64, z: f64) -> Point3 {
-    Vec3::new(x, y, z)
-}
-
-pub fn direction(x: f64, y: f64, z: f64) -> Direction {
-    Vec3::new(x, y, z)
-}
 
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub struct Vec3<T> {
@@ -30,6 +13,38 @@ pub struct Vec3<T> {
     pub y: f64,
     pub z: f64,
     _marker: PhantomData<T>,
+}
+
+impl<T> Index<usize> for Vec3<T> {
+    type Output = f64;
+    fn index(&self, i: usize) -> &Self::Output {
+        match i {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            _ => panic!("Vec3 index out of bounds"),
+        }
+    }
+}
+
+impl<T> IndexMut<usize> for Vec3<T> {
+    fn index_mut(&mut self, i: usize) -> &mut Self::Output {
+        match i {
+            0 => &mut self.x,
+            1 => &mut self.y,
+            2 => &mut self.z,
+            _ => panic!("Vec3 index out of bounds"),
+        }
+    }
+}
+
+impl<'a, T> IntoIterator for &'a Vec3<T> {
+    type Item = f64;
+    type IntoIter = std::array::IntoIter<f64, 3>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        IntoIterator::into_iter([self.x, self.y, self.z])
+    }
 }
 
 impl<T> Vec3<T> {
@@ -115,6 +130,23 @@ impl Sub for Direction {
     fn sub(self, rhs: Direction) -> Direction {
         Vec3::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
     }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct DirectionType;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub struct PointType;
+
+pub type Point3 = Vec3<PointType>;
+pub type Direction = Vec3<DirectionType>;
+
+pub fn point3(x: f64, y: f64, z: f64) -> Point3 {
+    Vec3::new(x, y, z)
+}
+
+pub fn direction(x: f64, y: f64, z: f64) -> Direction {
+    Vec3::new(x, y, z)
 }
 
 impl Add<Direction> for Point3 {

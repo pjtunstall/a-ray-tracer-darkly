@@ -50,88 +50,74 @@ impl Cube {
         }
     }
 
-    // Helper function to transform a point from world space to cube local space.
     fn world_to_local(&self, point: &Point3) -> [f64; 3] {
-        let offset = Point3::new(
-            point.x - self.center.x,
-            point.y - self.center.y,
-            point.z - self.center.z,
-        );
-
+        let offset = *point - self.center;
         [
-            offset.x * self.u.x + offset.y * self.u.y + offset.z * self.u.z,
-            offset.x * self.v.x + offset.y * self.v.y + offset.z * self.v.z,
-            offset.x * self.w.x + offset.y * self.w.y + offset.z * self.w.z,
+            self.u.dot(&offset),
+            self.v.dot(&offset),
+            self.w.dot(&offset),
         ]
     }
 
-    // Helper function to transform a direction from world space to cube local space.
     fn direction_to_local(&self, dir: &Direction) -> [f64; 3] {
-        [
-            dir.x * self.u.x + dir.y * self.u.y + dir.z * self.u.z,
-            dir.x * self.v.x + dir.y * self.v.y + dir.z * self.v.z,
-            dir.x * self.w.x + dir.y * self.w.y + dir.z * self.w.z,
-        ]
+        [self.u.dot(dir), self.v.dot(dir), self.w.dot(dir)]
     }
 
-    // Helper function to transform a direction from cube local space to world space.
-    fn direction_to_world(&self, local_dir: &[f64; 3]) -> Direction {
-        Direction::new(
+    /* Slick way of writing ths change of basis:
+    Direction::new(
             local_dir[0] * self.u.x + local_dir[1] * self.v.x + local_dir[2] * self.w.x,
             local_dir[0] * self.u.y + local_dir[1] * self.v.y + local_dir[2] * self.w.y,
             local_dir[0] * self.u.z + local_dir[1] * self.v.z + local_dir[2] * self.w.z,
         )
+     */
+    fn direction_to_world(&self, local_dir: &Direction) -> Direction {
+        [self.u, self.v, self.w]
+            .into_iter()
+            .zip(local_dir)
+            .map(|(basis, s)| basis * s)
+            .reduce(|a, b| a + b)
+            .unwrap()
     }
 }
 
 impl Hittable for Cube {
     fn hit(&self, ray: &Ray, ray_t: &Interval) -> Option<HitRecord> {
-        // Transform ray to cube's local coordinate system
         let local_origin = self.world_to_local(&ray.origin);
-        let local_direction = self.direction_to_local(&ray.direction);
+        let local_dir = self.direction_to_local(&ray.direction);
 
         let mut t_min = ray_t.min;
         let mut t_max = ray_t.max;
-        let mut hit_normal_local = [0., 0., 0.];
+        let mut hit_axis = None;
+        let mut hit_dir_sign = 0.0;
 
-        // Check intersection with each pair of parallel planes (x, y, z) in local space.
-        for axis in 0..3 {
-            let ray_dir_component = local_direction[axis];
-            let ray_origin_component = local_origin[axis];
-
-            if ray_dir_component.abs() < f64::EPSILON {
-                // Ray is parallel to the planes
-                if ray_origin_component.abs() > self.size {
-                    return None; // Ray misses the cube entirely.
+        for (axis, (&origin, &dir)) in local_origin.iter().zip(&local_dir).enumerate() {
+            if dir.abs() < f64::EPSILON {
+                if origin.abs() > self.size {
+                    return None; // Parallel and outside slab.
                 }
-            } else {
-                // Calculate intersection distances with both planes.
-                let inv_dir = 1.0 / ray_dir_component;
-                let t1 = (-self.size - ray_origin_component) * inv_dir;
-                let t2 = (self.size - ray_origin_component) * inv_dir;
+                continue;
+            }
 
-                let (t_near, t_far) = if t1 < t2 { (t1, t2) } else { (t2, t1) };
+            let inv_dir = 1.0 / dir;
+            let t1 = (-self.size - origin) * inv_dir;
+            let t2 = (self.size - origin) * inv_dir;
+            let (t_near, t_far) = if t1 < t2 { (t1, t2) } else { (t2, t1) };
 
-                // Update the intersection interval.
-                if t_near > t_min {
-                    t_min = t_near;
-                    // Determine which face we're hitting in local space.
-                    hit_normal_local = [0.0, 0.0, 0.0];
-                    hit_normal_local[axis] = if ray_dir_component > 0.0 { -1.0 } else { 1.0 };
-                }
+            if t_near > t_min {
+                t_min = t_near;
+                hit_axis = Some(axis);
+                hit_dir_sign = dir.signum();
+            }
 
-                if t_far < t_max {
-                    t_max = t_far;
-                }
+            if t_far < t_max {
+                t_max = t_far;
+            }
 
-                // No intersection if the intervals don't overlap.
-                if t_min > t_max {
-                    return None;
-                }
+            if t_min > t_max {
+                return None; // Slabs don't overlap.
             }
         }
 
-        // Check if the intersection point is within our ray interval.
         if !ray_t.contains(t_min) {
             return None;
         }
@@ -139,11 +125,20 @@ impl Hittable for Cube {
         let t = t_min;
         let point = ray.at(t);
 
-        // Transform the normal from local space back to world space.
-        let world_normal = self.direction_to_world(&hit_normal_local);
+        // Determine normal in local space.
+        let mut normal_local = Direction::new(0., 0., 0.);
+        if let Some(axis) = hit_axis {
+            normal_local[axis] = -hit_dir_sign;
+        }
 
-        let record = HitRecord::new(point, world_normal, t, self.material.clone(), ray);
+        let world_normal = self.direction_to_world(&normal_local);
 
-        Some(record)
+        Some(HitRecord::new(
+            point,
+            world_normal,
+            t,
+            self.material.clone(),
+            ray,
+        ))
     }
 }

@@ -1,12 +1,11 @@
-- Refactor examples and camera.
-- Parametrize depth and samples per pixel.
+- Mention that path tracing is the sort of ray tracing this program does and compare it to Whitted ray tracing.
 - Credit Peter Shirley, Trevor David Black, Steve Hollasch: [_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html), originally published in 2018. I used Version 4.0.2, 2025-04-25.
-- Note that negative z-axis points into the viewport.
+- Note that negative z-axis points into the viewport and that the direction of `camera.v` is reversed compared to that of `viewport.v` and its associated vectors: `pixel_dv` etc.
 - Change Vec3 to be based on an array.
-- Decide if it's worth giving the functions that return random items access to a common rng, created in advance, as I originally did by making them methods `camera`.
-- Keep track of the previous hit record material so that the next refraction index can be calculated rather than leaving it to the user of the library to get it right in advance.
+- Keep track of the previous hit record material so that the next refraction index can be calculated rather than leaving it to the user of the library to get it right in advance. Or, for now, just note clearly that this needs to be done.
 - Note reversal of definition of `refraction_index` in `scatter` in `Material` for `Dielectric` from the book.
 - Note that I needed to change the defocus angle to 20 degrees on the defocus blurr example, example_7, like the previous example; the book says 10 degrees, but the angle in the illustration matches what I get with 20.
+- Decide how to present the examples, e.g. all as library functions that can be called, and quote how to call them in the docs.
 
 For the audit, make these 800x600 images in advance:
 

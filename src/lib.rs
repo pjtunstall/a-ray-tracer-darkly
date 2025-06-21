@@ -1,5 +1,6 @@
 pub mod camera;
 pub mod color;
+pub mod cube;
 pub mod examples;
 pub mod file;
 pub mod hittable;

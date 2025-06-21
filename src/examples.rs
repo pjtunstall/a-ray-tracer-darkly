@@ -1,3 +1,4 @@
+pub mod cubes;
 pub mod dull_metal;
 pub mod glass;
 pub mod lambertian;
@@ -98,7 +99,7 @@ fn set_up_camera() -> Camera {
     Camera::new(params)
 }
 
-fn zoom_out() -> Camera {
+pub fn zoom_out() -> Camera {
     let params = CameraParameters {
         aspect_ratio: 16.0 / 9.0,
         image_width: 400,

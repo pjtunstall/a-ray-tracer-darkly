@@ -107,9 +107,7 @@ impl Camera {
             self.image.width, self.image.height
         )?;
 
-        // print!("\x1B[?25l"); // Hide the cursor.
         let pixels = self.generate_pixels(world, max_depth, samples_per_pixel, background);
-        // print!("\x1B[?25h"); // Show the cursor.
 
         for row in pixels {
             for pixel_color in row {

@@ -1,27 +1,31 @@
-use std::io;
-use std::rc::Rc;
+use std::{io, rc::Rc};
 
-use crate::camera;
-use crate::color::Color;
-use crate::examples;
-use crate::hittable::HittableList;
-use crate::material::{Dielectric, Lambertian, Metal};
-use crate::sphere::Sphere;
-use crate::vec3::{Direction, Point3};
+use crate::{
+    camera::{Camera, CameraParameters},
+    color::Color,
+    examples,
+    hittable::HittableList,
+    material::{Dielectric, Lambertian, Metal},
+    sphere::Sphere,
+    vec3::{Direction, Point3},
+};
 
 pub fn render(samples_per_pixel: usize) -> io::Result<()> {
     let world = make();
-    let mut camera = camera::Camera::new(
-        16. / 9.,
-        1200,
-        20.,
-        Point3::new(13., 2., 3.),
-        Point3::new(0., 0., 0.),
-        Direction::new(0., 1., 0.),
-        10.,
-        (0.6 as f64).to_radians(),
-        50,
-    );
+
+    let params = CameraParameters {
+        aspect_ratio: 16.0 / 9.0,
+        image_width: 1200,
+        vertical_fov: 20_f64.to_radians(),
+        look_from: Point3::new(13., 2., 3.),
+        look_at: Point3::new(0., 0., 0.),
+        up: Direction::new(0., 1., 0.),
+        focus_dist: 10.,
+        defocus_angle: 0.6_f64.to_radians(),
+        max_depth: 50,
+    };
+    let mut camera = Camera::new(params);
+
     camera.render(
         &world,
         "random_spheres",

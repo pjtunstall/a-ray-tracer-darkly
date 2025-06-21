@@ -14,6 +14,18 @@ use crate::{
     viewport::Viewport,
 };
 
+pub struct CameraParameters {
+    pub aspect_ratio: f64,
+    pub image_width: u32,
+    pub look_from: Point3,
+    pub look_at: Point3,
+    pub up: Direction,
+    pub max_depth: u32,
+    pub focus_dist: f64,
+    pub defocus_angle: f64,
+    pub vertical_fov: f64,
+}
+
 pub struct Camera {
     image: Image,
     look_from: Point3,
@@ -28,17 +40,19 @@ pub struct Camera {
 }
 
 impl Camera {
-    pub fn new(
-        aspect_ratio: f64,
-        image_width: u32,
-        vertical_fov: f64,
-        look_from: Point3,
-        look_at: Point3,
-        up: Direction,
-        focus_dist: f64,
-        defocus_angle: f64,
-        max_depth: u32,
-    ) -> Self {
+    pub fn new(params: CameraParameters) -> Self {
+        let CameraParameters {
+            aspect_ratio,
+            image_width,
+            look_from,
+            look_at,
+            up,
+            max_depth,
+            focus_dist,
+            defocus_angle,
+            vertical_fov,
+        } = params;
+
         let w = (look_from - look_at).normalize();
         let v = up.normalize();
         let u = v.cross(&w);

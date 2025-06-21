@@ -8,7 +8,7 @@ pub mod sky;
 use std::{f64::consts::PI, io};
 
 use crate::{
-    camera::Camera,
+    camera::{Camera, CameraParameters},
     examples,
     vec3::{Direction, Point3},
 };
@@ -45,57 +45,61 @@ pub fn book_1(samples_per_pixel_for_the_big_picture: usize) -> io::Result<()> {
 }
 
 fn set_up_camera() -> Camera {
-    Camera::new(
-        16.0 / 9.0,
-        400,
-        PI / 2.,
-        Point3::new(0., 0., 0.),
-        Point3::new(0., 0., -1.),
-        Direction::new(0., 1., 0.),
-        10.,
-        0.,
-        10,
-    )
+    let params = CameraParameters {
+        aspect_ratio: 16.0 / 9.0,
+        image_width: 400,
+        vertical_fov: PI / 2.,
+        look_from: Point3::new(0., 0., 0.),
+        look_at: Point3::new(0., 0., -1.),
+        up: Direction::new(0., 1., 0.),
+        focus_dist: 10.,
+        defocus_angle: 0.,
+        max_depth: 10,
+    };
+    Camera::new(params)
 }
 
 fn zoom_out() -> Camera {
-    Camera::new(
-        16.0 / 9.0,
-        400,
-        PI / 2.,
-        Point3::new(-2., 2., 1.),
-        Point3::new(0., 0., -1.),
-        Direction::new(0., 1., 0.),
-        10.,
-        0.,
-        10,
-    )
+    let params = CameraParameters {
+        aspect_ratio: 16.0 / 9.0,
+        image_width: 400,
+        vertical_fov: PI / 2.,
+        look_from: Point3::new(-2., 2., 1.),
+        look_at: Point3::new(0., 0., -1.),
+        up: Direction::new(0., 1., 0.),
+        focus_dist: 10.,
+        defocus_angle: 0.,
+        max_depth: 10,
+    };
+    Camera::new(params)
 }
 
 fn reduce_fov() -> Camera {
-    Camera::new(
-        16.0 / 9.0,
-        400,
-        PI / 9.,
-        Point3::new(-2., 2., 1.),
-        Point3::new(0., 0., -1.),
-        Direction::new(0., 1., 0.),
-        10.,
-        0.,
-        10,
-    )
+    let params = CameraParameters {
+        aspect_ratio: 16.0 / 9.0,
+        image_width: 400,
+        vertical_fov: PI / 9.,
+        look_from: Point3::new(-2., 2., 1.),
+        look_at: Point3::new(0., 0., -1.),
+        up: Direction::new(0., 1., 0.),
+        focus_dist: 10.,
+        defocus_angle: 0.,
+        max_depth: 10,
+    };
+    Camera::new(params)
 }
 
 fn defocus() -> Camera {
-    Camera::new(
-        16.0 / 9.0,
-        400,
-        PI / 9.,
-        Point3::new(-2., 2., 1.),
-        Point3::new(0., 0., -1.),
-        Direction::new(0., 1., 0.),
-        10.,
-        (3.4 as f64).to_radians(),
-        10,
-    )
+    let params = CameraParameters {
+        aspect_ratio: 16.0 / 9.0,
+        image_width: 400,
+        vertical_fov: PI / 9.,
+        look_from: Point3::new(-2., 2., 1.),
+        look_at: Point3::new(0., 0., -1.),
+        up: Direction::new(0., 1., 0.),
+        focus_dist: 10.,
+        defocus_angle: 3.4_f64.to_radians(),
+        max_depth: 10,
+    };
+    Camera::new(params)
 }

@@ -3,10 +3,11 @@ use std::io;
 use rt::examples;
 
 fn main() -> io::Result<()> {
-    examples::book_1(10, 10)?;
+    // Increase `samples_per_pixel` and `max_depth` for a higher quality image.
+    examples::book_1(50, 50)?;
 
-    // // Uncomment to render the cover illustration for Book 1, which is bigger than the others and so takes longer. They use 500 sampes per pixel, which may take some hours.
-    // examples::random_spheres::render(10, 10)?;
+    // // Uncomment to render the cover illustration of Ray Tracing in One Weekend, which is bigger than the others and so takes longer. The authors use 500 sampes per pixel for a high-quality image, which will take, as they warn, "quite a while".
+    // examples::random_spheres::render(50, 10)?;
 
     Ok(())
 }

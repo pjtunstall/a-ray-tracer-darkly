@@ -31,3 +31,31 @@ As bonus for this project you can implement:
     Add fluids
 
 Consider putting your bonuses behind command-line flags to achieve a reasonable performance standard defined above. For example, to render textures on your image, you can use a flag -t.
+
+-
+
+Note the effect of the two parameters:
+
+1. samples_per_pixel:
+
+What it controls: How many rays are fired per pixel.
+
+Effect: More samples reduce noise and improve image stability (especially for soft shadows, glossy reflections, and indirect lighting).
+
+Analogy: Like taking multiple noisy photos of the same scene and averaging them — the image gets smoother and clearer.
+
+Impact: Major visual improvement; easily visible.
+
+2. max_depth:
+
+What it controls: How many bounces each ray can take before termination.
+
+Effect: Controls how deep rays can go into light transport — especially for indirect illumination, caustics, reflections, and refractions.
+
+Analogy: Like limiting how far light can bounce around a room — fewer bounces means less global illumination.
+
+Impact:
+
+For scenes dominated by direct lighting, raising the depth beyond 1–2 may not show obvious differences.
+
+In scenes with lots of indirect lighting (e.g. interiors lit through small windows, light bouncing off colored walls), higher max depth contributes to realism — deeper soft shadows, color bleeding, subtle ambient effects.

@@ -22,8 +22,8 @@ pub struct CameraParameters {
     pub up: Direction,
     pub max_depth: u32,
     pub focus_dist: f64,
-    pub defocus_angle: f64,
-    pub vertical_fov: f64,
+    pub defocus_angle_in_degrees: f64,
+    pub vertical_fov_in_degrees: f64,
 }
 
 pub struct Camera {
@@ -49,9 +49,12 @@ impl Camera {
             up,
             max_depth,
             focus_dist,
-            defocus_angle,
-            vertical_fov,
+            defocus_angle_in_degrees,
+            vertical_fov_in_degrees,
         } = params;
+
+        let defocus_angle = defocus_angle_in_degrees.to_radians();
+        let vertical_fov = vertical_fov_in_degrees.to_radians();
 
         let w = (look_from - look_at).normalize();
         let v = up.normalize();

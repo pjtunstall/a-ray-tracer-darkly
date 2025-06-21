@@ -16,13 +16,13 @@ pub fn render(samples_per_pixel: usize) -> io::Result<()> {
     let params = CameraParameters {
         aspect_ratio: 16.0 / 9.0,
         image_width: 1200,
-        vertical_fov: 20_f64.to_radians(),
         look_from: Point3::new(13., 2., 3.),
         look_at: Point3::new(0., 0., 0.),
         up: Direction::new(0., 1., 0.),
-        focus_dist: 10.,
-        defocus_angle: 0.6_f64.to_radians(),
         max_depth: 50,
+        focus_dist: 10.,
+        defocus_angle_in_degrees: 0.6,
+        vertical_fov_in_degrees: 20.,
     };
     let mut camera = Camera::new(params);
 

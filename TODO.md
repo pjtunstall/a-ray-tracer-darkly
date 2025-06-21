@@ -3,12 +3,14 @@
 - Note that negative z-axis points into the viewport and that the direction of `camera.v` is reversed compared to that of `viewport.v` and its associated vectors: `pixel_dv` etc.
 - Change Vec3 to be based on an array.
 - Keep track of the previous hit record material so that the next refraction index can be calculated rather than leaving it to the user of the library to get it right in advance. Or, for now, just note clearly that this needs to be done.
+- Decide how to present the examples, e.g. all as library functions that can be called, and quote how to call them in the docs.
+- Redo cube implementation after reading Quadrilaterals chapter.
+
+Deviations from the book:
+
 - Note reversal of definition of `refraction_index` in `scatter` in `Material` for `Dielectric` from the book.
 - Note that I needed to change FOV to 20 degrees on the defocus blurr example, example_7, like the previous example; the book says 10 degrees, but the view in the illustration matches what I get with 20.
 - Note that I've changed FOV to 20 degrees for the earlier examples too as the left and right spheres are elongated otherwise. Apparently this is intentional, since that's how they look in the illustrations in the book.
-- Decide how to present the examples, e.g. all as library functions that can be called, and quote how to call them in the docs.
-- Redo cube implementation after reading Quadrilaterals chapter.
--
 
 For the audit, make these 800x600 images in advance:
 

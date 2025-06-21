@@ -3,7 +3,7 @@ use std::{
     ops::{Add, Div, Mul, Neg, Sub},
 };
 
-use rand::{Rng, rngs::ThreadRng};
+use rand::{Rng, rngs::SmallRng};
 
 use crate::color::Color;
 
@@ -139,7 +139,7 @@ impl Sub<Point3> for Point3 {
 }
 
 impl Direction {
-    pub fn random_unit(rng: &mut ThreadRng) -> Self {
+    pub fn random_unit(rng: &mut SmallRng) -> Self {
         loop {
             let v = Self::random(-1., 1., rng);
             let len_sq = v.length_squared();
@@ -149,20 +149,7 @@ impl Direction {
         }
     }
 
-    pub fn random_in_unit_disk(rng: &mut ThreadRng) -> Point3 {
-        loop {
-            let p = Self::random(-1., 1., rng);
-            if p.length_squared() < 1. {
-                return p.to_point();
-            }
-        }
-    }
-
-    fn to_point(&self) -> Point3 {
-        Point3::new(self.x, self.y, self.z)
-    }
-
-    pub fn random(min: f64, max: f64, rng: &mut ThreadRng) -> Self {
+    pub fn random(min: f64, max: f64, rng: &mut SmallRng) -> Self {
         let a = rng.random_range(min..max);
         let b = rng.random_range(min..max);
         let c = rng.random_range(min..max);
@@ -183,6 +170,26 @@ impl Direction {
         let r_out_perp = refraction_index * (*self + cos_theta * *normal);
         let r_out_parallel = -((1.0 - r_out_perp.length_squared()).abs().sqrt()) * *normal;
         r_out_perp + r_out_parallel
+    }
+}
+
+impl Point3 {
+    pub fn random(min: f64, max: f64, rng: &mut SmallRng) -> Self {
+        let a = rng.random_range(min..max);
+        let b = rng.random_range(min..max);
+        let c = rng.random_range(min..max);
+        Point3::new(a, b, c)
+    }
+
+    pub fn random_in_unit_disk(rng: &mut SmallRng) -> Point3 {
+        loop {
+            let a = rng.random_range(-1.0..1.0);
+            let b = rng.random_range(-1.0..1.0);
+            let p = Point3::new(a, b, 0.);
+            if p.length_squared() < 1. {
+                return p;
+            }
+        }
     }
 }
 

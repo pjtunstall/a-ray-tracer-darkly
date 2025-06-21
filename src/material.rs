@@ -1,4 +1,4 @@
-use rand::{Rng, rngs::ThreadRng};
+use rand::{Rng, rngs::SmallRng};
 
 use crate::{
     color::Color,
@@ -6,14 +6,14 @@ use crate::{
     vec3::{Direction, Point3},
 };
 
-pub trait Material {
+pub trait Material: Send + Sync {
     fn scatter(
         &self,
         incident_ray: &Ray,
         point: &Point3,
         normal: &Direction,
         front_face: bool,
-        rngs: &mut ThreadRng,
+        rngs: &mut SmallRng,
     ) -> Option<(Ray, Color)>;
 }
 
@@ -34,7 +34,7 @@ impl Material for Lambertian {
         point: &Point3,
         normal: &Direction,
         _front_face: bool,
-        rng: &mut ThreadRng,
+        rng: &mut SmallRng,
     ) -> Option<(Ray, Color)> {
         let mut scatter_direction = *normal + Direction::random_unit(rng);
         if scatter_direction.near_zero() {
@@ -67,7 +67,7 @@ impl Material for Metal {
         point: &Point3,
         normal: &Direction,
         _front_face: bool,
-        rng: &mut ThreadRng,
+        rng: &mut SmallRng,
     ) -> Option<(Ray, Color)> {
         let mut reflected = incident_ray.direction.reflect(normal);
         reflected = reflected.normalize() + self.fuzz * Direction::random_unit(rng);
@@ -96,7 +96,7 @@ impl Material for Dielectric {
         point: &Point3,
         normal: &Direction,
         front_face: bool,
-        rng: &mut ThreadRng,
+        rng: &mut SmallRng,
     ) -> Option<(Ray, Color)> {
         let attenuation = Color::new(1., 1., 1.);
 

@@ -1,11 +1,11 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use crate::{
     color::Color, hittable::HittableList, material::Lambertian, sphere::Sphere, vec3::Point3,
 };
 
 pub fn make() -> HittableList {
-    let lambertian = Rc::new(Lambertian {
+    let lambertian = Arc::new(Lambertian {
         albedo: Color::new(0.5, 0.5, 0.5),
     });
 

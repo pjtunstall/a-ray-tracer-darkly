@@ -1,4 +1,4 @@
-use std::rc::Rc;
+use std::sync::Arc;
 
 use crate::{
     color::Color,
@@ -9,10 +9,10 @@ use crate::{
 };
 
 pub fn make() -> HittableList {
-    let material_ground = Rc::new(Lambertian::new(Color::new(0.8, 0.8, 0.)));
-    let material_center = Rc::new(Lambertian::new(Color::new(0.1, 0.2, 0.5)));
-    let material_left = Rc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.3));
-    let material_right = Rc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 1.));
+    let material_ground = Arc::new(Lambertian::new(Color::new(0.8, 0.8, 0.)));
+    let material_center = Arc::new(Lambertian::new(Color::new(0.1, 0.2, 0.5)));
+    let material_left = Arc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.3));
+    let material_right = Arc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 1.));
 
     let ground = Box::new(Sphere::new(
         Point3::new(0., -100.5, -1.),

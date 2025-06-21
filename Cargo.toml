@@ -5,4 +5,5 @@ edition = "2024"
 
 [dependencies]
 rand = "0.9.1"
+rayon = "1.10.0"
 terminal_size = "0.4.2"

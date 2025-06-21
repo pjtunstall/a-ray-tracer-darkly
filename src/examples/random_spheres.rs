@@ -1,4 +1,4 @@
-use std::{io, rc::Rc};
+use std::{io, sync::Arc};
 
 use crate::{
     camera::{Camera, CameraParameters},
@@ -10,7 +10,7 @@ use crate::{
     vec3::{Direction, Point3},
 };
 
-pub fn render(samples_per_pixel: usize) -> io::Result<()> {
+pub fn render(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
     let world = make();
 
     let params = CameraParameters {
@@ -19,16 +19,16 @@ pub fn render(samples_per_pixel: usize) -> io::Result<()> {
         look_from: Point3::new(13., 2., 3.),
         look_at: Point3::new(0., 0., 0.),
         up: Direction::new(0., 1., 0.),
-        max_depth: 50,
-        focus_dist: 10.,
+        focal_distance: 10.,
         defocus_angle_in_degrees: 0.6,
         vertical_fov_in_degrees: 20.,
     };
-    let mut camera = Camera::new(params);
+    let camera = Camera::new(params);
 
     camera.render(
         &world,
         "random_spheres",
+        max_depth,
         samples_per_pixel,
         examples::sky::color,
     )?;
@@ -38,7 +38,7 @@ pub fn render(samples_per_pixel: usize) -> io::Result<()> {
 fn make() -> HittableList {
     let mut world = HittableList::new();
 
-    let ground_material = Rc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
+    let ground_material = Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
     world.add(Box::new(Sphere::new(
         Point3::new(0., -1000., 0.),
         1000.,
@@ -58,38 +58,38 @@ fn make() -> HittableList {
                 if choose_mat < 0.8 {
                     // diffuse
                     let albedo = Color::random(0.0..1.0) * Color::random(0.0..1.0);
-                    sphere_material = Rc::new(Lambertian::new(albedo));
+                    sphere_material = Arc::new(Lambertian::new(albedo));
                     world.add(Box::new(Sphere::new(center, 0.2, sphere_material)));
                 } else if choose_mat < 0.95 {
                     // metal
                     let albedo = Color::random(0.5..1.0);
                     let fuzz = rand::random_range(0.0..0.5);
-                    let sphere_material = Rc::new(Metal::new(albedo, fuzz));
+                    let sphere_material = Arc::new(Metal::new(albedo, fuzz));
                     world.add(Box::new(Sphere::new(center, 0.2, sphere_material)));
                 } else {
                     // glass
-                    let sphere_material = Rc::new(Dielectric::new(1.5));
+                    let sphere_material = Arc::new(Dielectric::new(1.5));
                     world.add(Box::new(Sphere::new(center, 0.2, sphere_material)));
                 }
             }
         }
     }
 
-    let material_1 = Rc::new(Dielectric::new(1.5));
+    let material_1 = Arc::new(Dielectric::new(1.5));
     world.add(Box::new(Sphere::new(
         Point3::new(0., 1., 0.),
         1.0,
         material_1.clone(),
     )));
 
-    let material_2 = Rc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
+    let material_2 = Arc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
     world.add(Box::new(Sphere::new(
         Point3::new(-4., 1., 0.),
         1.0,
         material_2.clone(),
     )));
 
-    let material_3 = Rc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
+    let material_3 = Arc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
     world.add(Box::new(Sphere::new(
         Point3::new(4., 1., 0.),
         1.0,

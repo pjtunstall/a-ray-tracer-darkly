@@ -3,7 +3,7 @@ use std::{
     ops::{Add, Div, Index, IndexMut, Mul, Neg, Sub},
 };
 
-use rand::{Rng, rngs::SmallRng};
+use rand::{Rng, SeedableRng, rngs::SmallRng};
 
 use crate::color::Color;
 
@@ -218,6 +218,66 @@ impl Point3 {
     }
 }
 
+pub struct Basis {
+    pub x: Direction,
+    pub y: Direction,
+    pub z: Direction,
+}
+
+impl Basis {
+    pub fn new(x: Direction, y: Direction, z: Direction) -> Self {
+        Basis { x, y, z }
+    }
+
+    pub fn new_orthonormal() -> Self {
+        let mut rng = rand::rng();
+        let mut rng = SmallRng::from_rng(&mut rng);
+        let x = Direction::random_unit(&mut rng);
+        let y;
+        loop {
+            let d = Direction::random_unit(&mut rng);
+            if 1. - x.dot(&d) > f64::EPSILON {
+                y = x.cross(&d);
+                break;
+            }
+        }
+        let z = x.cross(&y);
+        Self::new(x, y, z)
+    }
+}
+
+impl Index<usize> for Basis {
+    type Output = Direction;
+    fn index(&self, i: usize) -> &Self::Output {
+        match i {
+            0 => &self.x,
+            1 => &self.y,
+            2 => &self.z,
+            _ => panic!("Basis index out of bounds"),
+        }
+    }
+}
+
+impl IndexMut<usize> for Basis {
+    fn index_mut(&mut self, i: usize) -> &mut Self::Output {
+        match i {
+            0 => &mut self.x,
+            1 => &mut self.y,
+            2 => &mut self.z,
+            _ => panic!("Vec3 index out of bounds"),
+        }
+    }
+}
+
+impl<'a> IntoIterator for &'a Basis {
+    type Item = Direction;
+    type IntoIter = std::array::IntoIter<Direction, 3>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        IntoIterator::into_iter([self.x, self.y, self.z])
+    }
+}
+
 pub fn approx_eq<T>(a: Vec3<T>, b: Vec3<T>, epsilon: f64) -> bool {
     (a.x - b.x).abs() < epsilon && (a.y - b.y).abs() < epsilon && (a.z - b.z).abs() < epsilon
 }
@@ -276,5 +336,16 @@ mod tests {
 
         assert!((point_unit.length() - 1.0).abs() < f64::EPSILON);
         assert!((dir_unit.length() - 1.0).abs() < f64::EPSILON);
+    }
+
+    #[test]
+    fn test_new_orthogonal() {
+        let basis = Basis::new_orthonormal();
+        let x = basis.x;
+        let y = basis.y;
+        let z = basis.z;
+        assert!((x.dot(&y)).abs() < f64::EPSILON);
+        assert!((x.dot(&z)).abs() < f64::EPSILON);
+        assert!((y.dot(&z)).abs() < f64::EPSILON);
     }
 }

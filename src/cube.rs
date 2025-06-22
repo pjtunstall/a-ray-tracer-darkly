@@ -5,7 +5,7 @@ use crate::{
     interval::Interval,
     material::Material,
     ray::Ray,
-    vec3::{Direction, Point3},
+    vec3::{Direction, Point3, Basis},
 };
 
 pub struct Cube {
@@ -13,9 +13,9 @@ pub struct Cube {
     size: f64, // Half the side length (distance from center to face).
     material: Arc<dyn Material>,
     // Local coordinate system - three orthonormal vectors.
-    u: Direction, // Right vector
-    v: Direction, // Up vector
-    w: Direction, // Forward vector
+    u: Direction,
+    v: Direction,
+    w: Direction,
 }
 
 impl Cube {
@@ -36,17 +36,15 @@ impl Cube {
         center: Point3,
         size: f64,
         material: Arc<dyn Material>,
-        u: Direction, // Right vector (should be normalized)
-        v: Direction, // Up vector (should be normalized)
-        w: Direction, // Forward vector (should be normalized)
+        orientation: &Basis,
     ) -> Cube {
         Cube {
             center,
             size: size.max(f64::EPSILON),
             material,
-            u,
-            v,
-            w,
+            u: orientation.x,
+            v: orientation.y,
+            w: orientation.z,
         }
     }
 

@@ -4,7 +4,7 @@
 - Keep track of the previous hit record material so that the next refraction index can be calculated rather than leaving it to the user of the library to get it right in advance. Or, for now, just note clearly that this needs to be done.
 - Decide how to present the examples, e.g. all as library functions that can be called, and quote how to call them in the docs.
 - Redo cube implementation after reading Quadrilaterals chapter.
-- Consider which style to use here, and note the alternatives and reason for choosing one of the other:
+- Consider which style to use here, and note the alternatives and reason for choosing one of the other. Either way, maybe encapsulate the logic in a general change-of-basis function, naming it and its parameters something suitably general.
 
 ```rust
  /* This function contains a slick way of writing the change of basis more plainly expresssed as follows.

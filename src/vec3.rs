@@ -233,15 +233,25 @@ impl Basis {
         let mut rng = rand::rng();
         let mut rng = SmallRng::from_rng(&mut rng);
         let x = Direction::random_unit(&mut rng);
-        let y;
+
+        let mut v;
         loop {
-            let d = Direction::random_unit(&mut rng);
-            if 1. - x.dot(&d) > f64::EPSILON {
-                y = x.cross(&d);
+            v = Direction::random_unit(&mut rng);
+            if v.dot(&x).abs() > f64::EPSILON {
                 break;
             }
         }
-        let z = x.cross(&y);
+        let y = (v - x.dot(&v) * x).normalize();
+
+        let mut w;
+        loop {
+            w = Direction::random_unit(&mut rng);
+            if w.dot(&x).abs() > f64::EPSILON && w.dot(&y).abs() > f64::EPSILON {
+                break;
+            }
+        }
+        let z = (w - x.dot(&w) * x - y.dot(&w) * y).normalize();
+
         Self::new(x, y, z)
     }
 }

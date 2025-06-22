@@ -7,7 +7,7 @@ use crate::{
     cube::Cube,
     examples,
     hittable::HittableList,
-    material::{Dielectric, Lambertian, Metal},
+    material::{Dielectric, Metal},
     sphere::Sphere,
     vec3::{Basis, Direction, Point3},
 };
@@ -31,7 +31,7 @@ pub fn render(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
 fn set_up_camera() -> Camera {
     let params = CameraParameters {
         aspect_ratio: 4.0 / 3.0,
-        image_width: 800,
+        image_width: 400,
         look_from: Point3::new(0., 6., 9.),
         look_at: Point3::new(0., 0., -1.),
         up: Direction::new(0., 1., 0.),
@@ -43,13 +43,12 @@ fn set_up_camera() -> Camera {
 }
 
 fn make() -> HittableList {
-    // let earth = Arc::new(Dielectric::new(1.33));
-    let earth = Arc::new(Lambertian::new(Color::new(0.1, 0.2, 0.5)));
+    let earth = Arc::new(Dielectric::new(1.33));
     let metal_1 = Arc::new(Metal::new(Color::new(0.1, 0.2, 0.5), 0.5));
     let glass = Arc::new(Dielectric::new(1.5));
     let metal_2 = Arc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.1));
 
-    let ground = Box::new(Sphere::new(Point3::new(0., -100.5, -1.), 666., earth));
+    let ground = Box::new(Sphere::new(Point3::new(0., -100.5, -1.), 100., earth));
 
     let center = Box::new(Cube::new_oriented(
         Point3::new(0.0, 0., -1.),

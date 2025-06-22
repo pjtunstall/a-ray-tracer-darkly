@@ -3,14 +3,15 @@ use std::{io, path::PathBuf, sync::Arc};
 use crate::{
     camera::{Camera, CameraParameters},
     color::Color,
+    cube::Cube,
     examples,
     hittable::HittableList,
-    material::Lambertian,
+    material::{Lambertian, Metal},
     sphere::Sphere,
-    vec3::{Direction, Point3},
+    vec3::{Basis, Direction, Point3},
 };
 
-pub fn a_scene_with_a_sphere(
+pub fn cube_and_plane(
     max_depth: usize,
     samples_per_pixel: usize,
     image_width: u32,
@@ -20,7 +21,7 @@ pub fn a_scene_with_a_sphere(
     let camera = set_up_camera(image_width);
     camera.render(
         &world,
-        PathBuf::from("audit").join("a_scene_with_a_sphere"),
+        PathBuf::from("audit").join("plane_and_cube"),
         max_depth,
         samples_per_pixel,
         background,
@@ -44,21 +45,21 @@ fn set_up_camera(image_width: u32) -> Camera {
 }
 
 fn make_world() -> HittableList {
-    let lambertian = Arc::new(Lambertian {
-        albedo: Color::new(0.7, 0.1, 0.4),
-    });
+    let earth = Arc::new(Lambertian::new(Color::new(0.5, 0.3, 0.0)));
+    let metal = Arc::new(Metal::new(Color::new(0.7, 0.1, 0.5), 0.2));
+
+    let ground = Box::new(Sphere::new(Point3::new(0., -666.5, -1.), 666., earth));
+
+    let center = Box::new(Cube::new_oriented(
+        Point3::new(0.0, 0., -1.),
+        0.3,
+        metal.clone(),
+        &Basis::new_orthonormal(),
+    ));
 
     let mut world = HittableList::new();
-    world.add(Box::new(Sphere::new(
-        Point3::new(0.0, 0., -1.),
-        0.5,
-        lambertian.clone(),
-    )));
-    world.add(Box::new(Sphere::new(
-        Point3::new(0., -100.5, -1.),
-        100.,
-        lambertian.clone(),
-    )));
+    world.add(ground);
+    world.add(center);
 
     world
 }

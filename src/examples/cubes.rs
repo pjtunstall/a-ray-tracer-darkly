@@ -1,5 +1,4 @@
-use std::io;
-use std::sync::Arc;
+use std::{io, path::PathBuf, sync::Arc};
 
 use crate::{
     camera::{Camera, CameraParameters},
@@ -19,7 +18,7 @@ pub fn render(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
     let camera = set_up_camera();
     camera.render(
         &world,
-        "example_8",
+        PathBuf::from("cubes"),
         max_depth,
         samples_per_pixel,
         background,

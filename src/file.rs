@@ -1,7 +1,7 @@
 use std::{
     fs::{self, File},
     io::{self, BufWriter, Result},
-    path::{MAIN_SEPARATOR, Path},
+    path::{Path, PathBuf},
 };
 
 pub fn create_images_dir() -> io::Result<()> {
@@ -12,9 +12,13 @@ pub fn create_images_dir() -> io::Result<()> {
     Ok(())
 }
 
-pub fn writer(image_path: &str) -> Result<BufWriter<File>> {
+pub fn writer<P: AsRef<Path>>(image_path: P) -> Result<BufWriter<File>> {
     create_images_dir()?;
-    let path = format!("images{}{}.ppm", MAIN_SEPARATOR, image_path);
+
+    let path = PathBuf::from("images")
+        .join(image_path)
+        .with_extension("ppm");
+
     let file = File::create(path)?;
     Ok(BufWriter::new(file))
 }

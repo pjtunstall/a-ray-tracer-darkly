@@ -11,7 +11,11 @@ fn main() -> io::Result<()> {
 
     // examples::cubes::render(50, 10)?;
 
-    examples::audit::sphere::a_scene_with_a_sphere(10, 10, 800)?;
+    let max_depth = 10;
+    let samples_per_pixel = 10;
+    let image_width = 800;
+    examples::audit::sphere::a_scene_with_a_sphere(max_depth, samples_per_pixel, image_width)?;
+    examples::audit::plane_and_cube::cube_and_plane(max_depth, samples_per_pixel, image_width)?;
 
     Ok(())
 }

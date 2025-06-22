@@ -1,5 +1,6 @@
 use std::{
     io::{self, Write},
+    path::PathBuf,
     sync::{
         Arc,
         atomic::{AtomicUsize, Ordering},
@@ -95,12 +96,12 @@ impl Camera {
     pub fn render<T: Hittable + std::marker::Send + std::marker::Sync>(
         &self,
         world: &T,
-        image_name: &str,
+        image_path: PathBuf,
         max_depth: usize,
         samples_per_pixel: usize,
         background: fn(&Ray) -> Color,
     ) -> io::Result<()> {
-        let mut writer = file::writer(image_name)?;
+        let mut writer = file::writer(&image_path)?;
         writeln!(
             writer,
             "P3\n{} {}\n255",

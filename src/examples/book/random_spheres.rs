@@ -1,4 +1,4 @@
-use std::{io, sync::Arc};
+use std::{io, path::PathBuf, sync::Arc};
 
 use crate::{
     camera::{Camera, CameraParameters},
@@ -27,7 +27,7 @@ pub fn render(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
 
     camera.render(
         &world,
-        "random_spheres",
+        PathBuf::from("book").join("random_spheres"),
         max_depth,
         samples_per_pixel,
         examples::book::sky::color,

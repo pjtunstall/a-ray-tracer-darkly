@@ -15,7 +15,7 @@ use crate::{
 pub fn render(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
     let world = make();
 
-    let background = examples::sky::color;
+    let background = examples::book::sky::color;
     let camera = set_up_camera();
     camera.render(
         &world,

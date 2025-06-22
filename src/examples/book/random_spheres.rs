@@ -30,7 +30,7 @@ pub fn render(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
         "random_spheres",
         max_depth,
         samples_per_pixel,
-        examples::sky::color,
+        examples::book::sky::color,
     )?;
     Ok(())
 }

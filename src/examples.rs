@@ -1,10 +1,15 @@
 pub mod cubes;
-pub mod dull_metal;
-pub mod glass;
-pub mod lambertian;
-pub mod random_spheres;
-pub mod shiny_metal;
-pub mod sky;
+pub mod book {
+    pub mod dull_metal;
+    pub mod glass;
+    pub mod lambertian;
+    pub mod random_spheres;
+    pub mod shiny_metal;
+    pub mod sky;
+}
+pub mod audit {
+    pub mod sphere;
+}
 
 use std::io;
 
@@ -16,10 +21,10 @@ use crate::{
 
 pub fn book_1(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
     let mut world;
-    let background = examples::sky::color;
+    let background = examples::book::sky::color;
     let mut camera = set_up_camera();
 
-    world = examples::lambertian::make();
+    world = examples::book::lambertian::make();
     camera.render(
         &world,
         "example_1",
@@ -28,7 +33,7 @@ pub fn book_1(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
         background,
     )?;
 
-    world = examples::shiny_metal::make();
+    world = examples::book::shiny_metal::make();
     camera.render(
         &world,
         "example_2",
@@ -37,7 +42,7 @@ pub fn book_1(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
         background,
     )?;
 
-    world = examples::dull_metal::make();
+    world = examples::book::dull_metal::make();
     camera.render(
         &world,
         "example_3",
@@ -46,7 +51,7 @@ pub fn book_1(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
         background,
     )?;
 
-    world = examples::glass::make();
+    world = examples::book::glass::make();
     camera.render(
         &world,
         "example_4",

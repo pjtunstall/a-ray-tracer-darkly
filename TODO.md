@@ -4,6 +4,25 @@
 - Keep track of the previous hit record material so that the next refraction index can be calculated rather than leaving it to the user of the library to get it right in advance. Or, for now, just note clearly that this needs to be done.
 - Decide how to present the examples, e.g. all as library functions that can be called, and quote how to call them in the docs.
 - Redo cube implementation after reading Quadrilaterals chapter.
+- Consider which style to use here, and note the alternatives and reason for choosing one of the other:
+
+```rust
+ /* This function contains a slick way of writing the change of basis more plainly expresssed as follows.
+    Direction::new(
+            local_dir[0] * self.u.x + local_dir[1] * self.v.x + local_dir[2] * self.w.x,
+            local_dir[0] * self.u.y + local_dir[1] * self.v.y + local_dir[2] * self.w.y,
+            local_dir[0] * self.u.z + local_dir[1] * self.v.z + local_dir[2] * self.w.z,
+        )
+     */
+    fn direction_to_world(&self, local_dir: &Direction) -> Direction {
+        [self.u, self.v, self.w]
+            .into_iter()
+            .zip(local_dir)
+            .map(|(basis, s)| basis * s)
+            .reduce(|a, b| a + b)
+            .unwrap()
+    }
+```
 
 Deviations from the book:
 

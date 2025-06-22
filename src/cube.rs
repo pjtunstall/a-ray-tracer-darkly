@@ -63,7 +63,7 @@ impl Cube {
         [self.u.dot(dir), self.v.dot(dir), self.w.dot(dir)]
     }
 
-    /* Slick way of writing ths change of basis:
+    /* This function contains a slick way of writing the change of basis more plainly expresssed as follows.
     Direction::new(
             local_dir[0] * self.u.x + local_dir[1] * self.v.x + local_dir[2] * self.w.x,
             local_dir[0] * self.u.y + local_dir[1] * self.v.y + local_dir[2] * self.w.y,

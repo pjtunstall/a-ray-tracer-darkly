@@ -24,6 +24,7 @@ pub fn a_scene_with_a_sphere(
         max_depth,
         samples_per_pixel,
         background,
+        1.,
     )?;
 
     Ok(())

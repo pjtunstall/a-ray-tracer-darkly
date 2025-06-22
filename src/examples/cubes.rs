@@ -22,6 +22,7 @@ pub fn render(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
         max_depth,
         samples_per_pixel,
         background,
+        1.,
     )?;
 
     Ok(())

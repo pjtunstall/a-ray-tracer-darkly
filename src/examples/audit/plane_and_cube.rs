@@ -4,9 +4,9 @@ use crate::{
     camera::{Camera, CameraParameters},
     color::Color,
     cube::Cube,
-    examples,
     hittable::HittableList,
     material::{Lambertian, Metal},
+    ray::Ray,
     sphere::Sphere,
     vec3::{Basis, Direction, Point3},
 };
@@ -17,7 +17,7 @@ pub fn cube_and_plane(
     image_width: u32,
 ) -> io::Result<()> {
     let world = make_world();
-    let background = examples::book::sky::color;
+    let background = sky;
     let camera = set_up_camera(image_width);
     camera.render(
         &world,
@@ -25,9 +25,14 @@ pub fn cube_and_plane(
         max_depth,
         samples_per_pixel,
         background,
+        0.5,
     )?;
 
     Ok(())
+}
+
+fn sky(ray: &Ray) -> Color {
+    Color::new(0.0, 0.0, (ray.direction.y + 1.0) / 2.0)
 }
 
 fn set_up_camera(image_width: u32) -> Camera {

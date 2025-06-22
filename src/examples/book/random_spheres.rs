@@ -31,6 +31,7 @@ pub fn render(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
         max_depth,
         samples_per_pixel,
         examples::book::sky::color,
+        1.0,
     )?;
     Ok(())
 }

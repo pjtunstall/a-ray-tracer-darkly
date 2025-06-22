@@ -28,64 +28,71 @@ pub fn book_1(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
     world = examples::book::lambertian::make();
     camera.render(
         &world,
-        PathBuf::from("book").join("/example_1"),
+        PathBuf::from("book").join("example_1"),
         max_depth,
         samples_per_pixel,
         background,
+        1.,
     )?;
 
     world = examples::book::shiny_metal::make();
     camera.render(
         &world,
-        PathBuf::from("book").join("/example_2"),
+        PathBuf::from("book").join("example_2"),
         max_depth,
         samples_per_pixel,
         background,
+        1.,
     )?;
 
     world = examples::book::dull_metal::make();
     camera.render(
         &world,
-        PathBuf::from("book").join("/example_3"),
+        PathBuf::from("book").join("example_3"),
         max_depth,
         samples_per_pixel,
         background,
+        1.,
     )?;
 
     world = examples::book::glass::make();
     camera.render(
         &world,
-        PathBuf::from("book").join("/example_4"),
+        PathBuf::from("book").join("example_4"),
         max_depth,
         samples_per_pixel,
         background,
+        1.,
     )?;
 
     camera = wide_angle();
     camera.render(
         &world,
-        PathBuf::from("book").join("/example_5"),
+        PathBuf::from("book").join("example_5"),
         max_depth,
         samples_per_pixel,
         background,
+        1.,
     )?;
 
     camera = reduce_fov();
     camera.render(
         &world,
-        PathBuf::from("book").join("/example_6"),
+        PathBuf::from("book").join("example_6"),
         max_depth,
         samples_per_pixel,
         background,
+        1.,
     )?;
 
     camera = defocus();
     camera.render(
         &world,
-        PathBuf::from("book").join("/example_7"),
+        PathBuf::from("book").join("example_7"),
         max_depth,
         samples_per_pixel,
         background,
+        1.,
     )?;
 
     Ok(())

@@ -100,6 +100,7 @@ impl Camera {
         max_depth: usize,
         samples_per_pixel: usize,
         background: fn(&Ray) -> Color,
+        brightness: f64,
     ) -> io::Result<()> {
         let mut writer = file::writer(&image_path)?;
         writeln!(
@@ -108,7 +109,8 @@ impl Camera {
             self.image.width, self.image.height
         )?;
 
-        let pixels = self.generate_pixels(world, max_depth, samples_per_pixel, background);
+        let pixels =
+            self.generate_pixels(world, max_depth, samples_per_pixel, background, brightness);
 
         for row in pixels {
             for pixel_color in row {
@@ -125,6 +127,7 @@ impl Camera {
         max_depth: usize,
         samples_per_pixel: usize,
         background: fn(&Ray) -> Color,
+        brightness: f64,
     ) -> Vec<Vec<Color>> {
         let image_width = self.image.width;
         let image_height = self.image.height;
@@ -145,7 +148,7 @@ impl Camera {
                             pixel_color = pixel_color
                                 + camera.ray_color(&ray, world, max_depth, background, &mut rng);
                         }
-                        pixel_color / samples_per_pixel as f64
+                        brightness * pixel_color / samples_per_pixel as f64
                     })
                     .collect();
                 let done = progress.fetch_add(1, Ordering::Relaxed);

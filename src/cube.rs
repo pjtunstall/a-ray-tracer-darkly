@@ -70,10 +70,10 @@ impl Cube {
             local_dir[0] * self.u.z + local_dir[1] * self.v.z + local_dir[2] * self.w.z,
         )
      */
-    fn direction_to_world(&self, local_dir: &Direction) -> Direction {
+    fn direction_to_world(&self, local_direction: &Direction) -> Direction {
         [self.u, self.v, self.w]
             .into_iter()
-            .zip(local_dir)
+            .zip(local_direction)
             .map(|(basis, s)| basis * s)
             .reduce(|a, b| a + b)
             .unwrap()
@@ -83,14 +83,14 @@ impl Cube {
 impl Hittable for Cube {
     fn hit(&self, ray: &Ray, ray_t: &Interval) -> Option<HitRecord> {
         let local_origin = self.world_to_local(&ray.origin);
-        let local_dir = self.direction_to_local(&ray.direction);
+        let local_direction = self.direction_to_local(&ray.direction);
 
         let mut t_min = ray_t.min;
         let mut t_max = ray_t.max;
         let mut hit_axis = None;
         let mut hit_dir_sign = 0.0;
 
-        for (axis, (&origin, &dir)) in local_origin.iter().zip(&local_dir).enumerate() {
+        for (axis, (&origin, &dir)) in local_origin.iter().zip(&local_direction).enumerate() {
             if dir.abs() < f64::EPSILON {
                 if origin.abs() > self.size {
                     return None; // Parallel and outside slab.

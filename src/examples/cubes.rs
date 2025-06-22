@@ -16,7 +16,7 @@ pub fn render(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
     let world = make();
 
     let background = examples::sky::color;
-    let camera = examples::zoom_out();
+    let camera = examples::wide_angle();
     camera.render(
         &world,
         "example_8",

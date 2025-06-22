@@ -55,7 +55,7 @@ pub fn book_1(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
         background,
     )?;
 
-    camera = zoom_out();
+    camera = wide_angle();
     camera.render(
         &world,
         "example_5",
@@ -99,7 +99,7 @@ fn set_up_camera() -> Camera {
     Camera::new(params)
 }
 
-pub fn zoom_out() -> Camera {
+pub fn wide_angle() -> Camera {
     let params = CameraParameters {
         aspect_ratio: 16.0 / 9.0,
         image_width: 400,

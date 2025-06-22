@@ -57,6 +57,23 @@ impl<T> Vec3<T> {
         }
     }
 
+    pub fn random(min: f64, max: f64, rng: &mut SmallRng) -> Self {
+        let a = rng.random_range(min..max);
+        let b = rng.random_range(min..max);
+        let c = rng.random_range(min..max);
+        Self::new(a, b, c)
+    }
+
+    pub fn random_unit(rng: &mut SmallRng) -> Self {
+        loop {
+            let v = Self::random(-1., 1., rng);
+            let len_sq = v.length_squared();
+            if f64::EPSILON < len_sq && len_sq <= 1. {
+                return v / f64::sqrt(len_sq);
+            }
+        }
+    }
+
     pub fn length_squared(&self) -> f64 {
         self.x * self.x + self.y * self.y + self.z * self.z
     }
@@ -171,25 +188,8 @@ impl Sub<Point3> for Point3 {
 }
 
 impl Direction {
-    pub fn random_unit(rng: &mut SmallRng) -> Self {
-        loop {
-            let v = Self::random(-1., 1., rng);
-            let len_sq = v.length_squared();
-            if f64::EPSILON < len_sq && len_sq <= 1. {
-                return v / f64::sqrt(len_sq);
-            }
-        }
-    }
-
-    pub fn random(min: f64, max: f64, rng: &mut SmallRng) -> Self {
-        let a = rng.random_range(min..max);
-        let b = rng.random_range(min..max);
-        let c = rng.random_range(min..max);
-        Direction::new(a, b, c)
-    }
-
     pub fn to_color(&self) -> Color {
-        // Map each component (necessarily in the range [-1, 1] because `n` is a unit vector), to the range [0, 1].
+        // Map each component (necessarily in the range [-1, 1] if `n` is a unit vector), to the range [0, 1].
         0.5 * Color::new(self.x + 1., self.y + 1., self.z + 1.)
     }
 
@@ -206,13 +206,6 @@ impl Direction {
 }
 
 impl Point3 {
-    pub fn random(min: f64, max: f64, rng: &mut SmallRng) -> Self {
-        let a = rng.random_range(min..max);
-        let b = rng.random_range(min..max);
-        let c = rng.random_range(min..max);
-        Point3::new(a, b, c)
-    }
-
     pub fn random_in_unit_disk(rng: &mut SmallRng) -> Point3 {
         loop {
             let a = rng.random_range(-1.0..1.0);

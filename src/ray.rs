@@ -27,10 +27,13 @@ mod tests {
 
     #[test]
     fn test_at() {
-        let ray = Ray::new(vec3::point3(2.0, 3.0, 4.0), vec3::direction(1.0, 0.0, 0.0));
-        is_expected(&ray, 0.0, vec3::point3(2.0, 3.0, 4.0));
-        is_expected(&ray, 1.0, vec3::point3(3.0, 3.0, 4.0));
-        is_expected(&ray, -1.0, vec3::point3(1.0, 3.0, 4.0));
-        is_expected(&ray, 2.5, vec3::point3(4.5, 3.0, 4.0));
+        let ray = Ray::new(
+            vec3::Point3::new(2.0, 3.0, 4.0),
+            vec3::Direction::new(1.0, 0.0, 0.0),
+        );
+        is_expected(&ray, 0.0, vec3::Point3::new(2.0, 3.0, 4.0));
+        is_expected(&ray, 1.0, vec3::Point3::new(3.0, 3.0, 4.0));
+        is_expected(&ray, -1.0, vec3::Point3::new(1.0, 3.0, 4.0));
+        is_expected(&ray, 2.5, vec3::Point3::new(4.5, 3.0, 4.0));
     }
 }

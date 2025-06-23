@@ -1,5 +1,5 @@
 - Mention that path tracing is the sort of ray tracing this program does and compare it to Whitted ray tracing.
-- Credit Peter Shirley, Trevor David Black, Steve Hollasch: [_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html), originally published in 2018. I used Version 4.0.2, 2025-04-25.
+- Credit Peter Shirley, Trevor David Black, Steve Hollasch: [_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html), originally published in 2018. I used Version 4.0.2, 2025-04-25. The [series](https://raytracing.github.io/).
 - Note that negative z-axis points into the viewport and that the direction of `camera.v` is reversed compared to that of `viewport.v` and its associated vectors: `pixel_dv` etc.
 - Keep track of the previous hit record material so that the next refraction index can be calculated rather than leaving it to the user of the library to get it right in advance. Or, for now, just note clearly that this needs to be done.
 - Decide how to present the examples, e.g. all as library functions that can be called, and quote how to call them in the docs.

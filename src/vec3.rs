@@ -82,10 +82,6 @@ impl<T> Vec3<T> {
         self.length_squared().sqrt()
     }
 
-    pub fn dot(&self, rhs: &Vec3<T>) -> f64 {
-        self.x * rhs.x + self.y * rhs.y + self.z * rhs.z
-    }
-
     pub fn cross(&self, rhs: &Vec3<T>) -> Vec3<T> {
         Vec3::new(
             self.y * rhs.z - self.z * rhs.y,
@@ -97,6 +93,16 @@ impl<T> Vec3<T> {
     pub fn near_zero(&self) -> bool {
         let epsilon = 1e-8;
         self.x.abs() < epsilon && self.y < epsilon && self.z < epsilon
+    }
+}
+
+impl<T> Vec3<T> {
+    pub fn zip<U>(&self, other: &Vec3<U>) -> impl Iterator<Item = (f64, f64)> {
+        std::iter::zip(self.into_iter(), other.into_iter())
+    }
+
+    pub fn dot<U>(&self, rhs: &Vec3<U>) -> f64 {
+        self.zip(rhs).map(|(a, b)| a * b).sum()
     }
 }
 
@@ -135,20 +141,6 @@ impl<T> Div<f64> for Vec3<T> {
     }
 }
 
-impl Add for Direction {
-    type Output = Direction;
-    fn add(self, rhs: Direction) -> Direction {
-        Vec3::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
-    }
-}
-
-impl Sub for Direction {
-    type Output = Direction;
-    fn sub(self, rhs: Direction) -> Direction {
-        Vec3::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct DirectionType;
 
@@ -157,14 +149,6 @@ pub struct PointType;
 
 pub type Point3 = Vec3<PointType>;
 pub type Direction = Vec3<DirectionType>;
-
-pub fn point3(x: f64, y: f64, z: f64) -> Point3 {
-    Vec3::new(x, y, z)
-}
-
-pub fn direction(x: f64, y: f64, z: f64) -> Direction {
-    Vec3::new(x, y, z)
-}
 
 impl Add<Direction> for Point3 {
     type Output = Point3;
@@ -187,6 +171,33 @@ impl Sub<Point3> for Point3 {
     }
 }
 
+impl Point3 {
+    pub fn random_in_unit_disk(rng: &mut SmallRng) -> Point3 {
+        loop {
+            let a = rng.random_range(-1.0..1.0);
+            let b = rng.random_range(-1.0..1.0);
+            let p = Point3::new(a, b, 0.);
+            if p.length_squared() < 1. {
+                return p;
+            }
+        }
+    }
+}
+
+impl Add for Direction {
+    type Output = Direction;
+    fn add(self, rhs: Direction) -> Direction {
+        Vec3::new(self.x + rhs.x, self.y + rhs.y, self.z + rhs.z)
+    }
+}
+
+impl Sub for Direction {
+    type Output = Direction;
+    fn sub(self, rhs: Direction) -> Direction {
+        Vec3::new(self.x - rhs.x, self.y - rhs.y, self.z - rhs.z)
+    }
+}
+
 impl Direction {
     pub fn to_color(&self) -> Color {
         // Map each component (necessarily in the range [-1, 1] if `n` is a unit vector), to the range [0, 1].
@@ -202,19 +213,6 @@ impl Direction {
         let r_out_perp = refraction_index * (*self + cos_theta * *normal);
         let r_out_parallel = -((1.0 - r_out_perp.length_squared()).abs().sqrt()) * *normal;
         r_out_perp + r_out_parallel
-    }
-}
-
-impl Point3 {
-    pub fn random_in_unit_disk(rng: &mut SmallRng) -> Point3 {
-        loop {
-            let a = rng.random_range(-1.0..1.0);
-            let b = rng.random_range(-1.0..1.0);
-            let p = Point3::new(a, b, 0.);
-            if p.length_squared() < 1. {
-                return p;
-            }
-        }
     }
 }
 
@@ -298,7 +296,7 @@ mod tests {
 
     #[test]
     fn scalar_multiplication_for_direction() {
-        let v = direction(1.0, 2.0, 3.0);
+        let v = Direction::new(1.0, 2.0, 3.0);
         let result = v * 2.0;
         assert!(approx_eq(result, Vec3::new(2.0, 4.0, 6.0), f64::EPSILON));
         let result = 2.0 * v;

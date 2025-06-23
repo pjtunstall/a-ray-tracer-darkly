@@ -7,6 +7,7 @@ pub mod hittable;
 pub mod image;
 pub mod interval;
 pub mod material;
+pub mod plane;
 pub mod progress;
 pub mod ray;
 pub mod sphere;

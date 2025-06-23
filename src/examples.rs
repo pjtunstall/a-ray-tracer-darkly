@@ -8,8 +8,8 @@ pub mod book {
     pub mod sky;
 }
 pub mod audit {
+    pub mod a_scene_with_a_sphere;
     pub mod plane_and_cube;
-    pub mod sphere;
 }
 
 use std::{io, path::PathBuf};

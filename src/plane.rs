@@ -35,26 +35,26 @@ impl Plane {
     }
 }
 
-/*
-class quad : public hittable {
-  public:
-    quad(const point3& Q, const vec3& u, const vec3& v, shared_ptr<material> mat)
-      : Q(Q), u(u), v(v), mat(mat)
-    {
-        auto n = cross(u, v);
-        normal = unit_vector(n);
-        D = dot(normal, Q);
+impl Hittable for Plane {
+    fn hit(&self, ray: &Ray, ray_t: &Interval) -> Option<HitRecord> {
+        let denominator = self.normal.dot(&ray.direction);
+        if denominator.abs() < f64::EPSILON {
+            return None;
+        }
 
-        set_bounding_box();
+        let t = (self.offset - self.normal.dot(&ray.origin)) / denominator;
+        if !ray_t.contains(t) {
+            return None;
+        }
+        let point = ray.at(t);
+        let outward_normal = self.normal;
+
+        Some(HitRecord::new(
+            point,
+            outward_normal,
+            t,
+            self.material.clone(),
+            ray,
+        ))
     }
-    ...
-
-  private:
-    point3 Q;
-    vec3 u, v;
-    shared_ptr<material> mat;
-    aabb bbox;
-    vec3 normal;
-    double D;
-};
-*/
+}

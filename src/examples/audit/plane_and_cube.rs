@@ -2,12 +2,12 @@ use std::{io, path::PathBuf, sync::Arc};
 
 use crate::{
     camera::{Camera, CameraParameters},
-    color::Color,
+    color::{self, Color},
     cube::Cube,
     hittable::HittableList,
     material::{Lambertian, Metal},
+    plane::Plane,
     ray::Ray,
-    sphere::Sphere,
     vec3::{Basis, Direction, Point3},
 };
 
@@ -32,7 +32,10 @@ pub fn cube_and_plane(
 }
 
 fn sky(ray: &Ray) -> Color {
-    Color::new(0.0, 0.0, (ray.direction.y + 1.0) / 2.0)
+    let t = 0.5 * (ray.direction.y + 1.0);
+    let horizon = Color::new(0.8, 0.6, 0.4);
+    let zenith = Color::new(0.2, 0.3, 0.5);
+    color::lerp(horizon, zenith, t)
 }
 
 fn set_up_camera(image_width: u32) -> Camera {
@@ -50,21 +53,29 @@ fn set_up_camera(image_width: u32) -> Camera {
 }
 
 fn make_world() -> HittableList {
-    let earth = Arc::new(Lambertian::new(Color::new(0.5, 0.3, 0.0)));
-    let metal = Arc::new(Metal::new(Color::new(0.7, 0.1, 0.5), 0.2));
+    let ground_color = Color::new(0.3, 0.2, 0.1);
+    let cube_color = Color::new(0.9, 0.9, 0.9);
 
-    let ground = Box::new(Sphere::new(Point3::new(0., -666.5, -1.), 666., earth));
+    let ground_material = Arc::new(Lambertian::new(ground_color));
+    let cube_material = Arc::new(Metal::new(cube_color, 0.1));
 
-    let center = Box::new(Cube::new_oriented(
-        Point3::new(0.0, 0., -1.),
+    let ground = Box::new(Plane::new(
+        Point3::new(0., -1., 0.),
+        Direction::new(1., 0., 0.),
+        Direction::new(0., 0., 1.),
+        ground_material,
+    ));
+
+    let cube = Box::new(Cube::new_oriented(
+        Point3::new(0.0, 0., -5.),
         0.3,
-        metal.clone(),
+        cube_material,
         &Basis::new_orthonormal(),
     ));
 
     let mut world = HittableList::new();
     world.add(ground);
-    world.add(center);
+    world.add(cube);
 
     world
 }

@@ -10,8 +10,8 @@ pub mod book {
     pub mod sky;
 }
 pub mod audit {
-    pub mod a_scene_with_a_sphere;
     pub mod cube_and_plane;
+    pub mod sphere;
     pub mod various;
 }
 

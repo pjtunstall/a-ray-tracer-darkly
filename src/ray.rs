@@ -8,11 +8,14 @@ pub struct Ray {
 
 impl Ray {
     pub fn new(origin: Point3, direction: Direction) -> Ray {
-        // assert!(
-        //     !direction.near_zero(),
-        //     "Direction vector is too close to zero"
-        // );
-        Ray { origin, direction }
+        assert!(
+            !direction.near_zero(),
+            "Direction vector is too close to zero"
+        );
+        Ray {
+            origin,
+            direction: direction.normalize(),
+        }
     }
 
     pub fn at(&self, t: f64) -> Point3 {

@@ -1,6 +1,7 @@
 pub mod camera;
 pub mod color;
 pub mod cube;
+pub mod cylinder;
 pub mod disk;
 pub mod examples;
 pub mod file;

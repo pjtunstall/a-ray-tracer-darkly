@@ -4,13 +4,13 @@ use crate::{
     camera::{Camera, CameraParameters},
     color::Color,
     cube::Cube,
+    cylinder::Cylinder,
     disk::Disk,
     examples,
     hittable::HittableList,
     material::{Dielectric, Lambertian, Metal},
     quad::Quad,
     sphere::Sphere,
-    tube::Tube,
     vec3::{Basis, Direction, Point3},
 };
 
@@ -96,12 +96,15 @@ fn make_world() -> HittableList {
         Direction::new(0., 1., 0.),
         earth.clone(),
     ));
-    let tube = Box::new(Tube::new(
+
+    let Cylinder { tube, top, bottom } = Cylinder::new(
         Point3::new(0.4, 0., -1.),
         Direction::new(1.5, 1.5, -0.4),
         1.,
-        earth,
-    ));
+        earth.clone(),
+        glass.clone(),
+        glass.clone(),
+    );
 
     let mut world = HittableList::new();
     world.add(ground);
@@ -111,6 +114,8 @@ fn make_world() -> HittableList {
     world.add(cube);
     world.add(quad);
     world.add(tube);
+    world.add(top);
+    world.add(bottom);
 
     world
 }

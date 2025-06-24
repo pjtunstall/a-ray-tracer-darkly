@@ -29,7 +29,7 @@ pub fn render(max_depth: usize, samples_per_pixel: usize, image_width: u32) -> i
 
 fn set_up_camera(image_width: u32) -> Camera {
     let params = CameraParameters {
-        aspect_ratio: 16.0 / 9.0,
+        aspect_ratio: 4.0 / 3.0,
         image_width: image_width,
         look_from: Point3::new(0., 1., 4.),
         look_at: Point3::new(0., 0., -1.),

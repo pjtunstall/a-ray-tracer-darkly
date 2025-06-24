@@ -5,7 +5,7 @@ use crate::{
     color::{self, Color},
     cube::Cube,
     hittable::HittableList,
-    material::{Lambertian, Metal},
+    material::Metal,
     plane::Plane,
     ray::Ray,
     vec3::{Basis, Direction, Point3},
@@ -36,7 +36,7 @@ fn sky(ray: &Ray) -> Color {
 
 fn set_up_camera(image_width: u32) -> Camera {
     let params = CameraParameters {
-        aspect_ratio: 16.0 / 9.0,
+        aspect_ratio: 4.0 / 3.0,
         image_width: image_width,
         look_from: Point3::new(0., 0., 4.),
         look_at: Point3::new(0., 0., -1.),
@@ -49,16 +49,15 @@ fn set_up_camera(image_width: u32) -> Camera {
 }
 
 fn make_world() -> HittableList {
-    let ground_color = Color::new(0.05, 0.1, 0.1);
-    let cube_color = Color::new(0.9, 0.9, 0.9);
+    let ground_color = Color::new(0.2, 0.4, 0.4);
+    let cube_color = Color::new(0.8, 0.2, 0.2);
 
-    let ground_material = Arc::new(Lambertian::new(ground_color));
+    let ground_material = Arc::new(Metal::new(ground_color, 0.2));
     let cube_material = Arc::new(Metal::new(cube_color, 0.1));
 
-    let ground = Box::new(Plane::from_span(
-        Point3::new(0., -1., 0.),
-        Direction::new(1., 0., 0.),
-        Direction::new(0., 0., 1.),
+    let ground = Box::new(Plane::new(
+        Point3::new(0., -0.5, 0.),
+        Direction::new(0., 1., 0.),
         ground_material,
     ));
 

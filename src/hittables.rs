@@ -1,3 +1,11 @@
+pub mod cube;
+pub mod cylinder;
+pub mod disk;
+pub mod plane;
+pub mod quad;
+pub mod sphere;
+pub mod tube;
+
 use std::sync::Arc;
 
 use crate::{interval::Interval, material::Material, ray::Ray, vec3::Direction};

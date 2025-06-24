@@ -4,9 +4,8 @@ use crate::{
     camera::{Camera, CameraParameters},
     color::Color,
     examples,
-    hittable::HittableList,
+    hittables::{HittableList, sphere::Sphere},
     material::{Dielectric, Lambertian, Metal},
-    sphere::Sphere,
     vec3::{Direction, Point3},
 };
 

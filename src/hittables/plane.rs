@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::{
-    hittable::{HitRecord, Hittable},
+    hittables::{HitRecord, Hittable},
     interval::Interval,
     material::Material,
     ray::Ray,

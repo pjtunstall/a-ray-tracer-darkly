@@ -2,9 +2,8 @@ use std::sync::Arc;
 
 use crate::{
     color::Color,
-    hittable::HittableList,
+    hittables::{HittableList, sphere::Sphere},
     material::{Lambertian, Metal},
-    sphere::Sphere,
     vec3::Point3,
 };
 

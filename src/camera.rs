@@ -13,7 +13,7 @@ use rayon::prelude::*;
 use crate::{
     color::Color,
     file,
-    hittable::Hittable,
+    hittables::Hittable,
     image::Image,
     interval::Interval,
     progress,

@@ -16,12 +16,11 @@
 - Assert radius of Disk and Sphere are not too small; likewise make sure random points in unit disk are big enough. Check I'm asserting re. value or absolute values, depending on the case.
 - Dry out code for Plan, Quad, and Disk.
 - Allow Disk to be made either from normal or spanning vectors of plane.
-- Restructure how shapes are modularized.
 - Make fields of Camera and shapes private?
 - Tidy names of items in world in `various.rs`.
 
 ```rust
- /* This function contains a slick way of writing the change of basis more plainly expresssed as follows.
+ /* This function contains a slick way of writing the change of basis, more plainly expresssed with the code that follows it. Which is best: the slick, idiomatic way, or the plain way that might be clearer to more people?
     Direction::new(
             local_dir[0] * self.u.x + local_dir[1] * self.v.x + local_dir[2] * self.w.x,
             local_dir[0] * self.u.y + local_dir[1] * self.v.y + local_dir[2] * self.w.y,
@@ -43,13 +42,6 @@ Deviations from the book:
 - Note reversal of definition of `refraction_index` in `scatter` in `Material` for `Dielectric` from the book.
 - Note that I needed to change FOV to 20 degrees on the defocus blurr example, example_7, like the previous example; the book says 10 degrees, but the view in the illustration matches what I get with 20.
 - Note that I've changed FOV to 20 degrees for the earlier examples too as the left and right spheres are elongated otherwise. Apparently this is intentional, since that's how they look in the illustrations in the book.
-
-For the audit, make these 800x600 images in advance:
-
-- A scene with a sphere;
-- A scene with a flat plane and a cube with lower brightness than in the sphere image;
-- A scene with one of each of all the objects (one cube, one sphere, one cylinder and one flat plane);
-- A scene like the previous one, but with the camera in another position (thus generating the same image from a different perspective).
 
 Documentation:
 

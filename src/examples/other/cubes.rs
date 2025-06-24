@@ -3,11 +3,9 @@ use std::{io, path::PathBuf, sync::Arc};
 use crate::{
     camera::{Camera, CameraParameters},
     color::Color,
-    cube::Cube,
     examples,
-    hittable::HittableList,
+    hittables::{sphere::Sphere, HittableList, cube::Cube},
     material::{Dielectric, Metal},
-    sphere::Sphere,
     vec3::{Basis, Direction, Point3},
 };
 

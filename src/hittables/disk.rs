@@ -1,24 +1,34 @@
 use std::sync::Arc;
 
 use crate::{
-    hittable::{HitRecord, Hittable},
+    hittables::{HitRecord, Hittable},
     interval::Interval,
     material::Material,
     ray::Ray,
     vec3::{Direction, Point3},
 };
 
-pub struct Quad {
+pub struct Disk {
     pub point: Point3,
     pub normal: Direction,
     pub material: Arc<dyn Material>,
     pub offset: f64,
     pub u: Direction,
     pub v: Direction,
+    pub radius: f64,
 }
 
-impl Quad {
-    pub fn new(point: Point3, u: Direction, v: Direction, material: Arc<dyn Material>) -> Self {
+impl Disk {
+    pub fn new(
+        point: Point3,
+        radius: f64,
+        mut u: Direction,
+        mut v: Direction,
+        material: Arc<dyn Material>,
+    ) -> Self {
+        assert!(radius > 1e-8, "Radius is too small");
+        u = u.normalize();
+        v = v.normalize();
         let normal = u.cross(&v).normalize();
         let offset = normal.dot(&point);
         Self {
@@ -28,11 +38,12 @@ impl Quad {
             offset,
             u,
             v,
+            radius,
         }
     }
 }
 
-impl Hittable for Quad {
+impl Hittable for Disk {
     fn hit(&self, ray: &Ray, ray_t: &Interval) -> Option<HitRecord> {
         let denominator = self.normal.dot(&ray.direction);
 
@@ -53,7 +64,7 @@ impl Hittable for Quad {
         let alpha = self.normal.dot(&p.cross(&self.v));
         let beta = self.normal.dot(&self.u.cross(&p));
 
-        if !Interval::UNIT.contains(alpha) || !Interval::UNIT.contains(beta) {
+        if alpha * alpha + beta * beta > self.radius.powf(2.) {
             return None;
         }
 

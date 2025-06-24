@@ -1,9 +1,8 @@
 use std::sync::Arc;
 
 use crate::{
-    disk::Disk,
+    hittables::{disk::Disk, tube::Tube},
     material::Material,
-    tube::Tube,
     vec3::{Direction, Point3},
 };
 

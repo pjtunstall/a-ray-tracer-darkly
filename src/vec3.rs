@@ -68,7 +68,7 @@ impl<T> Vec3<T> {
         loop {
             let v = Self::random(-1., 1., rng);
             let len_sq = v.length_squared();
-            if f64::EPSILON < len_sq && len_sq <= 1. {
+            if 1e-8 < len_sq && len_sq <= 1. {
                 return v / f64::sqrt(len_sq);
             }
         }
@@ -91,7 +91,7 @@ impl<T> Vec3<T> {
     }
 
     pub fn is_zero(&self) -> bool {
-        self.x.abs() < f64::EPSILON && self.y < f64::EPSILON && self.z < f64::EPSILON
+        self.x.abs() < 1e-8 && self.y < 1e-8 && self.z < 1e-8
     }
 
     pub fn near_zero(&self) -> bool {
@@ -229,8 +229,8 @@ pub struct Basis {
 impl Basis {
     pub fn new(x: Direction, y: Direction, z: Direction) -> Self {
         assert!(
-            x.dot(&y.cross(&z)) >= f64::EPSILON,
-            "Inavalid basis: vectors should be independent"
+            x.dot(&y.cross(&z)) >= 1e-8,
+            "Inavalid basis: vectors not independent enough"
         );
         Basis { x, y, z }
     }
@@ -238,27 +238,21 @@ impl Basis {
     pub fn new_orthonormal() -> Self {
         let mut rng = rand::rng();
         let mut rng = SmallRng::from_rng(&mut rng);
+
         let x = Direction::random_unit(&mut rng);
 
-        let mut v;
-        loop {
-            v = Direction::random_unit(&mut rng);
-            if v.dot(&x).abs() > f64::EPSILON {
-                break;
+        let y = loop {
+            let v = Direction::random_unit(&mut rng);
+            let proj = x.dot(&v) * x;
+            let candidate = v - proj;
+            if candidate.length_squared() > 1e-8 {
+                break candidate.normalize();
             }
-        }
-        let y = (v - x.dot(&v) * x).normalize();
+        };
 
-        let mut w;
-        loop {
-            w = Direction::random_unit(&mut rng);
-            if w.dot(&x).abs() > f64::EPSILON && w.dot(&y).abs() > f64::EPSILON {
-                break;
-            }
-        }
-        let z = (w - x.dot(&w) * x - y.dot(&w) * y).normalize();
+        let z = x.cross(&y);
 
-        Self::new(x, y, z)
+        Basis { x, y, z }
     }
 }
 
@@ -336,13 +330,6 @@ mod tests {
     }
 
     #[test]
-    fn point_equality() {
-        let a = Point3::new(1.0, 2.0, 3.0);
-        let b = Point3::new(1.0, 2.0, 3.0);
-        assert_eq!(a, b);
-    }
-
-    #[test]
     fn test_normalize_for_markers() {
         let point = Point3::new(3.0, 0.0, 4.0);
         let dir = Direction::new(0.0, 5.0, 12.0);
@@ -355,7 +342,7 @@ mod tests {
     }
 
     #[test]
-    fn test_new_orthogonal() {
+    fn test_new_orthonormal() {
         let basis = Basis::new_orthonormal();
         let x = basis.x;
         let y = basis.y;

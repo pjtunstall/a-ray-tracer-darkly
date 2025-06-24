@@ -84,7 +84,7 @@ pub struct Dielectric {
 impl Dielectric {
     pub fn new(refraction_index: f64) -> Self {
         Dielectric {
-            refraction_index: refraction_index.max(f64::EPSILON),
+            refraction_index: refraction_index.max(1e-8),
         }
     }
 }

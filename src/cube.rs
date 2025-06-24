@@ -5,7 +5,7 @@ use crate::{
     interval::Interval,
     material::Material,
     ray::Ray,
-    vec3::{Direction, Point3, Basis},
+    vec3::{Basis, Direction, Point3},
 };
 
 pub struct Cube {
@@ -23,7 +23,7 @@ impl Cube {
     pub fn new(center: Point3, size: f64, material: Arc<dyn Material>) -> Cube {
         Cube {
             center,
-            size: size.max(f64::EPSILON),
+            size: size.max(1e-8),
             material,
             u: Direction::new(1.0, 0.0, 0.0),
             v: Direction::new(0.0, 1.0, 0.0),
@@ -40,7 +40,7 @@ impl Cube {
     ) -> Cube {
         Cube {
             center,
-            size: size.max(f64::EPSILON),
+            size: size.max(1e-8),
             material,
             u: orientation.x,
             v: orientation.y,
@@ -89,7 +89,7 @@ impl Hittable for Cube {
         let mut hit_dir_sign = 0.0;
 
         for (axis, (&origin, &dir)) in local_origin.iter().zip(&local_direction).enumerate() {
-            if dir.abs() < f64::EPSILON {
+            if dir.abs() < 1e-8 {
                 if origin.abs() > self.size {
                     return None; // Parallel and outside slab.
                 }

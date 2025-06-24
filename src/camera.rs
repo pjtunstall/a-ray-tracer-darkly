@@ -57,17 +57,14 @@ impl Camera {
             defocus_angle_in_degrees,
             vertical_fov_in_degrees,
         } = params;
-        assert!(image_width > 0, "Image width must be greater than zero");
+        assert!(image_width > 0, "Image width too close to zero");
+        assert!(aspect_ratio >= 1e-8, "Aspect ratio too close to zero");
         assert!(
-            aspect_ratio >= f64::EPSILON,
-            "Aspect ratio must be greater than zero"
+            !up.near_zero(),
+            "Camera up direrection vector too close to zero"
         );
         assert!(
-            !up.is_zero(),
-            "Camera up direrection vector must be nonzero"
-        );
-        assert!(
-            focal_distance >= f64::EPSILON,
+            focal_distance >= 1e-8,
             "Focal distance must be greater than zero"
         );
 

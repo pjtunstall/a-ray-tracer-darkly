@@ -17,7 +17,7 @@ pub struct Plane {
 
 impl Plane {
     pub fn new(point: Point3, mut normal: Direction, material: Arc<dyn Material>) -> Self {
-        assert!(!normal.is_zero(), "Normal vector must be nonzero");
+        assert!(!normal.near_zero(), "Normal vector too close to zero");
         normal = normal.normalize();
         let offset = normal.dot(&point);
         Self {
@@ -50,7 +50,7 @@ impl Plane {
 impl Hittable for Plane {
     fn hit(&self, ray: &Ray, ray_t: &Interval) -> Option<HitRecord> {
         let denominator = self.normal.dot(&ray.direction);
-        if denominator.abs() < f64::EPSILON {
+        if denominator.abs() < 1e-8 {
             return None;
         }
 

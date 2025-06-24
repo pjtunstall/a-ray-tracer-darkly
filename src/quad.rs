@@ -18,14 +18,7 @@ pub struct Quad {
 }
 
 impl Quad {
-    pub fn new(
-        point: Point3,
-        mut u: Direction,
-        mut v: Direction,
-        material: Arc<dyn Material>,
-    ) -> Self {
-        u = u.normalize();
-        v = v.normalize();
+    pub fn new(point: Point3, u: Direction, v: Direction, material: Arc<dyn Material>) -> Self {
         let normal = u.cross(&v).normalize();
         let offset = normal.dot(&point);
         Self {

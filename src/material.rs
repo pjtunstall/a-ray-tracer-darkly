@@ -71,6 +71,9 @@ impl Material for Metal {
     ) -> Option<(Ray, Color)> {
         let mut reflected = incident_ray.direction.reflect(normal);
         reflected = reflected.normalize() + self.fuzz * Direction::random_unit(rng);
+        if reflected.near_zero() {
+            reflected = normal.clone();
+        }
         let scattered = Ray::new(point.clone(), reflected);
         let attenuation = self.albedo.clone();
         Some((scattered, attenuation))
@@ -111,7 +114,7 @@ impl Material for Dielectric {
         let sin_theta = (1. - cos_theta * cos_theta).sqrt();
         let cannot_refract = refraction_index * sin_theta > 1.;
 
-        let direction = if cannot_refract
+        let mut direction = if cannot_refract
             || Self::reflectance(cos_theta, refraction_index) > rng.random_range(0.0..1.0)
         {
             unit_direction.reflect(normal)
@@ -119,6 +122,9 @@ impl Material for Dielectric {
             unit_direction.refract(normal, refraction_index)
         };
 
+        if direction.near_zero() {
+            direction = *normal;
+        }
         let scattered = Ray::new(*point, direction);
         Some((scattered, attenuation))
     }

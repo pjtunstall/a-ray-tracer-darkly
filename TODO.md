@@ -1,5 +1,8 @@
+- Documentation.
+- Make sure creation of rays with zero direction vector has been made impossible. I've added fallbacks, but keep an eye on it. It will be naturally tested by making more images and bigger ones especially. Asserts will alert me.
 - Mention that path tracing is the sort of ray tracing this program does and compare it to Whitted ray tracing.
 - Credit Peter Shirley, Trevor David Black, Steve Hollasch: [_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html), originally published in 2018. I used Version 4.0.2, 2025-04-25. The [series](https://raytracing.github.io/).
+- Note that axis represents length and direction of tube.
 - Note that negative z-axis points into the viewport and that the direction of `camera.v` is reversed compared to that of `viewport.v` and its associated vectors: `pixel_dv` etc.
 - Keep track of the previous hit record material so that the next refraction index can be calculated rather than leaving it to the user of the library to get it right in advance. Or, for now, just note clearly that this needs to be done.
 - Decide how to present the examples, e.g. all as library functions that can be called, and quote how to call them in the docs.
@@ -15,6 +18,7 @@
 - Allow Disk to be made either from normal or spanning vectors of plane.
 - Restructure how shapes are modularized.
 - Make fields of Camera and shapes private?
+- Tidy names of items in world in `various.rs`.
 
 ```rust
  /* This function contains a slick way of writing the change of basis more plainly expresssed as follows.

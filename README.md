@@ -1,5 +1,13 @@
 # rt
 
+- [Context](#context)
+- [Usage](#usage)
+- [Features](#features)
+- [Guide](#guide)
+  - [Camera](#camera)
+  - [World and plane](#world-and-plane)
+  - [Sphere](#sphere)
+
 ## Context
 
 This is a simple ray tracer. It's one of the 01Founders Rust projects. It implments all the features from the first book in the fantastic [Ray Tracing in One Weekend](https://raytracing.github.io/) series (adapting them from C++ to Rust), and a couple from book two (quad and plane), plus a few extras, in particular a cylinder, as required by 01.
@@ -12,12 +20,13 @@ If you don't already have Rust installed, [install it](https://www.rust-lang.org
 git clone https://github.com/pjtunstall/rt
 ```
 
-Then `cd rt`, and run `cargo run --release` to build and run a program with some examples.
+Then `cd rt`, and run `cargo run --release` to build and run a program with some examples. (The `release` flag requests some optmizations that allow the program to run faster.)
 
 ## Features
 
 - Techniques:
 
+  - Path tracing
   - Antialiasing
   - Gamma correction
   - Defocus blur
@@ -43,3 +52,166 @@ Then `cd rt`, and run `cargo run --release` to build and run a program with some
   - Lambertian (matt)
   - Metal (reflective)
   - Dielectric (reflective and refractive: glass, water, etc.)
+
+## Guide
+
+Here is a guide to using the library. We'll draw a scene with some objects.
+
+### Camera
+
+First, we'll need to set up a camera.
+
+```rust
+use rt::{
+  camera::{Camera, CameraParams};
+}
+
+fn main() -> {
+  let camera = set_up_camera();
+}
+
+fn set_up_camera() {
+  let params = CameraParameters {
+        aspect_ratio: 4.0 / 3.0,
+        image_width: 400,
+        look_from: Point3::new(0.0, 1.0, 4.0),
+        look_at: Point3::new(0.0, 0.0, -1.0),
+        up: Direction::new(0.0, 1.0, 0.0),
+        focal_distance: 10.0,
+        defocus_angle_in_degrees: 0.0, // Zero for maximum sharpness.
+        vertical_fov_in_degrees: 20.0, // Increase for wide angle.
+  };
+  
+  Camera::new(params)
+}
+```
+
+### World and plane
+
+Now let's create a world with an infinite plane. Here's our world-building function.
+
+```rust
+fn create_world() -> HittableList {
+  let ground_color = Color::new(0.4, 0.6, 0.);
+  let ground_material = Arc::new(Lambertian::new(ground_color)); // 
+  let plane = Plane::from_span(
+    Point3::new(0.0, -0.5, 0.0),   // An arbitrary origin for plane coordinates.
+    Direction::new(1.0, 0.0, 0.0), // These direction vectors define the plane
+    Direction::new(0.0, 0.0, 1.0), // as their span, so they mustn't be parallel.
+    ground_material,
+  );
+  let ground = Box::new(plane);
+
+  let mut world = HittableList::new(); // A list of all visible objects.
+  world.add(ground);
+
+  world
+}
+```
+
+And here it is in context. There's a lot of info in this next snippet, so feel free to skip some and come back to it later.
+
+```rust
+// `PathBuf` to write the file, `io` to handle errors, `Arc` to allow materials to be shared
+// between objects in a thread-safe way.
+use std::{io, path::PathBuf, sync::Arc};
+
+use rt::{
+  camera::{Camera, CameraParams};
+  color::Color,
+  hittables::{HittableList, plane::Plane}, // Hittables are visible objects, such as a plane.
+  material::Lambertian, // Lambertian is an opaque, nonreflective material, defined by its color.
+}
+
+fn main() -> io::Result<()> { // ... because writing to a file is fallible.
+  let camera = set_up_camera();
+  let world = create_world();
+
+  // Maximum number of recursions before we stop calculating the contribution each collision of
+  // a light ray makes to the quality of the pixel. In scenes dominated by indirect lighting,
+  // it contributes to realism: deeper soft shadows, color bleeding, subtle ambient effects.
+  // For scenes dominated by direct lighting, raising the depth beyond 1–2 may not show obvious
+  // differences.
+  let max_depth = 50;
+
+  // To compansate for the discreteness of pixels, we take samples from the area surrounding
+  // the pixel and average the resulting light (color) values together.  Higher values (more
+  // samples) give a smoother, less pixelated look.
+  let samples_per_pixel = 10;
+
+  // Raising the value of either of the previous two paramers makes for a higher-quality image
+  // at the cost of longer calulation time.
+
+  // A value between 1.0 and 0.0, representing the factor by which each collision affects the
+  // brightness.
+  let brightness = 1.0;
+
+  camera.render(
+        &world,
+        PathBuf::from("demo").join("plane"),
+        max_depth,
+        samples_per_pixel,
+        background,
+        brightness,
+    )?;
+
+    Ok(())
+}
+
+fn set_up_camera() {
+  // ...
+}
+
+fn create_world() -> HittableList {
+  let ground_color = Color::new(0.4, 0.6, 0.);
+  let ground_material = Arc::new(Lambertian::new(ground_color)); // 
+  let plane = Plane::from_span(
+    Point3::new(0.0, -0.5, 0.0),   // An arbitrary origin for plane coordinates.
+    Direction::new(1.0, 0.0, 0.0), // These direction vectors define the plane
+    Direction::new(0.0, 0.0, 1.0), // as their span, so they mustn't be parallel.
+    ground_material,
+  );
+  let ground = Box::new(plane);
+
+  let mut world = HittableList::new(); // A list of all visible objects.
+  world.add(ground);
+
+  world
+}
+```
+
+### Sphere
+
+Oh, the infinite plane is boring. Let's put a sphere on it.
+
+```rust
+fn create_world() -> HittableList {
+  // Create plane as before.
+  // ...
+
+  let sphere_color = Color::new(0.8, 0.8, 0.8);
+  let sphere_material = Arc::new(Metal::new(sphere_color, 0.0)); // That last value is the fuzziness.
+                                                                 // Zero means maximum shine.
+  let center = Point3::new(0.0, 0.0, -2.5);
+  let radius = 0.5;
+  let center = Box::new(Sphere::new(
+    center,
+    radius,
+    sphere_material.clone(),
+  ));
+
+  let mut world = HittableList::new();
+  world.add(ground);
+  world.add(sphere);
+
+  world
+}
+```
+
+And that's the essence of it. To add other shapes, you just need to know the parameters that define them.
+
+### Cube
+### Quad
+### Disk
+### Tube
+### Cylinder

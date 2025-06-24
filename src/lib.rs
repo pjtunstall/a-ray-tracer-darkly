@@ -1,6 +1,7 @@
 pub mod camera;
 pub mod color;
 pub mod cube;
+pub mod disk;
 pub mod examples;
 pub mod file;
 pub mod hittable;
@@ -9,7 +10,9 @@ pub mod interval;
 pub mod material;
 pub mod plane;
 pub mod progress;
+pub mod quad;
 pub mod ray;
 pub mod sphere;
+pub mod tube;
 pub mod vec3;
 pub mod viewport;

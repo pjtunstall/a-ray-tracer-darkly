@@ -6,6 +6,9 @@
 - Redo cube implementation after reading Quadrilaterals chapter.
 - Consider which style to use here, and note the alternatives and reason for choosing one of the other. Either way, maybe encapsulate the logic in a general change-of-basis function, naming it and its parameters something suitably general.
 - SmallRng -> Rng trait in vec3 to be more flexible?
+- See what fields of shapes can be made private.
+- Add more tests.
+- Make a Vec3 -> ProjectionOperator function in vec3.
 
 ```rust
  /* This function contains a slick way of writing the change of basis more plainly expresssed as follows.

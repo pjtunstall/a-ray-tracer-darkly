@@ -50,14 +50,18 @@ impl Plane {
 impl Hittable for Plane {
     fn hit(&self, ray: &Ray, ray_t: &Interval) -> Option<HitRecord> {
         let denominator = self.normal.dot(&ray.direction);
+
+        // Ray is parallel to the plane.
         if denominator.abs() < 1e-8 {
             return None;
         }
 
+        // Hit point parameter is outside of the ray interval.
         let t = (self.offset - self.normal.dot(&ray.origin)) / denominator;
         if !ray_t.contains(t) {
             return None;
         }
+
         let point = ray.at(t);
         let outward_normal = self.normal;
 

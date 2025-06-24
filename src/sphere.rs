@@ -39,16 +39,15 @@ impl Hittable for Sphere {
         let sqrt_d = discriminant.sqrt();
 
         // Find the nearest root that lies in the acceptable range.
-        let mut root = (h - sqrt_d) / a;
-        if !ray_t.surrounds(root) {
-            root = (h + sqrt_d) / a;
-            if !ray_t.surrounds(root) {
+        let mut t = (h - sqrt_d) / a;
+        if !ray_t.surrounds(t) {
+            t = (h + sqrt_d) / a;
+            if !ray_t.surrounds(t) {
                 return None;
             }
         }
 
-        let t = root;
-        let point = ray.at(root);
+        let point = ray.at(t);
         let outward_normal = (point - self.center) / self.radius;
         let record = HitRecord::new(point, outward_normal, t, self.material.clone(), ray);
 

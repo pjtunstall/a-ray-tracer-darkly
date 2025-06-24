@@ -10,6 +10,7 @@ use crate::{
     material::{Dielectric, Lambertian, Metal},
     quad::Quad,
     sphere::Sphere,
+    tube::Tube,
     vec3::{Basis, Direction, Point3},
 };
 
@@ -67,7 +68,7 @@ fn make_world() -> HittableList {
         0.8,
         Direction::new(1., 0., 0.),
         Direction::new(0., 0., 1.),
-        glass,
+        glass.clone(),
     ));
     let disk2 = Box::new(Disk::new(
         Point3::new(0., 1.3, -1.),
@@ -80,6 +81,12 @@ fn make_world() -> HittableList {
         Point3::new(0.5, 0.2, -1.),
         Direction::new(1., 0., -1.),
         Direction::new(0., 1., 0.),
+        earth.clone(),
+    ));
+    let tube = Box::new(Tube::new(
+        Point3::new(0.4, 0., -1.),
+        Direction::new(1.5, 1.5, -0.4),
+        1.,
         earth,
     ));
 
@@ -90,6 +97,7 @@ fn make_world() -> HittableList {
     world.add(disk2);
     world.add(cube);
     world.add(quad);
+    world.add(tube);
 
     world
 }

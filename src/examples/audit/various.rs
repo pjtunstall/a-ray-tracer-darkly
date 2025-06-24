@@ -2,38 +2,37 @@ use std::{io, path::PathBuf, sync::Arc};
 
 use crate::{
     camera::{Camera, CameraParameters},
-    color::Color,
+    color::{self, Color},
     cube::Cube,
     cylinder::Cylinder,
-    disk::Disk,
-    examples,
     hittable::HittableList,
     material::{Dielectric, Lambertian, Metal},
-    quad::Quad,
+    plane::Plane,
+    ray::Ray,
     sphere::Sphere,
     vec3::{Basis, Direction, Point3},
 };
 
 pub fn render(max_depth: usize, samples_per_pixel: usize, image_width: u32) -> io::Result<()> {
     let world = make_world();
-    let background = examples::book::sky::color;
+    let background = sky;
+    let source_1 = Point3::new(-9., 7., -12.);
+    let source_2 = Point3::new(-0.5, 1., 7.);
 
-    let mut look_from = Point3::new(0., 1., 6.);
-    let mut camera = set_up_camera(image_width, look_from);
+    let mut camera = set_up_camera(image_width, source_1);
     camera.render(
         &world,
-        PathBuf::from("audit").join("a_scene_with_various_objects"),
+        PathBuf::from("audit").join("various_pov_1"),
         max_depth,
         samples_per_pixel,
         background,
         1.,
     )?;
 
-    look_from = Point3::new(-9., 3., -12.);
-    camera = set_up_camera(image_width, look_from);
+    camera = set_up_camera(image_width, source_2);
     camera.render(
         &world,
-        PathBuf::from("audit").join("the_same_scene_from_a_new_pov"),
+        PathBuf::from("audit").join("various_pov_2"),
         max_depth,
         samples_per_pixel,
         background,
@@ -41,6 +40,13 @@ pub fn render(max_depth: usize, samples_per_pixel: usize, image_width: u32) -> i
     )?;
 
     Ok(())
+}
+
+fn sky(ray: &Ray) -> Color {
+    let t = 0.5 * (ray.direction.y + 1.0);
+    let horizon = Color::new(0.8, 0.6, 0.4);
+    let zenith = Color::new(0.2, 0.3, 0.5);
+    color::lerp(horizon, zenith, t)
 }
 
 fn set_up_camera(image_width: u32, look_from: Point3) -> Camera {
@@ -58,61 +64,59 @@ fn set_up_camera(image_width: u32, look_from: Point3) -> Camera {
 }
 
 fn make_world() -> HittableList {
-    let earth = Arc::new(Lambertian {
-        albedo: Color::new(0.5, 0.5, 0.4),
-    });
-    let metal = Arc::new(Metal::new(Color::new(1., 1., 1.), 0.1));
+    let ground_color = Color::new(0.2, 0.4, 0.4);
+    let rightmost_color = Color::new(0.9, 0.1, 0.2);
+    let cube_color = Color::new(0., 0.7, 0.0);
+    let material_cube = Arc::new(Lambertian::new(cube_color));
+    let material_ground = Arc::new(Lambertian::new(ground_color));
+    let material_rightmost = Arc::new(Lambertian::new(rightmost_color));
+    let material_left = Arc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.));
+    let material_right = Arc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.1));
     let glass = Arc::new(Dielectric::new(1.5));
 
-    let ground = Box::new(Sphere::new(
-        Point3::new(0., -666.5, -1.),
-        666.,
-        earth.clone(),
-    ));
-    let cube = Box::new(Cube::new_oriented(
-        Point3::new(-0.5, 0., -1.),
-        0.3,
-        metal.clone(),
-        &Basis::new_orthonormal(),
-    ));
-    let sphere = Box::new(Sphere::new(Point3::new(0., 0., -1.), 0.3, metal.clone()));
-    let disk1 = Box::new(Disk::new(
-        Point3::new(0., 0.3, -1.),
-        0.8,
+    let ground = Box::new(Plane::from_span(
+        Point3::new(0., -0.5, 0.),
         Direction::new(1., 0., 0.),
         Direction::new(0., 0., 1.),
-        glass.clone(),
+        material_ground.clone(),
     ));
-    let disk2 = Box::new(Disk::new(
-        Point3::new(0., 1.3, -1.),
+    let left = Box::new(Sphere::new(
+        Point3::new(-0.5, 0.3, -3.),
         0.5,
-        Direction::new(1., 0., 0.),
-        Direction::new(0., 1., 0.),
-        earth.clone(),
+        material_left.clone(),
     ));
-    let quad = Box::new(Quad::new(
-        Point3::new(0.5, 0.2, -1.),
-        Direction::new(1., 0., -1.),
-        Direction::new(0., 1., 0.),
-        earth.clone(),
+    let right = Box::new(Sphere::new(
+        Point3::new(1., 0.5, -1.5),
+        0.5,
+        material_right.clone(),
+    ));
+    let rightmost = Box::new(Sphere::new(
+        Point3::new(0.5, 0.1, -0.5),
+        0.5,
+        material_rightmost.clone(),
+    ));
+    let cube = Box::new(Cube::new_oriented(
+        Point3::new(2., 0.0, -2.),
+        0.3,
+        material_cube.clone(),
+        &Basis::new_orthonormal(),
     ));
 
     let Cylinder { tube, top, bottom } = Cylinder::new(
-        Point3::new(0.4, 0., -1.),
-        Direction::new(1.5, 1.5, -0.4),
-        1.,
-        earth.clone(),
+        Point3::new(0.2, -0.3, -1.),
+        Direction::new(-0.2, 3., -0.4),
+        0.3,
+        material_left.clone(),
         glass.clone(),
         glass.clone(),
     );
 
     let mut world = HittableList::new();
     world.add(ground);
-    world.add(sphere);
-    world.add(disk1);
-    world.add(disk2);
     world.add(cube);
-    world.add(quad);
+    world.add(left);
+    world.add(right);
+    world.add(rightmost);
     world.add(tube);
     world.add(top);
     world.add(bottom);

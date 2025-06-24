@@ -37,6 +37,7 @@ pub struct CameraParameters {
 pub struct Camera {
     image: Image,
     look_from: Point3,
+    look_at: Point3,
     center_of_top_left_pixel: Point3,
     pixel_du: Direction, // offset to pixel on the right
     pixel_dv: Direction, // offset to pixel below
@@ -96,6 +97,7 @@ impl Camera {
             pixel_dv,
             center_of_top_left_pixel,
             look_from,
+            look_at,
             defocus_disk_u,
             defocus_disk_v,
             defocus_angle,
@@ -213,8 +215,11 @@ impl Camera {
             self.defocus_disk_sample(rng)
         };
         let ray_direction = pixel_sample - ray_origin;
-
-        Ray::new(ray_origin, ray_direction)
+        if ray_direction.near_zero() {
+            Ray::new(ray_origin, self.look_from - self.look_at)
+        } else {
+            Ray::new(ray_origin, ray_direction)
+        }
     }
 
     fn defocus_disk_sample(&self, rng: &mut SmallRng) -> Point3 {

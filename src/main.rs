@@ -10,6 +10,7 @@ fn main() -> io::Result<()> {
     // examples::random_spheres::render(50, 10)?;
 
     // examples::other::cubes::render(50, 10)?;
+    examples::other::combo::render(10, 10, 800)?;
 
     let max_depth = 10;
     let samples_per_pixel = 10;

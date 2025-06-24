@@ -1,4 +1,5 @@
 pub mod other {
+    pub mod combo;
     pub mod cubes;
 }
 pub mod book {

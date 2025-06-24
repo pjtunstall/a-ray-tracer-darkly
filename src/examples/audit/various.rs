@@ -17,10 +17,23 @@ use crate::{
 pub fn render(max_depth: usize, samples_per_pixel: usize, image_width: u32) -> io::Result<()> {
     let world = make_world();
     let background = examples::book::sky::color;
-    let camera = set_up_camera(image_width);
+
+    let mut look_from = Point3::new(0., 1., 6.);
+    let mut camera = set_up_camera(image_width, look_from);
     camera.render(
         &world,
-        PathBuf::from("audit").join("combo"),
+        PathBuf::from("audit").join("a_scene_with_various_objects"),
+        max_depth,
+        samples_per_pixel,
+        background,
+        1.,
+    )?;
+
+    look_from = Point3::new(-9., 3., -12.);
+    camera = set_up_camera(image_width, look_from);
+    camera.render(
+        &world,
+        PathBuf::from("audit").join("the_same_scene_from_a_new_pov"),
         max_depth,
         samples_per_pixel,
         background,
@@ -30,11 +43,11 @@ pub fn render(max_depth: usize, samples_per_pixel: usize, image_width: u32) -> i
     Ok(())
 }
 
-fn set_up_camera(image_width: u32) -> Camera {
+fn set_up_camera(image_width: u32, look_from: Point3) -> Camera {
     let params = CameraParameters {
         aspect_ratio: 4.0 / 3.0,
         image_width: image_width,
-        look_from: Point3::new(0., 1., 6.),
+        look_from,
         look_at: Point3::new(0., 0., -1.),
         up: Direction::new(0., 1., 0.),
         focal_distance: 10.,

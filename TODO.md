@@ -14,6 +14,7 @@
 - Dry out code for Plan, Quad, and Disk.
 - Allow Disk to be made either from normal or spanning vectors of plane.
 - Restructure how shapes are modularized.
+- Make fields of Camera and shapes private?
 
 ```rust
  /* This function contains a slick way of writing the change of basis more plainly expresssed as follows.

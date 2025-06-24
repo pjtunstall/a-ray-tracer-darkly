@@ -16,7 +16,19 @@ pub struct Plane {
 }
 
 impl Plane {
-    pub fn new(
+    pub fn new(point: Point3, mut normal: Direction, material: Arc<dyn Material>) -> Self {
+        assert!(!normal.is_zero(), "Normal vector must be nonzero");
+        normal = normal.normalize();
+        let offset = normal.dot(&point);
+        Self {
+            point,
+            normal,
+            material,
+            offset,
+        }
+    }
+
+    pub fn from_span(
         point: Point3,
         mut u: Direction,
         mut v: Direction,

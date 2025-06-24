@@ -55,7 +55,7 @@ fn make_world() -> HittableList {
     let ground_material = Arc::new(Lambertian::new(ground_color));
     let cube_material = Arc::new(Metal::new(cube_color, 0.1));
 
-    let ground = Box::new(Plane::new(
+    let ground = Box::new(Plane::from_span(
         Point3::new(0., -1., 0.),
         Direction::new(1., 0., 0.),
         Direction::new(0., 0., 1.),

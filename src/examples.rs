@@ -1,4 +1,6 @@
-pub mod cubes;
+pub mod other {
+    pub mod cubes;
+}
 pub mod book {
     pub mod dull_metal;
     pub mod glass;

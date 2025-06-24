@@ -48,7 +48,7 @@ pub fn make_world() -> HittableList {
     let material_right = Arc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.1));
     let material_rightmost = Arc::new(Dielectric::new(1.5));
 
-    let ground = Box::new(Plane::new(
+    let ground = Box::new(Plane::from_span(
         Point3::new(0., -0.5, 0.),
         Direction::new(1., 0., 0.),
         Direction::new(0., 0., 1.),

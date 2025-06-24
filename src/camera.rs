@@ -57,6 +57,19 @@ impl Camera {
             defocus_angle_in_degrees,
             vertical_fov_in_degrees,
         } = params;
+        assert!(image_width > 0, "Image width must be greater than zero");
+        assert!(
+            aspect_ratio >= f64::EPSILON,
+            "Aspect ratio must be greater than zero"
+        );
+        assert!(
+            !up.is_zero(),
+            "Camera up direrection vector must be nonzero"
+        );
+        assert!(
+            focal_distance >= f64::EPSILON,
+            "Focal distance must be greater than zero"
+        );
 
         let defocus_angle = defocus_angle_in_degrees.to_radians();
         let vertical_fov = vertical_fov_in_degrees.to_radians();

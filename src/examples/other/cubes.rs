@@ -18,7 +18,7 @@ pub fn render(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
     let camera = set_up_camera();
     camera.render(
         &world,
-        PathBuf::from("cubes"),
+        PathBuf::from("other").join("cubes"),
         max_depth,
         samples_per_pixel,
         background,

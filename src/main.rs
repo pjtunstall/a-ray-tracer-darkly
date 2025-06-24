@@ -13,7 +13,7 @@ fn main() -> io::Result<()> {
 
     let max_depth = 10;
     let samples_per_pixel = 10;
-    let image_width = 400;
+    let image_width = 800;
     examples::audit::a_scene_with_a_sphere::render(max_depth, samples_per_pixel, image_width)?;
     examples::audit::cube_and_plane::render(max_depth, samples_per_pixel, image_width)?;
     examples::audit::combo::render(max_depth, samples_per_pixel, image_width)?;

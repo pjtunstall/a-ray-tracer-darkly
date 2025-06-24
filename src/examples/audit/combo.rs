@@ -4,9 +4,11 @@ use crate::{
     camera::{Camera, CameraParameters},
     color::Color,
     cube::Cube,
+    disk::Disk,
     examples,
     hittable::HittableList,
     material::{Dielectric, Lambertian, Metal},
+    quad::Quad,
     sphere::Sphere,
     vec3::{Basis, Direction, Point3},
 };
@@ -31,7 +33,7 @@ fn set_up_camera(image_width: u32) -> Camera {
     let params = CameraParameters {
         aspect_ratio: 4.0 / 3.0,
         image_width: image_width,
-        look_from: Point3::new(0., 0., 4.),
+        look_from: Point3::new(0., 1., 6.),
         look_at: Point3::new(0., 0., -1.),
         up: Direction::new(0., 1., 0.),
         focal_distance: 10.,
@@ -59,12 +61,35 @@ fn make_world() -> HittableList {
         metal.clone(),
         &Basis::new_orthonormal(),
     ));
-    let sphere = Box::new(Sphere::new(Point3::new(0., 0., -1.), 0.3, glass));
+    let sphere = Box::new(Sphere::new(Point3::new(0., 0., -1.), 0.3, metal.clone()));
+    let disk1 = Box::new(Disk::new(
+        Point3::new(0., 0.3, -1.),
+        0.8,
+        Direction::new(1., 0., 0.),
+        Direction::new(0., 0., 1.),
+        glass,
+    ));
+    let disk2 = Box::new(Disk::new(
+        Point3::new(0., 1.3, -1.),
+        0.5,
+        Direction::new(1., 0., 0.),
+        Direction::new(0., 1., 0.),
+        earth.clone(),
+    ));
+    let quad = Box::new(Quad::new(
+        Point3::new(0.5, 0.2, -1.),
+        Direction::new(1., 0., -1.),
+        Direction::new(0., 1., 0.),
+        earth,
+    ));
 
     let mut world = HittableList::new();
     world.add(ground);
     world.add(sphere);
+    world.add(disk1);
+    world.add(disk2);
     world.add(cube);
+    world.add(quad);
 
     world
 }

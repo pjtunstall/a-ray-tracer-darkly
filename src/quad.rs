@@ -36,12 +36,12 @@ impl Hittable for Quad {
     fn hit(&self, ray: &Ray, ray_t: &Interval) -> Option<HitRecord> {
         let denominator = self.normal.dot(&ray.direction);
 
-        // Ray is parallel to the quad.
+        // Return no hit if ray is parallel to the plane.
         if denominator.abs() < 1e-8 {
             return None;
         }
 
-        // Hit point parameter is outside of the ray interval.
+        // Return no hit if point parameter is outside of the ray interval.
         let t = (self.offset - self.normal.dot(&ray.origin)) / denominator;
         if !ray_t.contains(t) {
             return None;
@@ -49,11 +49,11 @@ impl Hittable for Quad {
 
         // Determine if the hit point lies within the planar shape using its plane coordinates.
         let intersection = ray.at(t);
-        let planar_translation = intersection - self.point;
-        let alpha = self.normal.dot(&planar_translation.cross(&self.v));
-        let beta = self.normal.dot(&self.u.cross(&planar_translation));
+        let p = intersection - self.point;
+        let alpha = self.normal.dot(&p.cross(&self.v));
+        let beta = self.normal.dot(&self.u.cross(&p));
 
-        if !is_interior(alpha, beta) {
+        if !Interval::UNIT.contains(alpha) || !Interval::UNIT.contains(beta) {
             return None;
         }
 
@@ -64,13 +64,5 @@ impl Hittable for Quad {
             self.material.clone(),
             ray,
         ))
-    }
-}
-
-fn is_interior(alpha: f64, beta: f64) -> bool {
-    if !Interval::UNIT.contains(alpha) || !Interval::UNIT.contains(beta) {
-        false
-    } else {
-        true
     }
 }

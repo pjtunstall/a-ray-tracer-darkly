@@ -9,6 +9,11 @@
 - See what fields of shapes can be made private.
 - Add more tests.
 - Make a Vec3 -> ProjectionOperator function in vec3.
+- Assert planar span is suitable for planar primitives Quad and Disk.
+- Assert radius of Disk and Sphere are not too small; likewise make sure random points in unit disk are big enough. Check I'm asserting re. value or absolute values, depending on the case.
+- Dry out code for Plan, Quad, and Disk.
+- Allow Disk to be made either from normal or spanning vectors of plane.
+- Restructure how shapes are modularized.
 
 ```rust
  /* This function contains a slick way of writing the change of basis more plainly expresssed as follows.

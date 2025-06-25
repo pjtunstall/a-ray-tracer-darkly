@@ -228,10 +228,10 @@ You also two options for defining a cube. You can supply a basis to orient the c
 
 ```rust
 let cube = Box::new(Cube::new_oriented(
-    Point3::new(0.0, 0., -5.),
+    Point3::new(0.0, 0., -5.),          // A corner.
     0.3,                                // Size: half edge length.
-    &Basis::new_orthonormal(),
-    cube_material,
+    &Basis::new_orthonormal(),          // Custom orientation.
+    cube_material,                      // `Arc<dyn Material>`.
 ));
 ```
 
@@ -239,8 +239,55 @@ Or you can omit the basis with `Cube::new` for a cube aligned with the camera co
 
 ### Quad
 
+A quad is a parallelogram, defined by a point, a pair of direction vectors (representing the sides of the parallelogram), and a material.
+
+```rust
+let quad = Box::new(Quad::new(
+    Point3::new(0.5, 0.2, -1.),     // A corner.
+    Direction::new(1., 0., -1.),
+    Direction::new(0., 1., 0.),
+    quad_material,
+));
+```
+
 ### Disk
+
+A disk is defined with same parameters as a quad, together with a radius. In this case, the length of the vectors is not important, only their direction, which defines the plane that contains the disk.
+
+```rust
+let disk = Box::new(Disk::new(
+    Point3::new(0., 0.3, -1.),      // Center.
+    0.8,                            // Radius.
+    Direction::new(1., 0., 0.),
+    Direction::new(0., 0., 1.),
+    disk_material,
+));
+```
 
 ### Tube
 
+A hollow, finite cylinder with no cap. It's length is that of the axis vector.
+
+```rust
+let tube = Box::new(Tube::new(
+    center_of_base,                 // A `Point3`.
+    axis,                           // A `Direction`.
+    radius,                         // `f64`.
+    tube_material                   // `Arc<dyn Material>`.
+);
+```
+
 ### Cylinder
+
+Only `Cylinder` is just a bit different. It's constructor returns three shapes: a tube and two disk, representing its top and bottom. Here we destructure the return vaue into variables for each of these, so that they can be added to the world individually.
+
+```rust
+let Cylinder { tube, top, bottom } = Cylinder::new(
+    Point3::new(0.2, -0.3, -1.),        // Center of base.
+    Direction::new(-0.2, 3., -0.4),     // Axis, specifying length and orientation.
+    0.3,                                // Radius.
+    tube_material,
+    top_material,
+    bottom_material,
+);
+```

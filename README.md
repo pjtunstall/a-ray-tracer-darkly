@@ -311,7 +311,9 @@ let Cylinder { tube, top, bottom } = Cylinder::new(
 
 ### vec3
 
-The `vec3` module exposes various linear algebra operations for manipulating the `Point3` and `Direction` types, including addition, scalar multiplication, dot and cross products. You might find it worth a look. There's also a `near_zero` method to check if a vector is so close to zero that it can't reliably be assumed to be nonzero  due to floating-point imprecision. Components of both types can be accessed either via their `x`, `y`, and `z` fields or by indexing and iteration, as in, for example these two equivalent ways to express the change of basis from cube coordinates to world coordinates. The simple way:
+The `vec3` module exposes various linear algebra operations for manipulating the `Point3` and `Direction` types, including addition, scalar multiplication, dot and cross products. You might find it worth a look. There's also a `near_zero` method to check if a vector is so close to zero that it can't reliably be assumed to be nonzero  due to floating-point imprecision. Components of both types can be accessed either via their `x`, `y`, and `z` fields or by indexing and iteration, as in, for example these two equivalent versions of the `Cube` method to change basis from cube coordinates to world coordinates.
+
+The simple way:
 
 ```rust
 fn direction_to_world(&self, local_direction: &Direction) -> Direction {

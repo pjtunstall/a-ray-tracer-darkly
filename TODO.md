@@ -1,4 +1,3 @@
-
 - Add a section on materials to the guide. Exemplify Dielectric and explain refraction index.
   - Note the idea of keeping track of the previous hit record material so that the next refraction index can be calculated rather than leaving it to the user of the library to get it right in advance. Or, for now, just note clearly that this needs to be done.
 - SmallRng -> Rng trait in vec3 to be more flexible?
@@ -11,6 +10,7 @@
 - Allow Disk to be made either from normal or spanning vectors of plane.
 - Make fields of Camera and shapes private?
 - Tidy names of items in world in `various.rs`.
+- Implement indexing and iteration for `Color`.
 
 Deviations from the book:
 

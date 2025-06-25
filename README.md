@@ -309,9 +309,23 @@ let Cylinder { tube, top, bottom } = Cylinder::new(
 );
 ```
 
+### Materials
+
+There are three materials, represented by the `Material` trait (Rust for "interface").
+
+- Lambertian: `Lambertian::new` takes a color (`Color`) and returns an `Arc<dyn Material>`.
+- Metal: `Metal::new` takes a color and a fuzziness (`f64`) and returns an `Arc<dyn Material>`.
+- Dielectric: `Dielectric::new` takes a refractive index (`f64`) and returns an `Arc<dyn Material>`.
+
+Colors are defined by `Color::new`, which takes three `f64` values in the range [0.0, 1.0] for red, green, and blue. These can be accessed via the `r`, `g`, and `b` fields.
+
+Fuzziness is an `f64` in the range [0.0, 1.0]. Set it to 0.0 for a perfect mirror, 1.0 for no reflection.
+
+Refractive index is relative. Thus set it to 1.5 for a glass object in air, and 1/1.5 for an air bubble embedded in glass. Water in air is 1.33. Other values are easily looked up.
+
 ### vec3
 
-The `vec3` module exposes various linear algebra operations for manipulating the `Point3` and `Direction` types, including addition, scalar multiplication, dot and cross products. You might find it worth a look. There's also a `near_zero` method to check if a vector is so close to zero that it can't reliably be assumed to be nonzero  due to floating-point imprecision. Components of both types can be accessed either via their `x`, `y`, and `z` fields or by indexing and iteration, as in, for example these two equivalent versions of the `Cube` method to change basis from cube coordinates to world coordinates.
+The `vec3` module exposes various linear algebra operations for manipulating the `Point3` and `Direction` types, including addition, scalar multiplication, dot and cross products. You might find it worth a look. There's also a `near_zero` method to check if a vector is so close to zero that it can't reliably be assumed to be nonzero due to floating-point imprecision. Components of both types can be accessed either via their `x`, `y`, and `z` fields or by indexing and iteration, as in, for example these two equivalent versions of the `Cube` method to change basis from cube coordinates to world coordinates.
 
 The simple way:
 

@@ -7,6 +7,11 @@
   - [Camera](#camera)
   - [World and plane](#world-and-plane)
   - [Sphere](#sphere)
+  - [Cube](#cube)
+  - [Quad](#quad)
+  - [Disk](#disk)
+  - [Tube](#tube)
+  - [Cylinder](#cylinder)
 
 ## Context
 
@@ -203,7 +208,7 @@ fn create_world() -> HittableList {
 
     let sphere_color = Color::new(0.8, 0.8, 0.8);
     let sphere_material = Arc::new(Metal::new(sphere_color, 0.0)); // That last value is the fuzziness.
-                                                                 // Zero means maximum shine.
+                                                                   // Zero means maximum shine.
     let center = Point3::new(0.0, 0.0, -2.5);
     let radius = 0.5;
     let center = Box::new(Sphere::new(

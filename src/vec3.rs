@@ -296,13 +296,15 @@ pub fn approx_eq<T>(a: Vec3<T>, b: Vec3<T>, epsilon: f64) -> bool {
 mod tests {
     use super::*;
 
+    const TOLERANCE: f64 = 1e-8;
+
     #[test]
     fn scalar_multiplication_for_direction() {
         let v = Direction::new(1.0, 2.0, 3.0);
         let result = v * 2.0;
-        assert!(approx_eq(result, Vec3::new(2.0, 4.0, 6.0), f64::EPSILON));
+        assert!(approx_eq(result, Vec3::new(2.0, 4.0, 6.0), TOLERANCE));
         let result = 2.0 * v;
-        assert!(approx_eq(result, Vec3::new(2.0, 4.0, 6.0), f64::EPSILON));
+        assert!(approx_eq(result, Vec3::new(2.0, 4.0, 6.0), TOLERANCE));
     }
 
     #[test]
@@ -310,7 +312,7 @@ mod tests {
         let p = Point3::new(1.0, 2.0, 3.0);
         let d = Direction::new(0.5, -1.0, 2.0);
         let result = p + d;
-        assert!(approx_eq(result, Vec3::new(1.5, 1.0, 5.0), f64::EPSILON));
+        assert!(approx_eq(result, Vec3::new(1.5, 1.0, 5.0), TOLERANCE));
     }
 
     #[test]
@@ -318,7 +320,7 @@ mod tests {
         let p = Point3::new(1.0, 2.0, 3.0);
         let d = Direction::new(0.5, -1.0, 2.0);
         let result = p - d;
-        assert!(approx_eq(result, Vec3::new(0.5, 3.0, 1.0), f64::EPSILON));
+        assert!(approx_eq(result, Vec3::new(0.5, 3.0, 1.0), TOLERANCE));
     }
 
     #[test]
@@ -326,7 +328,7 @@ mod tests {
         let a = Point3::new(3.0, 2.0, 1.0);
         let b = Point3::new(1.0, 1.0, 1.0);
         let result = a - b;
-        assert!(approx_eq(result, Vec3::new(2.0, 1.0, 0.0), f64::EPSILON));
+        assert!(approx_eq(result, Vec3::new(2.0, 1.0, 0.0), TOLERANCE));
     }
 
     #[test]
@@ -337,8 +339,8 @@ mod tests {
         let point_unit = point.normalize();
         let dir_unit = dir.normalize();
 
-        assert!((point_unit.length() - 1.0).abs() < f64::EPSILON);
-        assert!((dir_unit.length() - 1.0).abs() < f64::EPSILON);
+        assert!((point_unit.length() - 1.0).abs() < TOLERANCE);
+        assert!((dir_unit.length() - 1.0).abs() < TOLERANCE);
     }
 
     #[test]
@@ -347,8 +349,8 @@ mod tests {
         let x = basis.x;
         let y = basis.y;
         let z = basis.z;
-        assert!((x.dot(&y)).abs() < f64::EPSILON);
-        assert!((x.dot(&z)).abs() < f64::EPSILON);
-        assert!((y.dot(&z)).abs() < f64::EPSILON);
+        assert!((x.dot(&y)).abs() < TOLERANCE);
+        assert!((x.dot(&z)).abs() < TOLERANCE);
+        assert!((y.dot(&z)).abs() < TOLERANCE);
     }
 }

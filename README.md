@@ -1,5 +1,7 @@
 # rt
 
+![Composite image of various solids.](combo.png)
+
 - [Context](#context)
 - [Usage](#usage)
 - [Features](#features)
@@ -12,6 +14,7 @@
   - [Disk](#disk)
   - [Tube](#tube)
   - [Cylinder](#cylinder)
+  - [vec3](#vec3)
 
 ## Context
 
@@ -26,6 +29,8 @@ git clone https://github.com/pjtunstall/rt
 ```
 
 Then `cd rt`, and run `cargo run --release` to build and run a program with some examples. (The `release` flag requests some optmizations that allow the program to run faster.)
+
+See below for a more detailed [guide](#guide) on how to use the library.
 
 ## Features
 
@@ -58,9 +63,11 @@ Then `cd rt`, and run `cargo run --release` to build and run a program with some
   - Metal (reflective)
   - Dielectric (reflective and refractive: glass, water, etc.)
 
+![Spheres made of various materials on a green plane like a snooker table.](spheres.png)
+
 ## Guide
 
-Here is a guide to using the library. We'll draw a scene with some objects.
+Here is a guide to using the library. We'll draw a scene with some objects. They'll be saved in PPM (portable pixmap) format. Search for PPM viewers. There are several VS Code extension.
 
 ### Camera
 
@@ -79,12 +86,12 @@ fn set_up_camera() {
     let params = CameraParameters {
         aspect_ratio: 4.0 / 3.0,
         image_width: 400,
-        look_from: Point3::new(0.0, 1.0, 4.0),
-        look_at: Point3::new(0.0, 0.0, -1.0),
+        look_from: Point3::new(0.0, 1.0, 4.0), // x: right, y: up, z: backwards, away
+        look_at: Point3::new(0.0, 0.0, -1.0),  // from the viewport.
         up: Direction::new(0.0, 1.0, 0.0),
         focal_distance: 10.0,
         defocus_angle_in_degrees: 0.0, // Zero for maximum sharpness.
-        vertical_fov_in_degrees: 20.0, // Increase for wide angle.
+        vertical_fov_in_degrees: 20.0, // Field of view: increase for wide angle.
     };
 
     Camera::new(params)
@@ -97,8 +104,13 @@ Now let's create a world with an infinite plane. Here's our world-building funct
 
 ```rust
 fn create_world() -> HittableList {
-    let ground_color = Color::new(0.4, 0.6, 0.);
-    let ground_material = Arc::new(Lambertian::new(ground_color)); //
+    let ground_color = Color::new(0.4, 0.6, 0.); // Color components range from 0.0 to 1.0.
+    let ground_material = Arc::new(Lambertian::new(ground_color)); // The thread-safe version
+                                       // of `Rc`, the reference-counting smart pointer. This
+                                       // is to allow multiple shapes to share ownership of
+                                       // the same material. Thread-safety is needed because
+                                       // calculations are parallelized across all avilable
+                                       // CPU cores for speed.
     let plane = Plane::new(
         Point3::new(0.0, -0.5, 0.0),   // An arbitrary origin for plane coordinates.
         Direction::new(0.0, 1.0, 0.0), // A vector normal (i.e. at right angles)
@@ -295,4 +307,31 @@ let Cylinder { tube, top, bottom } = Cylinder::new(
     top_material,
     bottom_material,
 );
+```
+
+### vec3
+
+The `vec3` module exposes various linear algebra operations for manipulating the `Point3` and `Direction` types, including addition, scalar multiplication, dot and cross products. You might find it worth a look. There's also a `near_zero` method to check if a vector is so close to zero that it can't reliably be assumed to be nonzero  due to floating-point imprecision. Components of both types can be accessed either via their `x`, `y`, and `z` fields or by indexing and iteration, as in, for example these two equivalent ways to express the change of basis from cube coordinates to world coordinates. The simple way:
+
+```rust
+fn direction_to_world(&self, local_direction: &Direction) -> Direction {
+    Direction::new(
+        local_direction[0] * self.u.x + local_direction[1] * self.v.x + local_direction[2] * self.w.x,
+        local_direction[0] * self.u.y + local_direction[1] * self.v.y + local_direction[2] * self.w.y,
+        local_direction[0] * self.u.z + local_direction[1] * self.v.z + local_direction[2] * self.w.z,
+    )
+}
+```
+
+The slick way:
+
+```rust
+fn direction_to_world(&self, local_direction: &Direction) -> Direction {
+    [self.u, self.v, self.w]
+        .into_iter()
+        .zip(local_direction)
+        .map(|(basis, s)| basis * s)
+        .reduce(|a, b| a + b)
+        .unwrap()
+}
 ```

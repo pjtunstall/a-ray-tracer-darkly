@@ -21,7 +21,8 @@ impl Viewport {
 
         let width = height * (image.width as f64 / image.height as f64);
         let u = width * *camera_u;
-        let v = -height * *camera_v;
+        let v = -height * *camera_v; // Note the reversal of direction from `camera_v`! I've kept this to be consistent with Ray Tracing in One Weekend.
+
         Self {
             width,
             height,

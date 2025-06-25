@@ -1,12 +1,6 @@
-- Documentation.
-- Make sure creation of rays with zero direction vector has been made impossible. I've added fallbacks, but keep an eye on it. It will be naturally tested by making more images and bigger ones especially. Asserts will alert me.
-- Mention that path tracing is the sort of ray tracing this program does and compare it to Whitted ray tracing.
-- Credit Peter Shirley, Trevor David Black, Steve Hollasch: [_Ray Tracing in One Weekend_](https://raytracing.github.io/books/RayTracingInOneWeekend.html), originally published in 2018. I used Version 4.0.2, 2025-04-25. The [series](https://raytracing.github.io/).
-- Note that axis represents length and direction of tube.
-- Note that negative z-axis points into the viewport and that the direction of `camera.v` is reversed compared to that of `viewport.v` and its associated vectors: `pixel_dv` etc.
-- Keep track of the previous hit record material so that the next refraction index can be calculated rather than leaving it to the user of the library to get it right in advance. Or, for now, just note clearly that this needs to be done.
-- Decide how to present the examples, e.g. all as library functions that can be called, and quote how to call them in the docs.
-- Redo cube implementation after reading Quadrilaterals chapter.
+
+- Add a section on materials to the guide. Exemplify Dielectric and explain refraction index.
+  - Note the idea of keeping track of the previous hit record material so that the next refraction index can be calculated rather than leaving it to the user of the library to get it right in advance. Or, for now, just note clearly that this needs to be done.
 - Consider which style to use here, and note the alternatives and reason for choosing one of the other. Either way, maybe encapsulate the logic in a general change-of-basis function, naming it and its parameters something suitably general.
 - SmallRng -> Rng trait in vec3 to be more flexible?
 - See what fields of shapes can be made private.
@@ -19,46 +13,11 @@
 - Make fields of Camera and shapes private?
 - Tidy names of items in world in `various.rs`.
 
-```rust
- /* This function contains a slick way of writing the change of basis, more plainly expresssed with the code that follows it. Which is best: the slick, idiomatic way, or the plain way that might be clearer to more people?
-    Direction::new(
-            local_dir[0] * self.u.x + local_dir[1] * self.v.x + local_dir[2] * self.w.x,
-            local_dir[0] * self.u.y + local_dir[1] * self.v.y + local_dir[2] * self.w.y,
-            local_dir[0] * self.u.z + local_dir[1] * self.v.z + local_dir[2] * self.w.z,
-        )
-     */
-    fn direction_to_world(&self, local_dir: &Direction) -> Direction {
-        [self.u, self.v, self.w]
-            .into_iter()
-            .zip(local_dir)
-            .map(|(basis, s)| basis * s)
-            .reduce(|a, b| a + b)
-            .unwrap()
-    }
-```
-
 Deviations from the book:
 
 - Note reversal of definition of `refraction_index` in `scatter` in `Material` for `Dielectric` from the book.
 - Note that I needed to change FOV to 20 degrees on the defocus blurr example, example_7, like the previous example; the book says 10 degrees, but the view in the illustration matches what I get with 20.
 - Note that I've changed FOV to 20 degrees for the earlier examples too as the left and right spheres are elongated otherwise. Apparently this is intentional, since that's how they look in the illustrations in the book.
-
-Documentation:
-
-    Explanation on the features of your ray tracer
-    Code examples and explanations on how to:
-        create an instance of each object (a sphere, a cube, a flat plane and a cylinder)
-        change the brightness
-        change the camera position and angle
-
-As bonus for this project you can implement:
-
-    Textures to the surfaces of the objects
-    Reflection and refraction effects on the objects (make them shiny or reflective)
-    Add particles
-    Add fluids
-
-Consider putting your bonuses behind command-line flags to achieve a reasonable performance standard defined above. For example, to render textures on your image, you can use a flag -t.
 
 -
 

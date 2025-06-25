@@ -62,9 +62,9 @@ impl Cube {
 
     /* This function contains a slick way of writing the change of basis more plainly expresssed as follows.
     Direction::new(
-            local_dir[0] * self.u.x + local_dir[1] * self.v.x + local_dir[2] * self.w.x,
-            local_dir[0] * self.u.y + local_dir[1] * self.v.y + local_dir[2] * self.w.y,
-            local_dir[0] * self.u.z + local_dir[1] * self.v.z + local_dir[2] * self.w.z,
+            local_direction[0] * self.u.x + local_direction[1] * self.v.x + local_direction[2] * self.w.x,
+            local_direction[0] * self.u.y + local_direction[1] * self.v.y + local_direction[2] * self.w.y,
+            local_direction[0] * self.u.z + local_direction[1] * self.v.z + local_direction[2] * self.w.z,
         )
      */
     fn direction_to_world(&self, local_direction: &Direction) -> Direction {

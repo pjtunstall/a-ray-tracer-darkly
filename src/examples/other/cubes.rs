@@ -4,7 +4,7 @@ use crate::{
     camera::{Camera, CameraParameters},
     color::Color,
     examples,
-    hittables::{sphere::Sphere, HittableList, cube::Cube},
+    hittables::{HittableList, cube::Cube, sphere::Sphere},
     material::{Dielectric, Metal},
     vec3::{Basis, Direction, Point3},
 };
@@ -51,28 +51,28 @@ fn make() -> HittableList {
     let center = Box::new(Cube::new_oriented(
         Point3::new(0.0, 0., -1.),
         0.3,
-        glass.clone(),
         &Basis::new_orthonormal(),
+        glass.clone(),
     ));
     let inner = Box::new(Cube::new_oriented(
         Point3::new(0.0, 0., -1.),
         0.2,
-        glass.clone(),
         &Basis::new_orthonormal(),
+        glass.clone(),
     ));
     let inmost = Box::new(Cube::new_oriented(
         Point3::new(0.0, 0., -1.),
         0.1,
-        metal_2.clone(),
         &Basis::new_orthonormal(),
+        metal_2.clone(),
     ));
 
     let orientation = Basis::new_orthonormal();
     let left = Box::new(Cube::new_oriented(
         Point3::new(-1., 0., -1.),
         0.2,
-        metal_1.clone(),
         &orientation,
+        metal_1.clone(),
     ));
 
     let right = Box::new(Sphere::new(Point3::new(1., 0., -1.), 0.5, metal_2.clone()));

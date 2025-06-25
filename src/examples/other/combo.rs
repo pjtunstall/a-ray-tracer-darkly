@@ -69,8 +69,8 @@ fn make_world() -> HittableList {
     let cube = Box::new(Cube::new_oriented(
         Point3::new(-0.5, 0., -1.),
         0.3,
-        metal.clone(),
         &Basis::new_orthonormal(),
+        metal.clone(),
     ));
     let sphere = Box::new(Sphere::new(Point3::new(0., 0., -1.), 0.3, metal.clone()));
     let disk1 = Box::new(Disk::new(

@@ -63,15 +63,15 @@ First, we'll need to set up a camera.
 
 ```rust
 use rt::{
-  camera::{Camera, CameraParams};
+    camera::{Camera, CameraParams};
 }
 
 fn main() -> {
-  let camera = set_up_camera();
+    let camera = set_up_camera();
 }
 
 fn set_up_camera() {
-  let params = CameraParameters {
+    let params = CameraParameters {
         aspect_ratio: 4.0 / 3.0,
         image_width: 400,
         look_from: Point3::new(0.0, 1.0, 4.0),
@@ -80,9 +80,9 @@ fn set_up_camera() {
         focal_distance: 10.0,
         defocus_angle_in_degrees: 0.0, // Zero for maximum sharpness.
         vertical_fov_in_degrees: 20.0, // Increase for wide angle.
-  };
-  
-  Camera::new(params)
+    };
+
+    Camera::new(params)
 }
 ```
 
@@ -92,20 +92,19 @@ Now let's create a world with an infinite plane. Here's our world-building funct
 
 ```rust
 fn create_world() -> HittableList {
-  let ground_color = Color::new(0.4, 0.6, 0.);
-  let ground_material = Arc::new(Lambertian::new(ground_color)); // 
-  let plane = Plane::from_span(
-    Point3::new(0.0, -0.5, 0.0),   // An arbitrary origin for plane coordinates.
-    Direction::new(1.0, 0.0, 0.0), // These direction vectors define the plane
-    Direction::new(0.0, 0.0, 1.0), // as their span, so they mustn't be parallel.
-    ground_material,
-  );
-  let ground = Box::new(plane);
+    let ground_color = Color::new(0.4, 0.6, 0.);
+    let ground_material = Arc::new(Lambertian::new(ground_color)); //
+    let plane = Plane::new(
+        Point3::new(0.0, -0.5, 0.0),   // An arbitrary origin for plane coordinates.
+        Direction::new(0.0, 1.0, 0.0), // A vector normal (i.e. at right angles)
+        ground_material,               // to the plane. It must be nonzero.
+    );
+    let ground = Box::new(plane);
 
-  let mut world = HittableList::new(); // A list of all visible objects.
-  world.add(ground);
+    let mut world = HittableList::new(); // A list of all visible objects.
+    world.add(ground);
 
-  world
+    world
 }
 ```
 
@@ -159,26 +158,39 @@ fn main() -> io::Result<()> { // ... because writing to a file is fallible.
 }
 
 fn set_up_camera() {
-  // ...
+    // ...
 }
 
 fn create_world() -> HittableList {
-  let ground_color = Color::new(0.4, 0.6, 0.);
-  let ground_material = Arc::new(Lambertian::new(ground_color)); // 
-  let plane = Plane::from_span(
-    Point3::new(0.0, -0.5, 0.0),   // An arbitrary origin for plane coordinates.
-    Direction::new(1.0, 0.0, 0.0), // These direction vectors define the plane
-    Direction::new(0.0, 0.0, 1.0), // as their span, so they mustn't be parallel.
-    ground_material,
-  );
-  let ground = Box::new(plane);
+    let ground_color = Color::new(0.4, 0.6, 0.);
+    let ground_material = Arc::new(Lambertian::new(ground_color)); //
+    let plane = Plane::new(
+        Point3::new(0.0, -0.5, 0.0),   // An arbitrary origin for plane coordinates.
+        Direction::new(0.0, 1.0, 0.0), // A vector normal to the plane.
+        ground_material,
+    );
+    let ground = Box::new(plane);
 
-  let mut world = HittableList::new(); // A list of all visible objects.
-  world.add(ground);
+    let mut world = HittableList::new(); // A list of all visible objects.
+    world.add(ground);
 
   world
 }
 ```
+
+Sometimes, you might find it more convenient to specify a plane by two direction vectors that span it.
+
+```rust
+let plane = Plane::from_span(
+    Point3::new(0.0, -0.5, 0.0),   // An arbitrary origin for plane coordinates.
+    Direction::new(1.0, 0.0, 0.0), // These direction vectors define the plane
+    Direction::new(0.0, 0.0, 1.0), // as their span, so they mustn't be parallel.
+    ground_material,
+);
+```
+
+As with the normal vector, spanning vectors mustn't be zero. In fact, for practical purposes, these and other such vectors are required to not have all their components less than `1e-8` ($1\times10^{-8}$
+). This is to to prevent anomalies due to the imprecision of floating-point numbers.
 
 ### Sphere
 
@@ -186,32 +198,49 @@ Oh, the infinite plane is boring. Let's put a sphere on it.
 
 ```rust
 fn create_world() -> HittableList {
-  // Create plane as before.
-  // ...
+    // Create plane as before.
+    // ...
 
-  let sphere_color = Color::new(0.8, 0.8, 0.8);
-  let sphere_material = Arc::new(Metal::new(sphere_color, 0.0)); // That last value is the fuzziness.
+    let sphere_color = Color::new(0.8, 0.8, 0.8);
+    let sphere_material = Arc::new(Metal::new(sphere_color, 0.0)); // That last value is the fuzziness.
                                                                  // Zero means maximum shine.
-  let center = Point3::new(0.0, 0.0, -2.5);
-  let radius = 0.5;
-  let center = Box::new(Sphere::new(
-    center,
-    radius,
-    sphere_material.clone(),
-  ));
+    let center = Point3::new(0.0, 0.0, -2.5);
+    let radius = 0.5;
+    let center = Box::new(Sphere::new(
+        center,
+        radius,
+        sphere_material.clone(),
+    ));
 
-  let mut world = HittableList::new();
-  world.add(ground);
-  world.add(sphere);
+    let mut world = HittableList::new();
+    world.add(ground);
+    world.add(sphere);
 
-  world
+    world
 }
 ```
 
 And that's the essence of it. To add other shapes, you just need to know the parameters that define them.
 
 ### Cube
+
+You also two options for defining a cube. You can supply a basis to orient the cube however you like.
+
+```rust
+let cube = Box::new(Cube::new_oriented(
+    Point3::new(0.0, 0., -5.),
+    0.3,                                // Size: half edge length.
+    &Basis::new_orthonormal(),
+    cube_material,
+));
+```
+
+Or you can omit the basis with `Cube::new` for a cube aligned with the camera coordinate axes.
+
 ### Quad
+
 ### Disk
+
 ### Tube
+
 ### Cylinder

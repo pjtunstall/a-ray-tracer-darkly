@@ -12,8 +12,7 @@ pub struct Cube {
     center: Point3,
     size: f64, // Half the side length (distance from center to face).
     material: Arc<dyn Material>,
-    // Local coordinate system - three orthonormal vectors.
-    u: Direction,
+    u: Direction, // Local coordinate system: three orthonormal vectors.
     v: Direction,
     w: Direction,
 }
@@ -24,10 +23,10 @@ impl Cube {
         Cube {
             center,
             size: size.max(1e-8),
-            material,
             u: Direction::new(1.0, 0.0, 0.0),
             v: Direction::new(0.0, 1.0, 0.0),
             w: Direction::new(0.0, 0.0, 1.0),
+            material,
         }
     }
 
@@ -35,16 +34,16 @@ impl Cube {
     pub fn new_oriented(
         center: Point3,
         size: f64,
-        material: Arc<dyn Material>,
         orientation: &Basis,
+        material: Arc<dyn Material>,
     ) -> Cube {
         Cube {
             center,
             size: size.max(1e-8),
-            material,
             u: orientation.x,
             v: orientation.y,
             w: orientation.z,
+            material,
         }
     }
 

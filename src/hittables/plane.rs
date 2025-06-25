@@ -34,6 +34,10 @@ impl Plane {
         mut v: Direction,
         material: Arc<dyn Material>,
     ) -> Self {
+        assert!(
+            !u.near_zero() || !v.near_zero(),
+            "Span vectors too close to zero"
+        );
         u = u.normalize();
         v = v.normalize();
         let normal = u.cross(&v).normalize();

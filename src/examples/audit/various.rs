@@ -94,8 +94,8 @@ fn make_world() -> HittableList {
     let cube = Box::new(Cube::new_oriented(
         Point3::new(2., 0.0, -2.),
         0.3,
-        material_cube.clone(),
         &Basis::new_orthonormal(),
+        material_cube.clone(),
     ));
 
     let Cylinder { tube, top, bottom } = Cylinder::new(

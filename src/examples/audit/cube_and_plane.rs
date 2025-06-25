@@ -62,8 +62,8 @@ fn make_world() -> HittableList {
     let cube = Box::new(Cube::new_oriented(
         Point3::new(0.0, 0., -5.),
         0.3,
-        cube_material,
         &Basis::new_orthonormal(),
+        cube_material,
     ));
 
     let mut world = HittableList::new();

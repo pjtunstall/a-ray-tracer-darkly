@@ -1,12 +1,11 @@
-- Add a section on materials to the guide. Exemplify Dielectric and explain refraction index.
-  - Note the idea of keeping track of the previous hit record material so that the next refraction index can be calculated rather than leaving it to the user of the library to get it right in advance. Or, for now, just note clearly that this needs to be done.
+
 - SmallRng -> Rng trait in vec3 to be more flexible?
 - See what fields of shapes can be made private.
 - Add more tests.
 - Make a Vec3 -> ProjectionOperator function in vec3.
 - Assert planar span is suitable for planar primitives Quad and Disk.
 - Assert radius of Disk and Sphere are not too small; likewise make sure random points in unit disk are big enough. Check I'm asserting re. value or absolute values, depending on the case.
-- Dry out code for Plan, Quad, and Disk.
+- Dry out code for Plan, Quad, and Disk. Make a general planar primitive struct or trait.
 - Allow Disk to be made either from normal or spanning vectors of plane.
 - Make fields of Camera and shapes private?
 - Tidy names of items in world in `various.rs`.

@@ -38,10 +38,17 @@ impl Plane {
             !u.near_zero() || !v.near_zero(),
             "Span vectors too close to zero"
         );
+
         u = u.normalize();
         v = v.normalize();
         let normal = u.cross(&v).normalize();
+        assert!(
+            !normal.near_zero(),
+            "Normal vector too close to zero: span vectors too close to parallel?"
+        );
+
         let offset = normal.dot(&point);
+
         Self {
             point,
             normal,

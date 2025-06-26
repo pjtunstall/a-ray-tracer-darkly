@@ -1,4 +1,4 @@
 /target
 /images/*
-!/images/demo
-!/images/demo/**
+!/images/png
+!/images/png/**

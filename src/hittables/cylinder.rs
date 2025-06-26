@@ -22,7 +22,7 @@ impl Cylinder {
         material_bottom: Arc<dyn Material>,
     ) -> Self {
         assert!(axis.length() > 1e-8, "Axis vector is too small.");
-        let [u, v] = orthonormal_basis(&axis.normalize());
+        let [u, v] = orthonormal_basis_2d(&axis.normalize());
 
         let top = Disk::new(
             center_of_base + axis,
@@ -33,6 +33,7 @@ impl Cylinder {
         );
         let bottom = Disk::new(center_of_base, radius, u, v, material_bottom);
         let tube = Tube::new(center_of_base, axis, radius, material_tube);
+
         Self {
             tube: Box::new(tube),
             top: Box::new(top),
@@ -41,7 +42,7 @@ impl Cylinder {
     }
 }
 
-fn orthonormal_basis(axis: &Direction) -> [Direction; 2] {
+fn orthonormal_basis_2d(axis: &Direction) -> [Direction; 2] {
     let w = axis.normalize();
     let a = if w.x.abs() > 0.9 {
         Direction::new(0.0, 1.0, 0.0)

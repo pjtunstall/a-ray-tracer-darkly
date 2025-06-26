@@ -8,12 +8,14 @@
 - [Guide](#guide)
   - [Camera](#camera)
   - [World and plane](#world-and-plane)
-  - [Sphere](#sphere)
-  - [Cube](#cube)
-  - [Quad](#quad)
-  - [Disk](#disk)
-  - [Tube](#tube)
-  - [Cylinder](#cylinder)
+  - [Shapes](#shapes)
+    - [Sphere](#sphere)
+    - [Quad](#quad)
+    - [Cube](#cube)
+    - [Disk](#disk)
+    - [Tube](#tube)
+    - [Cylinder](#cylinder)
+  - [Materials](#materials)
   - [vec3](#vec3)
 
 ## Context
@@ -49,13 +51,13 @@ See below for a more detailed [guide](#guide) on how to use the library.
 
 - Shapes:
 
-  - Sphere
   - Plane
+  - Sphere
   - Quad
+  - Cube
+  - Disk
   - Tube
   - Cylinder
-  - Disk
-  - Cube
 
 - Materials:
 
@@ -106,11 +108,11 @@ Now let's create a world with an infinite plane. Here's our world-building funct
 fn create_world() -> HittableList {
     let ground_color = Color::new(0.4, 0.6, 0.); // Color components range from 0.0 to 1.0.
     let ground_material = Arc::new(Lambertian::new(ground_color)); // The thread-safe version
-                                       // of `Rc`, the reference-counting smart pointer. This
-                                       // is to allow multiple shapes to share ownership of
-                                       // the same material. Thread-safety is needed because
-                                       // calculations are parallelized across all avilable
-                                       // CPU cores for speed.
+                                       // of `Rc`, the reference-counting smart pointer.
+                                       // Reference counting allows multiple shapes to share
+                                       // ownership of the same material. Thread-safety is
+                                       // needed because calculations are parallelized across
+                                       // all avilable CPU cores for speed.
     let plane = Plane::new(
         Point3::new(0.0, -0.5, 0.0),   // An arbitrary origin for plane coordinates.
         Direction::new(0.0, 1.0, 0.0), // A vector normal (i.e. at right angles)
@@ -209,7 +211,11 @@ let plane = Plane::from_span(
 As with the normal vector, spanning vectors mustn't be zero. In fact, for practical purposes, these and other such vectors are required to not have all their components less than `1e-8` ($1\times10^{-8}$
 ). This is to to prevent anomalies due to the imprecision of floating-point numbers.
 
-### Sphere
+### Shapes
+
+Shapes are represented by the `Hittable` trait. (Trait is Rust's name for an interface.)
+
+#### Sphere
 
 Oh, the infinite plane is boring. Let's put a sphere on it.
 
@@ -239,7 +245,20 @@ fn create_world() -> HittableList {
 
 And that's the essence of it. To add other shapes, you just need to know the parameters that define them.
 
-### Cube
+#### Quad
+
+A quad is a parallelogram, defined by a point, a pair of direction vectors (representing the sides of the parallelogram), and a material.
+
+```rust
+let quad = Box::new(Quad::new(
+    Point3::new(0.5, 0.2, -1.),     // A corner.
+    Direction::new(1., 0., -1.),
+    Direction::new(0., 1., 0.),
+    quad_material,
+));
+```
+
+#### Cube
 
 You also two options for defining a cube. You can supply a basis to orient the cube however you like.
 
@@ -254,20 +273,7 @@ let cube = Box::new(Cube::new_oriented(
 
 Or you can omit the basis with `Cube::new` for a cube aligned with the camera coordinate axes.
 
-### Quad
-
-A quad is a parallelogram, defined by a point, a pair of direction vectors (representing the sides of the parallelogram), and a material.
-
-```rust
-let quad = Box::new(Quad::new(
-    Point3::new(0.5, 0.2, -1.),     // A corner.
-    Direction::new(1., 0., -1.),
-    Direction::new(0., 1., 0.),
-    quad_material,
-));
-```
-
-### Disk
+#### Disk
 
 A disk is defined with same parameters as a quad, together with a radius. In this case, the length of the vectors is not important, only their direction, which defines the plane that contains the disk.
 
@@ -281,7 +287,7 @@ let disk = Box::new(Disk::new(
 ));
 ```
 
-### Tube
+#### Tube
 
 A hollow, finite cylinder with no cap. It's length is that of the axis vector.
 
@@ -294,7 +300,7 @@ let tube = Box::new(Tube::new(
 );
 ```
 
-### Cylinder
+#### Cylinder
 
 Only `Cylinder` is just a bit different. It's constructor returns three shapes: a tube and two disk, representing its top and bottom. Here we destructure the return vaue into variables for each of these, so that they can be added to the world individually.
 
@@ -309,9 +315,9 @@ let Cylinder { tube, top, bottom } = Cylinder::new(
 );
 ```
 
-### Materials
+#### Materials
 
-There are three materials, represented by the `Material` trait (Rust for "interface").
+There are three materials, represented by the `Material` trait.
 
 - Lambertian: `Lambertian::new` takes a color (`Color`) and returns an `Arc<dyn Material>`.
 - Metal: `Metal::new` takes a color and a fuzziness (`f64`) and returns an `Arc<dyn Material>`.

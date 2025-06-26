@@ -139,11 +139,13 @@ use rt::{
   color::Color,
   hittables::{HittableList, plane::Plane}, // Hittables are visible objects, such as a plane.
   material::Lambertian, // Lambertian is an opaque, nonreflective material, defined by its color.
+  ray::Ray,
 }
 
 fn main() -> io::Result<()> { // ... because writing to a file is fallible.
   let camera = set_up_camera();
   let world = create_world();
+  let background = sky;
 
   // Maximum number of recursions before we stop calculating the contribution each collision of
   // a light ray makes to the quality of the pixel. In scenes dominated by indirect lighting,
@@ -169,7 +171,7 @@ fn main() -> io::Result<()> { // ... because writing to a file is fallible.
         PathBuf::from("demo").join("plane"),
         max_depth,
         samples_per_pixel,
-        background,
+        background, // A function of the form `fn(&Ray) -> Color`.
         brightness,
     )?;
 
@@ -178,6 +180,11 @@ fn main() -> io::Result<()> { // ... because writing to a file is fallible.
 
 fn set_up_camera() {
     // ...
+}
+
+// The background function could be more complex, but here we just return a constant color.
+fn sky(_ray: &Ray) -> Color {
+    Color::new(2.0, 3.0, 8.0)
 }
 
 fn create_world() -> HittableList {
@@ -197,7 +204,7 @@ fn create_world() -> HittableList {
 }
 ```
 
-Sometimes, you might find it more convenient to specify a plane by two direction vectors that span it.
+Alternativeley, a plane can be specified by two spanning vectors.
 
 ```rust
 let plane = Plane::from_span(

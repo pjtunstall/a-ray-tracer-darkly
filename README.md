@@ -1,6 +1,6 @@
 # rt
 
-![Composite image of various solids.](combo.png)
+![Composite image of various solids.](images/docs/combo.png)
 
 - [Context](#context)
 - [Usage](#usage)
@@ -63,9 +63,9 @@ See below for a more detailed [guide](#guide) on how to use the library.
 
   - Lambertian (matt)
   - Metal (reflective)
-  - Dielectric (reflective and refractive: glass, water, etc.)
+  - Dielectric (reflective and refractive: transparent)
 
-![Spheres made of various materials on a green plane like a snooker table.](spheres.png)
+![Spheres made of various materials on a green plane like a snooker table.](images/docs/spheres.png)
 
 ## Guide
 
@@ -323,11 +323,11 @@ There are three materials, represented by the `Material` trait.
 - Metal: `Metal::new` takes a color and a fuzziness (`f64`) and returns an `Arc<dyn Material>`.
 - Dielectric: `Dielectric::new` takes a refractive index (`f64`) and returns an `Arc<dyn Material>`.
 
-Colors are defined by `Color::new`, which takes three `f64` values in the range [0.0, 1.0] for red, green, and blue. These can be accessed via the `r`, `g`, and `b` fields.
+`Lambertian` represents materials with opaque, matt surfaces. Colors is defined by `Color::new`, which takes three `f64` values in the range [0.0, 1.0] for red, green, and blue. These can be accessed via the `r`, `g`, and `b` fields.
 
-Fuzziness is an `f64` in the range [0.0, 1.0]. Set it to 0.0 for a perfect mirror, 1.0 for no reflection.
+`Metal`s are reflective. Fuzziness is an `f64` in the range [0.0, 1.0]. Set it to 0.0 for a perfect mirror, 1.0 for dull metal.
 
-Refractive index is relative. Thus set it to 1.5 for a glass object in air, and 1/1.5 for an air bubble embedded in glass. Water in air is 1.33. Other values are easily looked up.
+`Dielectric` is for clear materials like glass or water. Light rays are both reflected and refracted (bent as they enter the material). The refractive index is relative. Thus set it to 1.5 for a glass object in air, and 1/1.5 for an air bubble embedded in glass. Water in air is 1.33. Other values are easily looked up.
 
 ### vec3
 

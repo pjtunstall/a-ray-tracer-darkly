@@ -19,7 +19,7 @@ pub fn render(max_depth: usize, samples_per_pixel: usize, image_width: u32) -> i
     let mut camera = set_up_camera(image_width, look_from);
     camera.render(
         &world,
-        PathBuf::from("other").join("combo_pov_1"),
+        PathBuf::from("demo").join("combo_pov_1"),
         max_depth,
         samples_per_pixel,
         background,
@@ -30,7 +30,7 @@ pub fn render(max_depth: usize, samples_per_pixel: usize, image_width: u32) -> i
     camera = set_up_camera(image_width, look_from);
     camera.render(
         &world,
-        PathBuf::from("other").join("combo_pov_2"),
+        PathBuf::from("demo").join("combo_pov_2"),
         max_depth,
         samples_per_pixel,
         background,

@@ -1,6 +1,6 @@
-# rt
+# A Ray Tracer Darkly
 
-![Composite image of various solids.](images/docs/combo.png)
+![Composite image of various solids.](images/demo/combo.png)
 
 - [Context](#context)
 - [Usage](#usage)
@@ -65,7 +65,7 @@ See below for a more detailed [guide](#guide) on how to use the library.
   - Metal (reflective)
   - Dielectric (reflective and refractive: transparent)
 
-![Spheres made of various materials on a green plane like a snooker table.](images/docs/spheres.png)
+![Spheres made of various materials on a green plane like a snooker table.](images/demo/spheres.png)
 
 ## Guide
 

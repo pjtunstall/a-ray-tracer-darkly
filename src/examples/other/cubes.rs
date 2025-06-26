@@ -2,21 +2,28 @@ use std::{io, path::PathBuf, sync::Arc};
 
 use crate::{
     camera::{Camera, CameraParameters},
-    color::Color,
-    examples,
-    hittables::{HittableList, cube::Cube, sphere::Sphere},
-    material::{Dielectric, Metal},
+    color::{self, Color},
+    hittables::{HittableList, cube::Cube, plane::Plane, sphere::Sphere},
+    material::{Dielectric, Light, Metal},
+    ray::Ray,
     vec3::{Basis, Direction, Point3},
 };
+
+fn sky(ray: &Ray) -> Color {
+    let t = 0.5 * (ray.direction.y + 1.0);
+    let horizon = Color::new(0.8, 0.6, 0.4);
+    let zenith = Color::new(0.2, 0.3, 0.5);
+    color::lerp(horizon, zenith, t)
+}
 
 pub fn render(max_depth: usize, samples_per_pixel: usize) -> io::Result<()> {
     let world = make();
 
-    let background = examples::book::sky::color;
+    let background = sky;
     let camera = set_up_camera();
     camera.render(
         &world,
-        PathBuf::from("other").join("cubes"),
+        PathBuf::from("demo").join("cubes"),
         max_depth,
         samples_per_pixel,
         background,
@@ -41,13 +48,18 @@ fn set_up_camera() -> Camera {
 }
 
 fn make() -> HittableList {
-    let earth = Arc::new(Dielectric::new(1.33));
+    let water = Arc::new(Dielectric::new(1.33));
     let metal_1 = Arc::new(Metal::new(Color::new(0.1, 0.2, 0.5), 0.5));
     let glass = Arc::new(Dielectric::new(1.5));
     let metal_2 = Arc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.1));
+    let light_material = Arc::new(Light::new(Color::new(4., 4., 1.)));
 
-    let ground = Box::new(Sphere::new(Point3::new(0., -100.5, -1.), 100., earth));
-
+    let ground = Box::new(Plane::new(
+        Point3::new(0., 0., 0.),
+        Direction::new(0., 1., 0.),
+        water,
+    ));
+    let light = Box::new(Sphere::new(Point3::new(0., 1., -2.), 0.2, light_material));
     let center = Box::new(Cube::new_oriented(
         Point3::new(0.0, 0., -1.),
         0.3,
@@ -84,6 +96,7 @@ fn make() -> HittableList {
     world.add(right);
     world.add(inner);
     world.add(inmost);
+    world.add(light);
 
     world
 }

@@ -48,9 +48,13 @@ pub fn make_world() -> HittableList {
 
     let ground = Box::new(Plane::new(
         Point3::new(0., -0.5, 0.),
-        Direction::new(1., 1., 0.),
+        Direction::new(0., 1., 0.),
         material_ground,
     ));
+    println!(
+        "x: {}, y: {}, z: {}",
+        ground.normal.x, ground.normal.y, ground.normal.z
+    );
     let center = Box::new(Sphere::new(
         Point3::new(0., 0., -2.5),
         0.5,

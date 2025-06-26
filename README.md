@@ -2,13 +2,15 @@
 
 ![Composite image of various solids.](images/demo/combo.png)
 
-- [Context](#context)
+- [Overview](#overview)
 - [Usage](#usage)
 - [Features](#features)
 - [Guide](#guide)
   - [Camera](#camera)
   - [World and plane](#world-and-plane)
+  - [World and plane in context](#world-and-plane-in-context)
   - [Shapes](#shapes)
+    - [Plane](#plane)
     - [Sphere](#sphere)
     - [Quad](#quad)
     - [Cube](#cube)
@@ -17,10 +19,14 @@
     - [Cylinder](#cylinder)
   - [Materials](#materials)
   - [vec3](#vec3)
+  - [Deviations from the book](#deviations-from-the-book)
+    - [Rust idiom](#rust-idiom)
+    - [Refraction index](#refraction-index)
+    - [Field of view](#field-of-view)
 
-## Context
+## Overview
 
-This is a simple ray tracer. It's one of the 01Founders Rust projects. It implments all the features from the first book in the fantastic [Ray Tracing in One Weekend](https://raytracing.github.io/) series (adapting them from C++ to Rust), and a couple from book two (quad and plane), plus a few extras, in particular a cylinder, as required by 01.
+This is a simple ray tracer. It's my solution to the third project of the Rust arc in the 01Founders course. It implements all the features from the first book of the fantastic [Ray Tracing in One Weekend](https://raytracing.github.io/) series, and a couple from book two (quad, plane, and light), plus a few extras, in particular a cylinder, as required by 01. The book's examples are in C++, but it proved fairly straightforward to adapt them to Rust.
 
 ## Usage
 
@@ -63,23 +69,20 @@ See below for a more detailed [guide](#guide) on how to use the library.
 
   - Lambertian (matt)
   - Metal (reflective)
-  - Dielectric (reflective and refractive: transparent)
+  - Dielectric (reflective and refractive)
+  - Light (light-emitting)
 
 ![Spheres made of various materials on a green plane like a snooker table.](images/demo/spheres.png)
 
 ## Guide
 
-Here is a guide to using the library. We'll draw a scene with some objects. They'll be saved in PPM (portable pixmap) format. Search for PPM viewers. There are several VS Code extension.
+Here is a guide to using the library. We'll draw a scene with some objects. They'll be saved in PPM (portable pixmap) format. Search for PPM viewers. There are several VS Code extensions.
 
 ### Camera
 
 First, we'll need to set up a camera.
 
 ```rust
-use rt::{
-    camera::{Camera, CameraParams};
-}
-
 fn main() -> {
     let camera = set_up_camera();
 }
@@ -88,8 +91,8 @@ fn set_up_camera() {
     let params = CameraParameters {
         aspect_ratio: 4.0 / 3.0,
         image_width: 400,
-        look_from: Point3::new(0.0, 1.0, 4.0), // x: right, y: up, z: backwards, away
-        look_at: Point3::new(0.0, 0.0, -1.0),  // from the viewport.
+        look_from: Point3::new(0.0, 1.0, 4.0), // x: right, y: up, z: backwards, relative to
+        look_at: Point3::new(0.0, 0.0, -1.0), // the direction the camera is looking.
         up: Direction::new(0.0, 1.0, 0.0),
         focal_distance: 10.0,
         defocus_angle_in_degrees: 0.0, // Zero for maximum sharpness.
@@ -106,13 +109,8 @@ Now let's create a world with an infinite plane. Here's our world-building funct
 
 ```rust
 fn create_world() -> HittableList {
-    let ground_color = Color::new(0.4, 0.6, 0.); // Color components range from 0.0 to 1.0.
-    let ground_material = Arc::new(Lambertian::new(ground_color)); // The thread-safe version
-                                       // of `Rc`, the reference-counting smart pointer.
-                                       // Reference counting allows multiple shapes to share
-                                       // ownership of the same material. Thread-safety is
-                                       // needed because calculations are parallelized across
-                                       // all avilable CPU cores for speed.
+    let ground_color = Color::new(0.4, 0.6, 0.); // RGB.
+    let ground_material = Arc::new(Lambertian::new(ground_color));
     let plane = Plane::new(
         Point3::new(0.0, -0.5, 0.0),   // An arbitrary origin for plane coordinates.
         Direction::new(0.0, 1.0, 0.0), // A vector normal (i.e. at right angles)
@@ -127,19 +125,24 @@ fn create_world() -> HittableList {
 }
 ```
 
-And here it is in context. There's a lot of info in this next snippet, so feel free to skip some and come back to it later.
+A `Hittable` is a visible object, so called because it's "hittable" by light rays. A `HittableList` is a collection of such objects. In particular, `world` stores all (potentially) visible objects in our scene.
+
+`Arc` is the thread-safe version of `Rc`, a reference-counting smart pointer. Reference counting allows multiple shapes to share ownership of the same material. Thread-safety is needed because calculations are parallelized across all avilable CPU cores for speed.
+
+## World and plane in context
+
+And here it all is in context. There's a lot of info in this next snippet, so feel free to skip some and come back to it later.
 
 ```rust
-// `PathBuf` to write the file, `io` to handle errors, `Arc` to allow materials to be shared
-// between objects in a thread-safe way.
-use std::{io, path::PathBuf, sync::Arc};
+use std::{io, path::PathBuf, sync::Arc}; // `PathBuf` to write the file, `io` to handle errors.
 
 use rt::{
   camera::{Camera, CameraParams};
   color::Color,
   hittables::{HittableList, plane::Plane}, // Hittables are visible objects, such as a plane.
   material::Lambertian, // Lambertian is an opaque, nonreflective material, defined by its color.
-  ray::Ray,
+  ray::Ray, // Rays extending from the camera, back through each pixel, into the scene.
+  vec3::{Direction, Point3}
 }
 
 fn main() -> io::Result<()> { // ... because writing to a file is fallible.
@@ -178,30 +181,34 @@ fn main() -> io::Result<()> { // ... because writing to a file is fallible.
     Ok(())
 }
 
-fn set_up_camera() {
-    // ...
-}
-
 // The background function could be more complex, but here we just return a constant color.
 fn sky(_ray: &Ray) -> Color {
     Color::new(2.0, 3.0, 8.0)
 }
 
-fn create_world() -> HittableList {
-    let ground_color = Color::new(0.4, 0.6, 0.);
-    let ground_material = Arc::new(Lambertian::new(ground_color)); //
-    let plane = Plane::new(
-        Point3::new(0.0, -0.5, 0.0),   // An arbitrary origin for plane coordinates.
-        Direction::new(0.0, 1.0, 0.0), // A vector normal to the plane.
-        ground_material,
-    );
-    let ground = Box::new(plane);
-
-    let mut world = HittableList::new(); // A list of all visible objects.
-    world.add(ground);
-
-  world
+fn set_up_camera() {
+    // ...
 }
+
+fn create_world() -> HittableList {
+    // ...
+}
+```
+
+### Shapes
+
+Shapes are represented by the `Hittable` trait. (Trait is Rust's name for an interface.)
+
+#### Plane
+
+We already saw one way to create a plane.
+
+```rust
+let plane = Plane::new(
+    Point3::new(0.0, -0.5, 0.0),   // An arbitrary point in the plane.
+    Direction::new(0.0, 1.0, 0.0), // A vector normal to the plane.
+    ground_material,
+);
 ```
 
 Alternativeley, a plane can be specified by two spanning vectors.
@@ -216,11 +223,7 @@ let plane = Plane::from_span(
 ```
 
 As with the normal vector, spanning vectors mustn't be zero. In fact, for practical purposes, these and other such vectors are required to not have all their components less than `1e-8` ($1\times10^{-8}$
-). This is to to prevent anomalies due to the imprecision of floating-point numbers.
-
-### Shapes
-
-Shapes are represented by the `Hittable` trait. (Trait is Rust's name for an interface.)
+). This is to reduce the likelihood of anomalies due to the imprecision of floating-point numbers.
 
 #### Sphere
 
@@ -267,7 +270,7 @@ let quad = Box::new(Quad::new(
 
 #### Cube
 
-You also two options for defining a cube. You can supply a basis to orient the cube however you like.
+There are two options for defining a cube. You can supply a basis to orient the cube however you like.
 
 ```rust
 let cube = Box::new(Cube::new_oriented(
@@ -282,7 +285,7 @@ Or you can omit the basis with `Cube::new` for a cube aligned with the camera co
 
 #### Disk
 
-A disk is defined with same parameters as a quad, together with a radius. In this case, the length of the vectors is not important, only their direction, which defines the plane that contains the disk.
+A disk is defined with same parameters as a quad, together with a radius. In this case, the length of the vectors is not important, only their directions, which define the plane that contains the disk.
 
 ```rust
 let disk = Box::new(Disk::new(
@@ -296,7 +299,7 @@ let disk = Box::new(Disk::new(
 
 #### Tube
 
-A hollow, finite cylinder with no cap. It's length is that of the axis vector.
+A hollow, finite cylinder with no cap. The length of the tune is that of the axis vector.
 
 ```rust
 let tube = Box::new(Tube::new(
@@ -309,7 +312,7 @@ let tube = Box::new(Tube::new(
 
 #### Cylinder
 
-Only `Cylinder` is just a bit different. It's constructor returns three shapes: a tube and two disk, representing its top and bottom. Here we destructure the return vaue into variables for each of these, so that they can be added to the world individually.
+Only `Cylinder` is just a bit different. Its constructor returns three shapes: a tube and two disks, representing the top and bottom of the cylinder. Here we destructure the return value into variables for each of these, so that they can be added to the world individually.
 
 ```rust
 let Cylinder { tube, top, bottom } = Cylinder::new(
@@ -324,17 +327,20 @@ let Cylinder { tube, top, bottom } = Cylinder::new(
 
 #### Materials
 
-There are three materials, represented by the `Material` trait.
+There are four materials, represented by the `Material` trait.
 
-- Lambertian: `Lambertian::new` takes a color (`Color`) and returns an `Arc<dyn Material>`.
-- Metal: `Metal::new` takes a color and a fuzziness (`f64`) and returns an `Arc<dyn Material>`.
-- Dielectric: `Dielectric::new` takes a refractive index (`f64`) and returns an `Arc<dyn Material>`.
+- `Lambertian`: `Lambertian::new` takes a `Color`.
+- `Metal`: `Metal::new` takes a `Color` and a fuzziness (`f64`).
+- `Dielectric`: `Dielectric::new` takes a refractive index (`f64`).
+- `Light`: `Light::new` takes a `Color`.
 
-`Lambertian` represents materials with opaque, matt surfaces. Colors is defined by `Color::new`, which takes three `f64` values in the range [0.0, 1.0] for red, green, and blue. These can be accessed via the `r`, `g`, and `b` fields.
+`Lambertian` represents materials with opaque, matt surfaces. A `Color` is defined by `Color::new`, which takes three `f64` values for red, green, and blue. These can be accessed via the `r`, `g`, and `b` fields. These components should be set in the range [0.0, 1.0]. They can be given higher values, but will be clamped before printing.
 
-`Metal`s are reflective. Fuzziness is an `f64` in the range [0.0, 1.0]. Set it to 0.0 for a perfect mirror, 1.0 for dull metal.
+`Metal`s are reflective. Fuzziness is an `f64` in the range [0.0, 1.0]. Set it to 0.0 for a perfect mirror, 1.0 for dull metal. The same rules for `Color` apply as for `Lambertian`.
 
 `Dielectric` is for clear materials like glass or water. Light rays are both reflected and refracted (bent as they enter the material). The refractive index is relative. Thus set it to 1.5 for a glass object in air, and 1/1.5 for an air bubble embedded in glass. Water in air is 1.33. Other values are easily looked up.
+
+`Light` is for light-emiting materials. The components of the `Color` passed to `Light::new` should be greater than 1.0. In their example in _Ray Tracing: The Next Week_, Shirley et al. set them all to 4.0, and just say, "This allows it to be bright enough to light things."
 
 ### vec3
 
@@ -364,3 +370,33 @@ fn direction_to_world(&self, local_direction: &Direction) -> Direction {
         .unwrap()
 }
 ```
+
+## Deviations from the book
+
+## Rust idiom
+
+In the spirit of Rust, I chose to introduce some extra type security, distinguishinging between `Color`, `Point3`, and `Direction` types which, for the book, are all aliases for their `vec3` class. Otherwise I stuck pretty close to their code.
+
+## Refraction index
+
+For some reason, I found I had to "reverse" the definition of `refraction_index` in `scatter` in `Material` for `Dielectric` from the book. That is to say, I had to use the reciprocal of what they used. Thus, Shirley et al.:
+
+```C++
+double ri = rec.front_face ? (1.0/refraction_index) : refraction_index;
+```
+
+Me:
+
+```rust
+let refraction_index = if front_face {
+    self.refraction_index
+} else {
+    1. / self.refraction_index
+};
+```
+
+## Field of view
+
+I needed to change the (vertical) field of view, `vertical_fov_in_degrees`, to 20 degrees on the defocus blurr example, `example_7`, as it is in the previous example. The book has 10 degrees, but the view in the illustration matches what I get with 20.
+
+In my versions of the book's examples, I've also changed the field of view from 90 to 20 degrees for the earlier examples, as the left and right spheres are elongated otherwise. Apparently the wider angle was the author's intention, since the flanking spheres are elongated in the illustrations in the book. I thought it would be clearer to have all the spheres look like spheres in those initial examples and only show distortion when the concept of wide angle is introduced.

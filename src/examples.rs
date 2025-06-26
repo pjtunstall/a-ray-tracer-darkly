@@ -12,8 +12,8 @@ pub mod book {
 }
 pub mod audit {
     pub mod cube_and_plane;
-    pub mod sphere;
-    pub mod various;
+    pub mod sphere_scene;
+    pub mod various_x2;
 }
 
 use std::{io, path::PathBuf};

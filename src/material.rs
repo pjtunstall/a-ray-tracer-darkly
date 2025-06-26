@@ -15,6 +15,10 @@ pub trait Material: Send + Sync {
         front_face: bool,
         rngs: &mut SmallRng,
     ) -> Option<(Ray, Color)>;
+
+    fn emit(&self, _point: &Point3) -> Color {
+        Color::new(0., 0., 0.)
+    }
 }
 
 pub struct Lambertian {
@@ -136,5 +140,32 @@ impl Dielectric {
         let mut r_0 = (1. - refraction_index) / (1. + refraction_index);
         r_0 *= r_0;
         r_0 + (1. - r_0) * (1. - cosine).powf(5.)
+    }
+}
+
+pub struct Light {
+    pub color: Color,
+}
+
+impl Material for Light {
+    fn scatter(
+        &self,
+        _incident_ray: &Ray,
+        _point: &Point3,
+        _normal: &Direction,
+        _front_face: bool,
+        _rng: &mut SmallRng,
+    ) -> Option<(Ray, Color)> {
+        None
+    }
+
+    fn emit(&self, _point: &Point3) -> Color {
+        self.color.clone()
+    }
+}
+
+impl Light {
+    pub fn new(color: Color) -> Self {
+        Light { color }
     }
 }

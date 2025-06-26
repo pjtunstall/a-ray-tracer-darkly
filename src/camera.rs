@@ -187,15 +187,16 @@ impl Camera {
             return Color::new(0., 0., 0.);
         }
         if let Some(record) = world.hit(ray, &Interval::new(0.001, f64::INFINITY)) {
-            if let Some((scattered, attenuation)) =
-                record
-                    .material
-                    .scatter(&ray, &record.point, &record.normal, record.front_face, rng)
+            let color_from_attenuation = if let Some((scattered, attenuation)) = record
+                .material
+                .scatter(&ray, &record.point, &record.normal, record.front_face, rng)
             {
                 attenuation * self.ray_color(&scattered, world, depth - 1, background, rng)
             } else {
                 Color::new(0., 0., 0.)
-            }
+            };
+            let color_from_emission = record.material.emit(&record.point);
+            color_from_attenuation + color_from_emission
         } else {
             background(&ray)
         }

@@ -96,7 +96,7 @@ impl<T> Vec3<T> {
 
     pub fn near_zero(&self) -> bool {
         let epsilon = 1e-8;
-        self.x.abs() < epsilon && self.y < epsilon && self.z < epsilon
+        self.x.abs() < epsilon && self.y.abs() < epsilon && self.z.abs() < epsilon
     }
 }
 

@@ -21,10 +21,10 @@
   - [Image quality parameters](#image-quality-parameters)
   - [Converting images to PNG, JPG, etc.](#convert-images-to-png-jpg,-etc.)
   - [vec3](#vec3)
-  - [Deviations from the book](#deviations-from-the-book)
-    - [Rust idiom](#rust-idiom)
-    - [Refraction index](#refraction-index)
-    - [Field of view](#field-of-view)
+- [Deviations from the book](#deviations-from-the-book)
+  - [Rust idiom](#rust-idiom)
+  - [Refraction index](#refraction-index)
+  - [Field of view](#field-of-view)
 
 ## Overview
 

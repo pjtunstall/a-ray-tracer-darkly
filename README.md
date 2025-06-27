@@ -418,3 +418,5 @@ let refraction_index = if front_face {
 I needed to change the (vertical) field of view, `vertical_fov_in_degrees`, to 20 degrees on the defocus blurr example, `example_7`, as it is in the previous example. The book has 10 degrees, but the view in the illustration matches what I get with 20.
 
 In my versions of the book's examples, I've also changed the field of view from 90 to 20 degrees for the earlier examples, as the left and right spheres are elongated otherwise. Apparently the wider angle was the author's intention, since the flanking spheres are elongated in the illustrations in the book. I thought it would be clearer to have all the spheres look like spheres in those initial examples and only show distortion when the concept of wide angle is introduced.
+
+![Spheres on a dark plane, lit by a setting sun.](images/png/sunset.png)

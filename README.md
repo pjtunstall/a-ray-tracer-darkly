@@ -35,10 +35,10 @@ This is a simple ray tracer. It's my solution to the third project of the Rust a
 If you don't already have Rust installed, [install it](https://www.rust-lang.org/tools/install). Clone this repository:
 
 ```sh
-git clone https://github.com/pjtunstall/rt
+git clone https://github.com/pjtunstall/a-ray-tracer-darkly
 ```
 
-Then `cd rt`, and run `cargo run --release` to build and run a program with some examples. (The `release` flag requests some optmizations that allow the program to run faster.)
+Then `cd a-ray-tracer-darkly`, and run `cargo run --release` to build and run a program with some examples. (The `release` flag requests some optmizations that allow the program to run faster.)
 
 See below for a more detailed [guide](#guide) on how to use the library.
 

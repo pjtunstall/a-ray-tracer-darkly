@@ -20,9 +20,10 @@ pub struct Cube {
 impl Cube {
     // Create a cube aligned with world coordinates.
     pub fn new(center: Point3, size: f64, material: Arc<dyn Material>) -> Cube {
+        assert!(1e-8 < size, "Size is too small");
         Cube {
             center,
-            size: size.max(1e-8),
+            size,
             u: Direction::new(1.0, 0.0, 0.0),
             v: Direction::new(0.0, 1.0, 0.0),
             w: Direction::new(0.0, 0.0, 1.0),
@@ -37,9 +38,10 @@ impl Cube {
         orientation: &Basis,
         material: Arc<dyn Material>,
     ) -> Cube {
+        assert!(1e-8 < size, "Size is too small");
         Cube {
             center,
-            size: size.max(1e-8),
+            size,
             u: orientation.x,
             v: orientation.y,
             w: orientation.z,

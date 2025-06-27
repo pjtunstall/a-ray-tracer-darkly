@@ -21,7 +21,7 @@ impl Cylinder {
         material_top: Arc<dyn Material>,
         material_bottom: Arc<dyn Material>,
     ) -> Self {
-        assert!(axis.length() > 1e-8, "Axis vector is too small.");
+        assert!(1e-8 < axis.length(), "Axis vector is too small");
         let [u, v] = orthonormal_basis_2d(&axis.normalize());
 
         let top = Disk::new(

@@ -26,7 +26,7 @@ impl Disk {
         mut v: Direction,
         material: Arc<dyn Material>,
     ) -> Self {
-        assert!(radius > 1e-8, "Radius is too small");
+        assert!(1e-8 < radius, "Radius is too small");
         assert!(
             !u.near_zero() && !v.near_zero(),
             "Spanning vector(s) too close to zero"

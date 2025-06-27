@@ -90,10 +90,6 @@ impl<T> Vec3<T> {
         )
     }
 
-    pub fn is_zero(&self) -> bool {
-        self.x.abs() < 1e-8 && self.y < 1e-8 && self.z < 1e-8
-    }
-
     pub fn near_zero(&self) -> bool {
         let epsilon = 1e-8;
         self.x.abs() < epsilon && self.y.abs() < epsilon && self.z.abs() < epsilon
@@ -229,7 +225,7 @@ pub struct Basis {
 impl Basis {
     pub fn new(x: Direction, y: Direction, z: Direction) -> Self {
         assert!(
-            x.dot(&y.cross(&z)) >= 1e-8,
+            1e-8 < x.dot(&y.cross(&z)),
             "Inavalid basis: vectors not independent enough"
         );
         Basis { x, y, z }

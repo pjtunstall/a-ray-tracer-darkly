@@ -90,9 +90,8 @@ pub struct Dielectric {
 
 impl Dielectric {
     pub fn new(refraction_index: f64) -> Self {
-        Dielectric {
-            refraction_index: refraction_index.max(1e-8),
-        }
+        assert!(1e-8 < refraction_index, "Refraction index is too small");
+        Dielectric { refraction_index }
     }
 }
 

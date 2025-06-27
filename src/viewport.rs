@@ -9,13 +9,13 @@ pub struct Viewport {
 
 impl Viewport {
     pub fn new(height: f64, image: &Image, camera_u: &Direction, camera_v: &Direction) -> Self {
-        assert!(height > 1e-8, "Height of viewport too close to zero");
+        assert!(height > 1e-8, "Height of viewport is too small");
         assert!(
             !camera_u.near_zero(),
             "camera_u direction vector too close to zero"
         );
         assert!(
-            !camera_v.is_zero(),
+            !camera_v.near_zero(),
             "camera_v direction vector too close to zero"
         );
 

@@ -6,8 +6,7 @@ pub struct Image {
 
 impl Image {
     pub fn new(width: u32, aspect_ratio: f64) -> Self {
-        assert!(width > 0, "Image width must be greater than zero");
-        assert!(aspect_ratio > 1e-8, "Aspect ratio too close to zero");
+        assert!(1e-8 < aspect_ratio, "Aspect ratio is too low");
 
         let height = ((width as f64 / aspect_ratio) as u32).max(1);
 

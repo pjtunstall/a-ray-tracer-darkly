@@ -58,16 +58,13 @@ impl Camera {
             defocus_angle_in_degrees,
             vertical_fov_in_degrees,
         } = params;
-        assert!(image_width > 0, "Image width too close to zero");
-        assert!(aspect_ratio >= 1e-8, "Aspect ratio too close to zero");
+        assert!(image_width > 0, "Image width needs to be greater than zero");
+        assert!(1e-8 < aspect_ratio, "Aspect ratio is too low");
         assert!(
             !up.near_zero(),
-            "Camera up direrection vector too close to zero"
+            "Camera up direction vector too close to zero"
         );
-        assert!(
-            focal_distance >= 1e-8,
-            "Focal distance must be greater than zero"
-        );
+        assert!(1e-8 < focal_distance, "Focal distance is too small");
 
         let defocus_angle = defocus_angle_in_degrees.to_radians();
         let vertical_fov = vertical_fov_in_degrees.to_radians();

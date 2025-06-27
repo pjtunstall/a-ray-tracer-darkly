@@ -16,7 +16,7 @@ pub struct Sphere {
 
 impl Sphere {
     pub fn new(center: Point3, radius: f64, material: Arc<dyn Material>) -> Sphere {
-        assert!(radius > 1e-8, "Radius is too small");
+        assert!(1e-8 < radius, "Radius is too small");
 
         Sphere {
             center,

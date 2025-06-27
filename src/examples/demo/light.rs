@@ -30,7 +30,7 @@ fn set_up_camera(image_width: u32) -> Camera {
         aspect_ratio: 4.0 / 3.0,
         image_width: image_width,
         look_from: Point3::new(0., 1., 24.),
-        look_at: Point3::new(0., 0., -1.),
+        look_at: Point3::new(0., 2., -1.),
         up: Direction::new(0., 1., 0.),
         focal_distance: 10.,
         defocus_angle_in_degrees: 0.,
@@ -41,8 +41,8 @@ fn set_up_camera(image_width: u32) -> Camera {
 
 fn sky(ray: &Ray) -> Color {
     let t = 0.5 * (ray.direction.y + 1.0);
-    let horizon = Color::new(0.8, 0.6, 0.0);
-    let zenith = Color::new(0.1, 0.2, 0.5);
+    let horizon = Color::new(0.7, 0.5, 0.0);
+    let zenith = Color::new(0.05, 0.05, 0.3);
     color::lerp(horizon, zenith, t)
 }
 

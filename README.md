@@ -1,6 +1,6 @@
 # A Ray Tracer Darkly
 
-![Composite image of various solids.](images/demo/combo.png)
+![Composite image of various solids.](images/png/combo.png)
 
 - [Overview](#overview)
 - [Usage](#usage)
@@ -18,6 +18,8 @@
     - [Tube](#tube)
     - [Cylinder](#cylinder)
   - [Materials](#materials)
+  - [Image quality parameters](#image-quality-parameters)
+  - [Converting images to PNG, JPG, etc.](#convert-images-to-png-jpg,-etc.)
   - [vec3](#vec3)
   - [Deviations from the book](#deviations-from-the-book)
     - [Rust idiom](#rust-idiom)
@@ -72,7 +74,7 @@ See below for a more detailed [guide](#guide) on how to use the library.
   - Dielectric (reflective and refractive)
   - Light (light-emitting)
 
-![Spheres made of various materials on a green plane like a snooker table.](images/demo/spheres.png)
+![Spheres made of various materials on a green plane like a snooker table.](images/png/spheres.png)
 
 ## Guide
 
@@ -95,7 +97,7 @@ fn set_up_camera() {
         look_at: Point3::new(0.0, 0.0, -1.0), // the direction the camera is looking.
         up: Direction::new(0.0, 1.0, 0.0),
         focal_distance: 10.0,
-        defocus_angle_in_degrees: 0.0, // Zero for maximum sharpness.
+        defocus_angle_in_degrees: 0.0, // Zero for maximum sharpness, higher values to defocus.
         vertical_fov_in_degrees: 20.0, // Field of view: increase for wide angle.
     };
 
@@ -135,6 +137,8 @@ And here it all is in context. There's a lot of info in this next snippet, so fe
 
 ```rust
 use std::{io, path::PathBuf, sync::Arc}; // `PathBuf` to write the file, `io` to handle errors.
+                                         // `Arc` for shared ownership and with thread-safety.
+use rand::{Rng, SeedableRng, rngs::SmallRng};
 
 use rt::{
   camera::{Camera, CameraParams};
@@ -171,7 +175,7 @@ fn main() -> io::Result<()> { // ... because writing to a file is fallible.
 
   camera.render(
         &world,
-        PathBuf::from("demo").join("plane"),
+        PathBuf::from("demo").join("plane"), // Where the image will be saved.
         max_depth,
         samples_per_pixel,
         background, // A function of the form `fn(&Ray) -> Color`.
@@ -341,6 +345,23 @@ There are four materials, represented by the `Material` trait.
 `Dielectric` is for clear materials like glass or water. Light rays are both reflected and refracted (bent as they enter the material). The refractive index is relative. Thus set it to 1.5 for a glass object in air, and 1/1.5 for an air bubble embedded in glass. Water in air is 1.33. Other values are easily looked up.
 
 `Light` is for light-emiting materials. The components of the `Color` passed to `Light::new` should be greater than 1.0. In their example in _Ray Tracing: The Next Week_, Shirley et al. set them all to 4.0, and just say, "This allows it to be bright enough to light things."
+
+### Image quality parameters
+
+Two parameters determine image quality. Higher values increase image quality at the cost time to produce.
+
+`max_depth` is the maximum number of recursions before we stop calculating the contribution each collision of a light ray makes to the color of the pixel. In scenes dominated by indirect lighting,
+it contributes to realism: deeper soft shadows, color bleeding, subtle ambient effects. For scenes dominated by direct lighting, raising the depth beyond 1–2 may not show obvious differences.
+
+To compansate for the discreteness of pixels, we take samples from the area surrounding the pixel and average the resulting light (color) values together. `samples_per_pixel` is the number of such samoles taken. Higher values (more samples) give a smoother, less pixelated look.
+
+## Converting images to PNG, JPG, etc.
+
+This is simple with a tool like ImageMagic.
+
+```sh
+convert image.ppm image.png
+```
 
 ### vec3
 

@@ -1,6 +1,7 @@
-pub mod other {
+pub mod demo {
     pub mod combo;
     pub mod cubes;
+    pub mod light;
 }
 pub mod book {
     pub mod dull_metal;

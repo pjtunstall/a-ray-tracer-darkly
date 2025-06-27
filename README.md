@@ -345,12 +345,11 @@ There are four materials, represented by the `Material` trait.
 
 ### Image quality parameters
 
-Two parameters determine image quality. Higher values increase image quality, but the image takes longer to render. This is especially noticeable in more complex scenes.
+Two parameters determine image quality. Higher values increase image quality, but the image takes longer to render. This is especially noticeable for more complex scenes.
 
-`max_depth` is the maximum number of recursions before we stop calculating the contribution each collision of a light ray makes to the color of the pixel. In scenes dominated by indirect lighting,
-it contributes to realism: deeper soft shadows, color bleeding, subtle ambient effects. For scenes dominated by direct lighting, raising the depth beyond 1–2 may not show obvious differences.
+`max_depth` is the maximum number of recursions (bounces) before we stop calculating the contribution each collision of a light ray makes to the color of the pixel. Fewer bounces means less global illumination. In scenes dominated by indirect lighting, it contributes to realism: deeper soft shadows, color bleeding, subtle ambient effects. For scenes dominated by direct lighting, raising the depth beyond 1–2 may not show obvious differences.
 
-To compensate for the discreteness of pixels, we take samples from the area surrounding the pixel and average the resulting light (color) values together. `samples_per_pixel` is the number of such samoles taken. Higher values (more samples) give a smoother, less pixelated look.
+`samples_per_pixel` controls how many rays are fired per pixel. To reduce the jaggedness and noise that result from sampling a single point per pixel, we take multiple samples within the area of each pixel. These rays are slightly randomized--perturbed within the pixel's extent--and their color values are averaged. It's like taking several noisy photos of the same scene and combining them to get a cleaner image. Results are especially evident in complex lighting situations like soft shadows, glossy surfaces, and indirect illumination. The improvement is often dramatic.
 
 ### Converting images to PNG, JPG, etc.
 

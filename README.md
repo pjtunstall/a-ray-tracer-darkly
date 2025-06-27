@@ -28,7 +28,7 @@
 
 ## Overview
 
-This is a simple ray tracer. It's my solution to the third project of the Rust arc in the 01Founders course. It implements all the features from the first book of the fantastic [Ray Tracing in One Weekend](https://raytracing.github.io/) series, and a couple from book two (quad, plane, and light), plus a few extras, in particular a cylinder, as required by 01. The book's examples are in C++, but it proved fairly straightforward to adapt them to Rust.
+This is a simple ray tracer. It's my solution to the third project of the Rust arc in the 01Founders course. It implements all the features from the first book of the fantastic [Ray Tracing in One Weekend](https://raytracing.github.io/) series and a few from book two (quad, plane, and light). I've also implemented a cylinder, as required by 01. The book's examples are in C++, but it proved fairly straightforward to adapt them to Rust.
 
 ## Usage
 
@@ -125,7 +125,7 @@ A `Hittable` is a visible object, so called because it's "hittable" by light ray
 
 `Arc` is the thread-safe version of `Rc`, a reference-counting smart pointer. Reference counting allows multiple shapes to share ownership of the same material. Thread-safety is needed because calculations are parallelized across all avilable CPU cores for speed.
 
-## World and plane in context
+### World and plane in context
 
 And here it all is in context. There's a lot of info in this next snippet, so feel free to skip some and come back to it later.
 
@@ -326,7 +326,7 @@ let Cylinder { tube, top, bottom } = Cylinder::new(
 );
 ```
 
-#### Materials
+### Materials
 
 There are four materials, represented by the `Material` trait.
 
@@ -341,7 +341,7 @@ There are four materials, represented by the `Material` trait.
 
 `Dielectric` is for clear materials like glass or water. Light rays are both reflected and refracted (bent as they enter the material). The refractive index is relative. Thus set it to 1.5 for a glass object in air, and 1/1.5 for an air bubble embedded in glass. Water in air is 1.33. Other values are easily looked up.
 
-`Light` is for light-emiting materials. The components of the `Color` passed to `Light::new` should be greater than 1.0. In their example in _Ray Tracing: The Next Week_, Shirley et al. set them all to 4.0. They say, "This allows it to be bright enough to light things."
+`Light` is for light-emiting materials. The components of the `Color` passed to `Light::new` should be greater than 1.0. In their [example](https://raytracing.github.io/books/RayTracingTheNextWeek.html#lights/turningobjectsintolights) in _Ray Tracing: The Next Week_, Shirley et al. set them all to 4.0. They say, "This allows it to be bright enough to light things."
 
 ### Image quality parameters
 
@@ -352,7 +352,7 @@ it contributes to realism: deeper soft shadows, color bleeding, subtle ambient e
 
 To compensate for the discreteness of pixels, we take samples from the area surrounding the pixel and average the resulting light (color) values together. `samples_per_pixel` is the number of such samoles taken. Higher values (more samples) give a smoother, less pixelated look.
 
-## Converting images to PNG, JPG, etc.
+### Converting images to PNG, JPG, etc.
 
 This is simple with a tool like ImageMagic.
 
@@ -391,11 +391,11 @@ fn direction_to_world(&self, local_direction: &Direction) -> Direction {
 
 ## Deviations from the book
 
-## Rust idiom
+### Rust idiom
 
 In the spirit of Rust, I chose to introduce some extra type security, distinguishinging between `Color`, `Point3`, and `Direction` types which, for the book, are all aliases for their `vec3` class. Otherwise I stuck pretty close to their code.
 
-## Refraction index
+### Refraction index
 
 For some reason, I found I had to "reverse" the definition of `refraction_index` in `scatter` in `Material` for `Dielectric` from the book. That is to say, I had to use the reciprocal of what they used. Thus, Shirley et al.:
 
@@ -413,7 +413,7 @@ let refraction_index = if front_face {
 };
 ```
 
-## Field of view
+### Field of view
 
 I needed to change the (vertical) field of view, `vertical_fov_in_degrees`, to 20 degrees on the defocus blurr example, `example_7`, as it is in the previous example. The book has 10 degrees, but the view in the illustration matches what I get with 20.
 

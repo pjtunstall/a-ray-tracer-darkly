@@ -38,7 +38,7 @@ If you don't already have Rust installed, [install it](https://www.rust-lang.org
 git clone https://github.com/pjtunstall/a-ray-tracer-darkly
 ```
 
-Then `cd a-ray-tracer-darkly`, and run `cargo run --release` to build and run a program with some examples. (The `release` flag requests some optmizations that allow the program to run faster.)
+Then `cd a-ray-tracer-darkly`, and run `cargo run --release` to build and run a program with some examples. (The `--release` flag builds the program in a faster, optimized mode instead of the slower debug mode used by default.)
 
 See below for a more detailed [guide](#guide) on how to use the library.
 

@@ -28,7 +28,7 @@
 
 ## Overview
 
-This is a simple ray tracer. It's my solution to the third project of the Rust arc in the 01Founders course. It implements all the features from the first book of the fantastic [Ray Tracing in One Weekend](https://raytracing.github.io/) series and a few from book two (quad, plane, and light). I've also implemented a cylinder, as required by 01. The book's examples are in C++, but it proved fairly straightforward to adapt them to Rust.
+This is a simple ray tracer. It's my response to the third project of the Rust arc in the 01Founders course, called [rt](https://github.com/01-edu/public/tree/master/subjects/rt). I've implemented all the features from the first book of the fantastic [Ray Tracing in One Weekend](https://raytracing.github.io/) series and a few from book two (quad, plane, and light); also a cylinder, as required by 01. The book's examples are in C++, but it proved fairly straightforward to adapt them to Rust.
 
 ## Usage
 

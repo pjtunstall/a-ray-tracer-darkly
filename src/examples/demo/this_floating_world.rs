@@ -23,7 +23,7 @@ pub fn render(max_depth: usize, samples_per_pixel: usize, image_width: u32) -> i
     let camera = set_up_camera(image_width);
     camera.render(
         &world,
-        PathBuf::from("demo").join("cubes"),
+        PathBuf::from("demo").join("this_floating_world"),
         max_depth,
         samples_per_pixel,
         background,
@@ -35,10 +35,10 @@ pub fn render(max_depth: usize, samples_per_pixel: usize, image_width: u32) -> i
 
 fn set_up_camera(image_width: u32) -> Camera {
     let params = CameraParameters {
-        aspect_ratio: 4.0 / 3.0,
+        aspect_ratio: 16. / 9.0,
         image_width,
         look_from: Point3::new(0., 6., 9.),
-        look_at: Point3::new(0., 0., -1.),
+        look_at: Point3::new(0., 1., -1.),
         up: Direction::new(0., 1., 0.),
         focal_distance: 10.,
         defocus_angle_in_degrees: 0.,
@@ -52,10 +52,10 @@ fn make() -> HittableList {
     let metal_1 = Arc::new(Metal::new(Color::new(0.1, 0.2, 0.5), 0.5));
     let glass = Arc::new(Dielectric::new(1.5));
     let metal_2 = Arc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.1));
-    let light_material = Arc::new(Light::new(Color::new(4., 4., 1.)));
+    let light_material = Arc::new(Light::new(Color::new(2., 2., 1.)));
 
     let ground = Box::new(Plane::new(
-        Point3::new(0., 0., 0.),
+        Point3::new(0., -0.5, 0.),
         Direction::new(0., 1., 0.),
         water,
     ));

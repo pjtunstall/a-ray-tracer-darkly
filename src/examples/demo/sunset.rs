@@ -15,7 +15,7 @@ pub fn render(max_depth: usize, samples_per_pixel: usize, image_width: u32) -> i
     let camera = set_up_camera(image_width);
     camera.render(
         &world,
-        PathBuf::from("demo").join("light"),
+        PathBuf::from("demo").join("sunset"),
         max_depth,
         samples_per_pixel,
         background,

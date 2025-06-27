@@ -1,6 +1,6 @@
 # A Ray Tracer Darkly
 
-![Composite image of various solids.](images/png/combo.png)
+![Composite image of various solids.](images/png/various.png)
 
 - [Overview](#overview)
 - [Usage](#usage)
@@ -74,8 +74,6 @@ See below for a more detailed [guide](#guide) on how to use the library.
   - Dielectric (reflective and refractive)
   - Light (light-emitting)
 
-![Spheres made of various materials on a green plane like a snooker table.](images/png/spheres.png)
-
 ## Guide
 
 Here is a guide to using the library. We'll draw a scene with some objects. They'll be saved in PPM (portable pixmap) format. Search for PPM viewers. There are several VS Code extensions.
@@ -85,11 +83,7 @@ Here is a guide to using the library. We'll draw a scene with some objects. They
 First, we'll need to set up a camera.
 
 ```rust
-fn main() -> {
-    let camera = set_up_camera();
-}
-
-fn set_up_camera() {
+fn set_up_camera() -> Camera {
     let params = CameraParameters {
         aspect_ratio: 4.0 / 3.0,
         image_width: 400,
@@ -137,7 +131,7 @@ And here it all is in context. There's a lot of info in this next snippet, so fe
 
 ```rust
 use std::{io, path::PathBuf, sync::Arc}; // `PathBuf` to write the file, `io` to handle errors.
-                                         // `Arc` for shared ownership and with thread-safety.
+                                         // `Arc` for shared ownership with thread-safety.
 use rand::{Rng, SeedableRng, rngs::SmallRng};
 
 use rt::{
@@ -149,7 +143,10 @@ use rt::{
   vec3::{Direction, Point3}
 }
 
-fn main() -> io::Result<()> { // ... because writing to a file is fallible.
+fn main() -> io::Result<()> { // Alias for `Result<(), std::io::Error>`; because writing to a
+                              // file is fallible. If there's an error, the question mark at
+                              // after the call to `camera.render` propagates any I/O error.
+                              // The program will panic and the error message is printed.
   let camera = set_up_camera();
   let world = create_world();
   let background = sky;
@@ -161,7 +158,7 @@ fn main() -> io::Result<()> { // ... because writing to a file is fallible.
   // differences.
   let max_depth = 50;
 
-  // To compansate for the discreteness of pixels, we take samples from the area surrounding
+  // To compensate for the discreteness of pixels, we take samples from the area surrounding
   // the pixel and average the resulting light (color) values together.  Higher values (more
   // samples) give a smoother, less pixelated look.
   let samples_per_pixel = 10;
@@ -182,7 +179,7 @@ fn main() -> io::Result<()> { // ... because writing to a file is fallible.
         brightness,
     )?;
 
-    Ok(())
+    Ok(()) // If we reach this line, no I/O error occurred, so we return an `Ok` result.
 }
 
 // The background function could be more complex, but here we just return a constant color.
@@ -344,28 +341,28 @@ There are four materials, represented by the `Material` trait.
 
 `Dielectric` is for clear materials like glass or water. Light rays are both reflected and refracted (bent as they enter the material). The refractive index is relative. Thus set it to 1.5 for a glass object in air, and 1/1.5 for an air bubble embedded in glass. Water in air is 1.33. Other values are easily looked up.
 
-`Light` is for light-emiting materials. The components of the `Color` passed to `Light::new` should be greater than 1.0. In their example in _Ray Tracing: The Next Week_, Shirley et al. set them all to 4.0, and just say, "This allows it to be bright enough to light things."
+`Light` is for light-emiting materials. The components of the `Color` passed to `Light::new` should be greater than 1.0. In their example in _Ray Tracing: The Next Week_, Shirley et al. set them all to 4.0. They say, "This allows it to be bright enough to light things."
 
 ### Image quality parameters
 
-Two parameters determine image quality. Higher values increase image quality at the cost time to produce.
+Two parameters determine image quality. Higher values increase image quality, but the image takes longer to render. This is especially noticeable in more complex scenes.
 
 `max_depth` is the maximum number of recursions before we stop calculating the contribution each collision of a light ray makes to the color of the pixel. In scenes dominated by indirect lighting,
 it contributes to realism: deeper soft shadows, color bleeding, subtle ambient effects. For scenes dominated by direct lighting, raising the depth beyond 1–2 may not show obvious differences.
 
-To compansate for the discreteness of pixels, we take samples from the area surrounding the pixel and average the resulting light (color) values together. `samples_per_pixel` is the number of such samoles taken. Higher values (more samples) give a smoother, less pixelated look.
+To compensate for the discreteness of pixels, we take samples from the area surrounding the pixel and average the resulting light (color) values together. `samples_per_pixel` is the number of such samoles taken. Higher values (more samples) give a smoother, less pixelated look.
 
 ## Converting images to PNG, JPG, etc.
 
 This is simple with a tool like ImageMagic.
 
 ```sh
-convert image.ppm image.png
+convert path/to/where-the-ppm-lives/image.ppm path/to/where-you-want-to-save-the-png/image.png
 ```
 
 ### vec3
 
-The `vec3` module exposes various linear algebra operations for manipulating the `Point3` and `Direction` types, including addition, scalar multiplication, dot and cross products. You might find it worth a look. There's also a `near_zero` method to check if a vector is so close to zero that it can't reliably be assumed to be nonzero due to floating-point imprecision. Components of both types can be accessed either via their `x`, `y`, and `z` fields or by indexing and iteration, as in, for example these two equivalent versions of the `Cube` method to change basis from cube coordinates to world coordinates.
+The `vec3` module exposes various linear algebra operations for manipulating the `Point3` and `Direction` types, including addition, scalar multiplication, dot and cross products. There's also a `near_zero` method to check if a vector is so close to zero that it can't reliably be assumed to be nonzero due to floating-point imprecision. Components of both types can be accessed either via their `x`, `y`, and `z` fields or by indexing and iteration, as in, for example these two equivalent versions of the `Cube` method to change basis from cube coordinates to world coordinates.
 
 The simple way:
 

@@ -10,17 +10,17 @@ fn main() -> io::Result<()> {
     // examples::book::random_spheres::render(50, 500)?;
 
     // // Some custom examples I made.
-    // examples::demo::cubes::render(10, 10, 800)?;
-    // examples::demo::combo::render(10, 10, 800)?;
-    examples::demo::light::render(10, 300, 800)?;
+    // examples::demo::this_floating_world::render(10, 500, 800)?;
+    // examples::demo::combo::render(10, 500, 800)?;
+    // examples::demo::sunset::render(10, 500, 800)?;
 
-    // // These are the scenes I created to meet the requirements of the 01Founders project.
-    // let max_depth = 50;
-    // let samples_per_pixel = 50;
-    // let image_width = 800;
-    // examples::audit::sphere_scene::render(max_depth, samples_per_pixel, image_width)?;
-    // examples::audit::cube_and_plane::render(max_depth, samples_per_pixel, image_width)?;
-    // examples::audit::various_x2::render(max_depth, samples_per_pixel, image_width)?;
+    // These are the scenes I created to meet the requirements of the 01Founders project.
+    let max_depth = 50;
+    let samples_per_pixel = 500;
+    let image_width = 800;
+    examples::audit::sphere_scene::render(max_depth, samples_per_pixel, image_width)?; // A scene with a sphere.
+    examples::audit::cube_and_plane::render(max_depth, samples_per_pixel, image_width)?; // A cube and plane, darker than the previous image.
+    examples::audit::various_x2::render(max_depth, samples_per_pixel, image_width)?; // Two scenes from different points of view with a plane, a sphere, a cube. and a cylinder.
 
     Ok(())
 }

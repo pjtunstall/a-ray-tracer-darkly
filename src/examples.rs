@@ -1,7 +1,7 @@
 pub mod demo {
     pub mod combo;
-    pub mod cubes;
-    pub mod light;
+    pub mod sunset;
+    pub mod this_floating_world;
 }
 pub mod book {
     pub mod dull_metal;

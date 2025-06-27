@@ -138,7 +138,7 @@ use rt::{
   camera::{Camera, CameraParams};
   color::Color,
   hittables::{HittableList, plane::Plane}, // Hittables are visible objects, such as a plane.
-  material::Lambertian, // Lambertian is an opaque, nonreflective material, defined by its color.
+  materials::Lambertian, // Lambertian is an opaque, nonreflective material, defined by its color.
   ray::Ray, // Rays extending from the camera, back through each pixel, into the scene.
   vec3::{Direction, Point3}
 }
@@ -198,7 +198,7 @@ fn create_world() -> HittableList {
 
 ### Shapes
 
-Shapes are represented by the `Hittable` trait. (Trait is Rust's name for an interface.)
+Shapes are represented by the `Hittable` trait. (Trait is Rust's name for an interface.) Specific shapes belong to their own submodules of the `hittable` module, so import them with `use hittables::plane::Plane` etc. Materials belong directly to the `materials` module. Import them with `use materials::Metal` etc. (See [Materials](#materials).)
 
 #### Plane
 

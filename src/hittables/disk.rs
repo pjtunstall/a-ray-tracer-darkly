@@ -3,7 +3,7 @@ use std::sync::Arc;
 use crate::{
     hittables::{HitRecord, Hittable},
     interval::Interval,
-    material::Material,
+    materials::Material,
     ray::Ray,
     vec3::{Direction, Point3},
 };

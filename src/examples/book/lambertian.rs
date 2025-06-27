@@ -1,7 +1,10 @@
 use std::sync::Arc;
 
 use crate::{
-    color::Color, hittables::{HittableList, sphere::Sphere}, material::Lambertian, vec3::Point3,
+    color::Color,
+    hittables::{HittableList, sphere::Sphere},
+    materials::Lambertian,
+    vec3::Point3,
 };
 
 pub fn make() -> HittableList {

@@ -7,7 +7,7 @@ use crate::{
     hittables::{
         HittableList, cube::Cube, cylinder::Cylinder, disk::Disk, quad::Quad, sphere::Sphere,
     },
-    material::{Dielectric, Lambertian, Metal},
+    materials::{Dielectric, Lambertian, Metal},
     vec3::{Basis, Direction, Point3},
 };
 

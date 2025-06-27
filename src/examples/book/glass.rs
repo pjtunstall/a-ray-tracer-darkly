@@ -3,7 +3,7 @@ use std::sync::Arc;
 use crate::{
     color::Color,
     hittables::{HittableList, sphere::Sphere},
-    material::{Dielectric, Lambertian, Metal},
+    materials::{Dielectric, Lambertian, Metal},
     vec3::Point3,
 };
 

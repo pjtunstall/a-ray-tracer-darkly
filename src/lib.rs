@@ -5,7 +5,7 @@ pub mod file;
 pub mod hittables;
 pub mod image;
 pub mod interval;
-pub mod material;
+pub mod materials;
 pub mod progress;
 pub mod ray;
 pub mod vec3;

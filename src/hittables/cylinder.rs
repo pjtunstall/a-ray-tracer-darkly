@@ -2,7 +2,7 @@ use std::sync::Arc;
 
 use crate::{
     hittables::{disk::Disk, tube::Tube},
-    material::Material,
+    materials::Material,
     vec3::{Direction, Point3},
 };
 

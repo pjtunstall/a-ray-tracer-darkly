@@ -8,7 +8,7 @@ pub mod tube;
 
 use std::sync::Arc;
 
-use crate::{interval::Interval, material::Material, ray::Ray, vec3::Direction};
+use crate::{interval::Interval, materials::Material, ray::Ray, vec3::Direction};
 
 pub struct HitRecord {
     pub point: crate::vec3::Point3,

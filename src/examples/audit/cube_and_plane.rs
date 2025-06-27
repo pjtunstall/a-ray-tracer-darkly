@@ -4,7 +4,7 @@ use crate::{
     camera::{Camera, CameraParameters},
     color::{self, Color},
     hittables::{HittableList, cube::Cube, plane::Plane},
-    material::Metal,
+    materials::Metal,
     ray::Ray,
     vec3::{Basis, Direction, Point3},
 };

@@ -5,7 +5,7 @@ use crate::{
     color::Color,
     examples,
     hittables::{HittableList, sphere::Sphere},
-    material::{Dielectric, Lambertian, Metal},
+    materials::{Dielectric, Lambertian, Metal},
     vec3::{Direction, Point3},
 };
 

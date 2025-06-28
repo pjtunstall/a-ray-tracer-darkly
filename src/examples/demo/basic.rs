@@ -29,14 +29,14 @@ pub fn render(max_depth: usize, samples_per_pixel: usize, image_width: u32) -> i
 }
 
 fn sky(_ray: &Ray) -> Color {
-    Color::new(2.0, 3.0, 8.0)
+    Color::new(0.8, 0.8, 0.9)
 }
 
 fn set_up_camera(image_width: u32) -> Camera {
     let params = CameraParameters {
         aspect_ratio: 16.0 / 9.0,
         image_width,
-        look_from: Point3::new(0.0, 0.25, 4.0),
+        look_from: Point3::new(0.0, 0.2, 4.0),
         look_at: Point3::new(0.0, 0.0, -1.0),
         up: Direction::new(0.0, 1.0, 0.0),
         focal_distance: 10.0,
@@ -48,7 +48,7 @@ fn set_up_camera(image_width: u32) -> Camera {
 }
 
 fn create_world() -> HittableList {
-    let ground_color = Color::new(0.4, 0.2, 2.0);
+    let ground_color = Color::new(0.5, 0.5, 0.5);
     let ground_material = Arc::new(Lambertian::new(ground_color));
     let plane = Plane::new(
         Point3::new(0.0, -0.5, 0.0),
@@ -57,7 +57,7 @@ fn create_world() -> HittableList {
     );
     let ground = Box::new(plane);
 
-    let sphere_color = Color::new(0.8, 0.1, 0.1);
+    let sphere_color = Color::new(0.8, 0.4, 0.4);
     let sphere_material = Arc::new(Lambertian::new(sphere_color));
     let center = Point3::new(0.0, 0.0, -2.5);
     let radius = 0.5;

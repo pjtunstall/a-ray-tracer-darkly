@@ -3,7 +3,10 @@ use std::{io, path::PathBuf, sync::Arc};
 use crate::{
     camera::{Camera, CameraParameters},
     color::{self, Color},
-    hittables::{HittableList, cube::Cube, plane::Plane, sphere::Sphere},
+    hittables::{
+        HittableList, cube::Cube, cylinder::Cylinder, plane::Plane, sphere::Sphere,
+        volumes::ConstantMedium,
+    },
     materials::{Dielectric, Light, Metal},
     ray::Ray,
     vec3::{Basis, Direction, Point3},
@@ -59,44 +62,60 @@ fn make() -> HittableList {
         Direction::new(0., 1., 0.),
         water,
     ));
-    let light = Box::new(Sphere::new(Point3::new(0., 1., -2.), 0.2, light_material));
+    let light = Box::new(Sphere::new(Point3::new(0., 1., -5.), 0.2, light_material));
     let center = Box::new(Cube::new_oriented(
-        Point3::new(0.0, 0., -1.),
+        Point3::new(0., 0., -1.),
         0.3,
         &Basis::new_orthonormal(),
         glass.clone(),
     ));
-    let inner = Box::new(Cube::new_oriented(
-        Point3::new(0.0, 0., -1.),
-        0.2,
-        &Basis::new_orthonormal(),
-        glass.clone(),
-    ));
-    let inmost = Box::new(Cube::new_oriented(
-        Point3::new(0.0, 0., -1.),
-        0.1,
-        &Basis::new_orthonormal(),
-        metal_2.clone(),
-    ));
-
-    let orientation = Basis::new_orthonormal();
     let left = Box::new(Cube::new_oriented(
         Point3::new(-1., 0., -1.),
         0.2,
-        &orientation,
-        metal_1.clone(),
+        &Basis::new_orthonormal(),
+        metal_1,
     ));
+    let right = Box::new(Sphere::new(Point3::new(1., 0., -1.), 0.5, metal_2));
 
-    let right = Box::new(Sphere::new(Point3::new(1., 0., -1.), 0.5, metal_2.clone()));
+    let Cylinder { tube, top, bottom } = Cylinder::new(
+        Point3::new(-0.2, 0., -2.0),
+        Direction::new(0., 0.7, 0.),
+        0.3,
+        glass.clone(),
+        glass.clone(),
+        glass.clone(),
+    );
+    let mut cylinder = HittableList::new();
+    cylinder.add(tube);
+    cylinder.add(top);
+    cylinder.add(bottom);
+    let boundary = Arc::new(cylinder);
+
+    let density = 0.5;
+    let smoke_color = Color::new(0.8, 0.8, 0.9);
+    let smoke = Box::new(ConstantMedium::new(boundary.clone(), density, smoke_color));
+
+    let Cylinder { tube, top, bottom } = Cylinder::new(
+        Point3::new(-0.2, 0., -2.0),
+        Direction::new(0., 0.7, 0.),
+        0.3,
+        glass.clone(),
+        glass.clone(),
+        glass,
+    );
+    let mut cylinder = HittableList::new();
+    cylinder.add(tube);
+    cylinder.add(top);
+    cylinder.add(bottom);
 
     let mut world = HittableList::new();
     world.add(ground);
     world.add(center);
     world.add(left);
     world.add(right);
-    world.add(inner);
-    world.add(inmost);
     world.add(light);
+    world.add(Box::new(cylinder));
+    world.add(smoke);
 
     world
 }

@@ -87,7 +87,7 @@ fn set_up_camera() -> Camera {
     let params = CameraParameters {
         aspect_ratio: 16.0 / 9.0,
         image_width: 800,
-        look_from: Point3::new(0.0, 1.0, 4.0), // x: right, y: up, z: backwards, relative to
+        look_from: Point3::new(0.0, 0.2, 4.0), // x: right, y: up, z: backwards, relative to
         look_at: Point3::new(0.0, 0.0, -1.0), // the direction the camera is looking.
         up: Direction::new(0.0, 1.0, 0.0),
         focal_distance: 10.0,
@@ -105,7 +105,7 @@ Now let's create a world with an infinite plane. Here's our world-building funct
 
 ```rust
 fn create_world() -> HittableList {
-    let ground_color = Color::new(0.4, 0.2, 0.2); // RGB.
+    let ground_color = Color::new(0.4, 0.2, 0.2); // RGB in the range [0.0, 1.0].
     let ground_material = Arc::new(Lambertian::new(ground_color));
     let plane = Plane::new(
         Point3::new(0.0, -0.5, 0.0),   // An arbitrary origin for plane coordinates.
@@ -127,11 +127,12 @@ A `Hittable` is a visible object, so called because it's "hittable" by light ray
 
 ### World and plane in context
 
-And here it all is in context. There's a lot of info in this next snippet, so feel free to skip some and come back to it later.
+And here it all is in context. There's a lot of info in this next snippet, so feel free to skip some and come back to it later. The full example (plane together with a [sphere from the next section](#sphere)) can be found in `examples/demo/basic.rs`. To try it, uncomment the corresponding line in `main.rs` and run `cargo run --release`. Note that, in `basic.rs`, the import statements refer to the library as `crate` because `basic.rs` itself belongs to the library. If you're importing items into a separate crate, you should refer to it as `rt`, as in the snippets below.
 
 ```rust
-use std::{io, path::PathBuf, sync::Arc}; // `PathBuf` to write the file, `io` to handle errors.
-                                         // `Arc` for shared ownership with thread-safety.
+// `PathBuf` to write the file, `io` to handle errors.
+// `Arc` for shared ownership with thread-safety.
+use std::{io, path::PathBuf, sync::Arc};
 
 use rt::{
   camera::{Camera, CameraParameters},
@@ -171,7 +172,7 @@ fn main() -> io::Result<()> { // Alias for `Result<(), std::io::Error>`; because
 
   camera.render(
         &world,
-        PathBuf::from("demo").join("plane"), // Where the image will be saved.
+        PathBuf::from("demo").join("basic"), // Where the image will be saved.
         max_depth,
         samples_per_pixel,
         background, // A function of the form `fn(&Ray) -> Color`.
@@ -183,7 +184,7 @@ fn main() -> io::Result<()> { // Alias for `Result<(), std::io::Error>`; because
 
 // The background function could be more complex, but here we just return a constant color.
 fn sky(_ray: &Ray) -> Color {
-    Color::new(2.0, 3.0, 8.0)
+    Color::new(0.8, 0.8, 0.9)
 }
 
 fn set_up_camera() {
@@ -238,7 +239,7 @@ fn create_world() -> HittableList {
     // Create plane as before.
     // ...
 
-    let sphere_color = Color::new(0.4, 0.2, 0.2);
+    let sphere_color = Color::new(0.8, 0.4, 0.4);
     let sphere_material = Arc::new(Lambertian::new(sphere_color));
     let center = Point3::new(0.0, 0.0, -2.5);
     let radius = 0.5;
@@ -260,11 +261,11 @@ And that's the essence of it. To add other shapes, you just need to know the par
 
 #### Quad
 
-A quad is a parallelogram, defined by a point, a pair of direction vectors (representing the sides of the parallelogram), and a material.
+A quad is a parallelogram, defined by a point, a pair of direction vectors (representing the sides of the parallelogram), and a material. Import it with `use hittables::quad::Quad;`, and similarly for other shapes.
 
 ```rust
 let quad = Box::new(Quad::new(
-    Point3::new(0.5, 0.2, -1.),     // A corner.
+    Point3::new(0.5, 0.2, -1.), // A corner.
     Direction::new(1., 0., -1.),
     Direction::new(0., 1., 0.),
     quad_material,

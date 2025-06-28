@@ -385,9 +385,7 @@ Internally, it makes itself consist of a pseudo `Material` called `Isotropic`.
 
 Shirley et al. note that their code (on which mine is based)
 
-> assumes that once a ray exits the constant medium boundary, it will continue forever outside the boundary. Put another way, it assumes that the boundary shape is convex. So this particular implementation will work for boundaries like boxes or spheres, but will not work with toruses or shapes that contain voids.
-
--- [Ray Tracing: The Next Week](https://raytracing.github.io/books/RayTracingTheNextWeek.html#volumes)
+> assumes that once a ray exits the constant medium boundary, it will continue forever outside the boundary. Put another way, it assumes that the boundary shape is convex. So this particular implementation will work for boundaries like boxes or spheres, but will not work with toruses or shapes that contain voids. -- [Ray Tracing: The Next Week](https://raytracing.github.io/books/RayTracingTheNextWeek.html#volumes)
 
 ### Image quality parameters
 

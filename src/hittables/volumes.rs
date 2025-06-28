@@ -12,9 +12,9 @@ use crate::{
 };
 
 pub struct ConstantMedium {
-    boundary: Arc<dyn Hittable>,
+    boundary: Arc<dyn Hittable>, // Assumed to be convex!
     negative_inverse_density: f64,
-    phase_function: Arc<Isotropic>, // a material
+    phase_function: Arc<Isotropic>, // `Isotropic` as a `Material`.
 }
 
 impl ConstantMedium {

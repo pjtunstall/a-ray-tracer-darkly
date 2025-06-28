@@ -248,7 +248,7 @@ fn create_world() -> HittableList {
     let sphere = Arc::new(Sphere::new(
         center,
         radius,
-        sphere_material.clone(),
+        sphere_material,
     ));
 
     let mut world = HittableList::new();
@@ -369,7 +369,7 @@ There are four materials, represented by the `Material` trait.
 
 ### Particles
 
-At present, the library provides just one sort of diffuse/particulate object, `hittables::volumes::ComstantMedium`. (Such objects are sometimes called "volumes" or "participating media".) This is defined by shape, color, and density.
+At present, the library provides just one sort of diffuse/particulate object, `hittables::volumes::ConstantMedium`. (Such objects are sometimes called "volumes" or "participating media".) This is defined by a shape (representing the boundary of the diffuse object), color, and density.
 
 ```rust
 let density = 0.3;
@@ -382,6 +382,12 @@ let smoke = Arc::new(ConstantMedium::new(
 ```
 
 Internally, it makes itself consist of a pseudo `Material` called `Isotropic`.
+
+Shirley et al. note that their code (on which mine is based)
+
+> assumes that once a ray exits the constant medium boundary, it will continue forever outside the boundary. Put another way, it assumes that the boundary shape is convex. So this particular implementation will work for boundaries like boxes or spheres, but will not work with toruses or shapes that contain voids.
+
+-- [Ray Tracing: The Next Week](https://raytracing.github.io/books/RayTracingTheNextWeek.html#volumes)
 
 ### Image quality parameters
 

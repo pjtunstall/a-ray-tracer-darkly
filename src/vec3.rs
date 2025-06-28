@@ -342,11 +342,17 @@ mod tests {
     #[test]
     fn test_new_orthonormal() {
         let basis = Basis::new_orthonormal();
+
         let x = basis.x;
         let y = basis.y;
         let z = basis.z;
+
         assert!((x.dot(&y)).abs() < TOLERANCE);
         assert!((x.dot(&z)).abs() < TOLERANCE);
         assert!((y.dot(&z)).abs() < TOLERANCE);
+
+        assert!(x.length() - 1.0 < TOLERANCE);
+        assert!(y.length() - 1.0 < TOLERANCE);
+        assert!(z.length() - 1.0 < TOLERANCE);
     }
 }

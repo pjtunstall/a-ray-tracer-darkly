@@ -5,6 +5,6 @@
 - Allow Disk to be made either from normal or spanning vectors of plane.
 - Tidy names of items in world in `various.rs`.
 - Implement indexing and iteration for `Color`.
-- When texture is implemented, look again at `isotropic` and add attentuation.
+- When texture is implemented, look again at `Isotropic` and add attentuation.
 - Distinguish phase functions as a special sort of `Material`, by analogy with how `ConstantMedium` belongs to the submodule `volumes` of `hittables`?
 - Make submodules for each `Material`.

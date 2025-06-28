@@ -1,4 +1,5 @@
 pub mod demo {
+    pub mod basic;
     pub mod combo;
     pub mod sunset;
     pub mod this_floating_world;

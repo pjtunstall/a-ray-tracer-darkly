@@ -85,8 +85,8 @@ First, we'll need to set up a camera.
 ```rust
 fn set_up_camera() -> Camera {
     let params = CameraParameters {
-        aspect_ratio: 4.0 / 3.0,
-        image_width: 400,
+        aspect_ratio: 16.0 / 9.0,
+        image_width: 800,
         look_from: Point3::new(0.0, 1.0, 4.0), // x: right, y: up, z: backwards, relative to
         look_at: Point3::new(0.0, 0.0, -1.0), // the direction the camera is looking.
         up: Direction::new(0.0, 1.0, 0.0),
@@ -105,7 +105,7 @@ Now let's create a world with an infinite plane. Here's our world-building funct
 
 ```rust
 fn create_world() -> HittableList {
-    let ground_color = Color::new(0.4, 0.6, 0.); // RGB.
+    let ground_color = Color::new(0.4, 0.2, 0.2); // RGB.
     let ground_material = Arc::new(Lambertian::new(ground_color));
     let plane = Plane::new(
         Point3::new(0.0, -0.5, 0.0),   // An arbitrary origin for plane coordinates.
@@ -132,16 +132,15 @@ And here it all is in context. There's a lot of info in this next snippet, so fe
 ```rust
 use std::{io, path::PathBuf, sync::Arc}; // `PathBuf` to write the file, `io` to handle errors.
                                          // `Arc` for shared ownership with thread-safety.
-use rand::{Rng, SeedableRng, rngs::SmallRng};
 
 use rt::{
-  camera::{Camera, CameraParams};
+  camera::{Camera, CameraParameters},
   color::Color,
   hittables::{HittableList, plane::Plane}, // Hittables are visible objects, such as a plane.
   materials::Lambertian, // Lambertian is an opaque, nonreflective material, defined by its color.
   ray::Ray, // Rays extending from the camera, back through each pixel, into the scene.
   vec3::{Direction, Point3}
-}
+};
 
 fn main() -> io::Result<()> { // Alias for `Result<(), std::io::Error>`; because writing to a
                               // file is fallible. If there's an error, the question mark at
@@ -231,16 +230,19 @@ As with the normal vector, spanning vectors mustn't be zero. In fact, for practi
 Oh, the infinite plane is boring. Let's put a sphere on it.
 
 ```rust
+use rt::{
+    hittables::sphere::Sphere;
+}
+
 fn create_world() -> HittableList {
     // Create plane as before.
     // ...
 
-    let sphere_color = Color::new(0.8, 0.8, 0.8);
-    let sphere_material = Arc::new(Metal::new(sphere_color, 0.0)); // That last value is the fuzziness.
-                                                                   // Zero means maximum shine.
+    let sphere_color = Color::new(0.4, 0.2, 0.2);
+    let sphere_material = Arc::new(Lambertian::new(sphere_color));
     let center = Point3::new(0.0, 0.0, -2.5);
     let radius = 0.5;
-    let center = Box::new(Sphere::new(
+    let sphere = Box::new(Sphere::new(
         center,
         radius,
         sphere_material.clone(),
@@ -335,7 +337,7 @@ There are four materials, represented by the `Material` trait.
 - `Dielectric`: `Dielectric::new` takes a refractive index (`f64`).
 - `Light`: `Light::new` takes a `Color`.
 
-`Lambertian` represents materials with opaque, matt surfaces. A `Color` is defined by `Color::new`, which takes three `f64` values for red, green, and blue. These can be accessed via the `r`, `g`, and `b` fields. These components should be set in the range [0.0, 1.0]. They can be given higher values, but will be clamped before printing.
+`Lambertian` represents materials with opaque, matt surfaces. A `Color` is defined by `Color::new`, which takes three `f64` values for red, green, and blue. These can be accessed via the `r`, `g`, and `b` fields. These components should be set in the range [0.0, 1.0]. They can be given higher values, but will be clamped before writing the color to a file.
 
 `Metal`s are reflective. Fuzziness is an `f64` in the range [0.0, 1.0]. Set it to 0.0 for a perfect mirror, 1.0 for dull metal. The same rules for `Color` apply as for `Lambertian`.
 

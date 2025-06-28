@@ -14,7 +14,7 @@ use crate::{
 pub struct ConstantMedium {
     boundary: Arc<dyn Hittable>,
     negative_inverse_density: f64,
-    phase_function: Arc<Isotropic>,
+    phase_function: Arc<Isotropic>, // a material
 }
 
 impl ConstantMedium {
@@ -29,31 +29,24 @@ impl ConstantMedium {
 
 impl Hittable for ConstantMedium {
     fn hit(&self, ray: &Ray, ray_t: &Interval, rng: &mut SmallRng) -> Option<HitRecord> {
-        let rec1 = self.boundary.hit(ray, &Interval::FULL, rng)?;
-        let rec2 = self
-            .boundary
-            .hit(ray, &Interval::new(rec1.t + 0.0001, f64::INFINITY), rng)?;
+        let record_1 = self.boundary.hit(ray, &Interval::FULL, rng)?; // entry
+        let record_2 =
+            self.boundary
+                .hit(ray, &Interval::new(record_1.t + 0.0001, f64::INFINITY), rng)?; // exit
 
-        let mut t1 = rec1.t;
-        let mut t2 = rec2.t;
+        let mut t1 = record_1.t;
+        let mut t2 = record_2.t;
 
-        if t1 < ray_t.min {
-            t1 = ray_t.min;
-        }
-        if t2 > ray_t.max {
-            t2 = ray_t.max;
-        }
+        t1 = t1.max(ray_t.min);
+        t2 = t2.min(ray_t.max);
 
         if t1 >= t2 {
             return None;
         }
 
-        if t1 < 0.0 {
-            t1 = 0.0;
-        }
+        t1 = t1.max(0.0);
 
-        let ray_length = ray.direction.length();
-        let distance_inside_boundary = (t2 - t1) * ray_length;
+        let distance_inside_boundary = t2 - t1;
 
         let u: f64 = rng.random_range(0.0..1.0);
         let hit_distance = self.negative_inverse_density * u.ln();
@@ -62,7 +55,7 @@ impl Hittable for ConstantMedium {
             return None;
         }
 
-        let t = t1 + hit_distance / ray_length;
+        let t = t1 + hit_distance;
         let point = ray.at(t);
 
         Some(HitRecord {

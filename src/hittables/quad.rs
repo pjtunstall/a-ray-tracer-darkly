@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use rand::rngs::SmallRng;
+
 use crate::{
     hittables::{HitRecord, Hittable},
     interval::Interval,
@@ -44,7 +46,7 @@ impl Quad {
 }
 
 impl Hittable for Quad {
-    fn hit(&self, ray: &Ray, ray_t: &Interval) -> Option<HitRecord> {
+    fn hit(&self, ray: &Ray, ray_t: &Interval, _rng: &mut SmallRng) -> Option<HitRecord> {
         let denominator = self.normal.dot(&ray.direction);
 
         // Return no hit if ray is parallel to the plane.

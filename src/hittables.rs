@@ -5,8 +5,11 @@ pub mod plane;
 pub mod quad;
 pub mod sphere;
 pub mod tube;
+pub mod volumes;
 
 use std::sync::Arc;
+
+use rand::rngs::SmallRng;
 
 use crate::{interval::Interval, materials::Material, ray::Ray, vec3::Direction};
 
@@ -42,12 +45,12 @@ impl HitRecord {
 }
 
 pub trait Hittable: Send + Sync {
-    fn hit(&self, ray: &Ray, ray_t: &Interval) -> Option<HitRecord>;
+    fn hit(&self, ray: &Ray, ray_t: &Interval, rng: &mut SmallRng) -> Option<HitRecord>;
 }
 
 impl<T: Hittable + ?Sized> Hittable for Arc<T> {
-    fn hit(&self, r: &Ray, ray_t: &Interval) -> Option<HitRecord> {
-        (**self).hit(r, ray_t)
+    fn hit(&self, r: &Ray, ray_t: &Interval, rng: &mut SmallRng) -> Option<HitRecord> {
+        (**self).hit(r, ray_t, rng)
     }
 }
 
@@ -66,12 +69,12 @@ impl HittableList {
 }
 
 impl Hittable for HittableList {
-    fn hit(&self, ray: &Ray, ray_t: &Interval) -> Option<HitRecord> {
+    fn hit(&self, ray: &Ray, ray_t: &Interval, rng: &mut SmallRng) -> Option<HitRecord> {
         let mut closest_so_far = ray_t.max;
         let mut option = None;
 
         for object in &self.objects {
-            if let Some(record) = object.hit(ray, &Interval::new(ray_t.min, closest_so_far)) {
+            if let Some(record) = object.hit(ray, &Interval::new(ray_t.min, closest_so_far), rng) {
                 closest_so_far = record.t;
                 option = Some(record);
             }

@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use rand::rngs::SmallRng;
+
 use crate::{
     hittables::{HitRecord, Hittable},
     interval::Interval,
@@ -80,7 +82,7 @@ impl Cube {
 }
 
 impl Hittable for Cube {
-    fn hit(&self, ray: &Ray, ray_t: &Interval) -> Option<HitRecord> {
+    fn hit(&self, ray: &Ray, ray_t: &Interval, _rng: &mut SmallRng) -> Option<HitRecord> {
         let local_origin = self.world_to_local(&ray.origin);
         let local_direction = self.direction_to_local(&ray.direction);
 

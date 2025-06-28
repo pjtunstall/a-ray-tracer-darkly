@@ -5,3 +5,4 @@
 - Allow Disk to be made either from normal or spanning vectors of plane.
 - Tidy names of items in world in `various.rs`.
 - Implement indexing and iteration for `Color`.
+- When texture is implemented, look again at `isotropic` and add attentuation.

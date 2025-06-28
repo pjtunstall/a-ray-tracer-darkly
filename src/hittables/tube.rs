@@ -1,5 +1,7 @@
 use std::sync::Arc;
 
+use rand::rngs::SmallRng;
+
 use crate::{
     hittables::{HitRecord, Hittable},
     interval::Interval,
@@ -36,7 +38,7 @@ impl Tube {
 }
 
 impl Hittable for Tube {
-    fn hit(&self, ray: &Ray, ray_t: &Interval) -> Option<HitRecord> {
+    fn hit(&self, ray: &Ray, ray_t: &Interval, _rng: &mut SmallRng) -> Option<HitRecord> {
         let origin_to_center = ray.origin - self.center_of_base;
         let axis = self.axis;
 

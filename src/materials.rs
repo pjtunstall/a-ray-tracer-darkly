@@ -168,3 +168,27 @@ impl Light {
         Light { color }
     }
 }
+
+pub struct Isotropic {
+    albedo: Color,
+}
+
+impl Isotropic {
+    pub fn new(albedo: Color) -> Self {
+        Self { albedo }
+    }
+}
+
+impl Material for Isotropic {
+    fn scatter(
+        &self,
+        _incident_ray: &Ray,
+        point: &Point3,
+        _normal: &Direction,
+        _front_face: bool,
+        rng: &mut SmallRng,
+    ) -> Option<(Ray, Color)> {
+        let scattered = Ray::new(*point, Direction::random_unit(rng));
+        Some((scattered, self.albedo.clone()))
+    }
+}

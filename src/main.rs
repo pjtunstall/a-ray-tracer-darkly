@@ -9,7 +9,7 @@ fn main() -> io::Result<()> {
     // // The cover illustration of Ray Tracing in One Weekend, which is bigger than the others and so takes longer. The authors use 500 sampes per pixel for a high-quality image, which will take, as they warn, "quite a while".
     // examples::book::random_spheres::render(50, 500)?;
 
-    // // Some custom examples I made.
+    // // Some demos I made.
     // examples::demo::basic::render(10, 500, 800)?;
     // examples::demo::combo::render(10, 500, 800)?;
     // examples::demo::sunset::render(10, 500, 800)?;

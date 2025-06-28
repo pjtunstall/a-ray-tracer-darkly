@@ -305,7 +305,7 @@ let disk = Arc::new(Disk::new(
 
 #### Tube
 
-A hollow, finite cylinder with no cap. The length of the tune is that of the axis vector.
+A hollow, finite tube. The length of the tube is that of its axis vector.
 
 ```rust
 let tube = Arc::new(Tube::new(
@@ -318,10 +318,10 @@ let tube = Arc::new(Tube::new(
 
 #### Cylinder
 
-Only `Cylinder` is just a bit different. Its constructor returns three shapes: a tube and two disks, representing the top and bottom of the cylinder. Here we destructure the return value into variables for each of these, so that they can be added to the world individually.
+Only `Cylinder` is just a bit different. It's is a composite of three shapes: a tube and two disks (top and bottom). It can be destructured into its parts if you want to access them individually. In that case, they should each be added to the world.
 
 ```rust
-let Cylinder { tube, top, bottom } = Cylinder::new(
+let Cylinder { tube, top, bottom, .. } = Cylinder::new(
     Point3::new(0.2, -0.3, -1.),        // Center of base.
     Direction::new(-0.2, 3., -0.4),     // Axis, specifying length and orientation.
     0.3,                                // Radius.
@@ -329,6 +329,25 @@ let Cylinder { tube, top, bottom } = Cylinder::new(
     top_material,
     bottom_material,
 );
+
+world.add(tube);
+world.add(top);
+world.add(bottom);
+```
+
+Otherwise, you can simply add the whole cylinder as one item.
+
+```rust
+let cylinder = Cylinder::new(
+    Point3::new(0.2, -0.3, -1.),
+    Direction::new(-0.2, 3., -0.4),
+    0.3,
+    tube_material,
+    top_material,
+    bottom_material,
+).whole;
+
+world.add(cylinder);
 ```
 
 ### Materials
@@ -350,7 +369,7 @@ There are four materials, represented by the `Material` trait.
 
 ### Particles
 
-At present, the library provides just one sort of diffuse/particulate object, `hittables::volumes::ComstantMedium`. (Such objects are sometimes called "volumes" or "participating media".) It's defined by shape, color, and density.
+At present, the library provides just one sort of diffuse/particulate object, `hittables::volumes::ComstantMedium`. (Such objects are sometimes called "volumes" or "participating media".) This is defined by shape, color, and density.
 
 ```rust
 let density = 0.3;
@@ -362,7 +381,7 @@ let smoke = Arc::new(ConstantMedium::new(
 ));
 ```
 
-Internally, it makes itself consist of a `Material` called `Isotropic`.
+Internally, it makes itself consist of a pseudo `Material` called `Isotropic`.
 
 ### Image quality parameters
 

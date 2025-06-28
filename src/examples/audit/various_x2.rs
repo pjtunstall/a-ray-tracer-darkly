@@ -98,14 +98,15 @@ fn make_world() -> HittableList {
         material_cube.clone(),
     ));
 
-    let Cylinder { tube, top, bottom } = Cylinder::new(
+    let cylinder = Cylinder::new(
         Point3::new(0.2, -0.3, -1.),
         Direction::new(-0.2, 3., -0.4),
         0.3,
         material_left.clone(),
         glass.clone(),
         glass.clone(),
-    );
+    )
+    .whole;
 
     let mut world = HittableList::new();
     world.add(ground);
@@ -113,9 +114,7 @@ fn make_world() -> HittableList {
     world.add(left);
     world.add(right);
     world.add(rightmost);
-    world.add(tube);
-    world.add(top);
-    world.add(bottom);
+    world.add(cylinder);
 
     world
 }

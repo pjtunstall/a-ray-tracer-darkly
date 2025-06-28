@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use crate::{
-    hittables::{disk::Disk, tube::Tube},
+    hittables::{Hittable, HittableList, disk::Disk, tube::Tube},
     materials::Material,
     vec3::{Direction, Point3},
 };
@@ -10,6 +10,7 @@ pub struct Cylinder {
     pub tube: Arc<Tube>,
     pub top: Arc<Disk>,
     pub bottom: Arc<Disk>,
+    pub whole: Arc<dyn Hittable>,
 }
 
 impl Cylinder {
@@ -24,20 +25,26 @@ impl Cylinder {
         assert!(1e-8 < axis.length(), "Axis vector is too small");
         let [u, v] = orthonormal_basis_2d(&axis.normalize());
 
-        let top = Disk::new(
+        let top = Arc::new(Disk::new(
             center_of_base + axis,
             radius,
             u.clone(),
             v.clone(),
             material_top,
-        );
-        let bottom = Disk::new(center_of_base, radius, u, v, material_bottom);
-        let tube = Tube::new(center_of_base, axis, radius, material_tube);
+        ));
+        let bottom = Arc::new(Disk::new(center_of_base, radius, u, v, material_bottom));
+        let tube = Arc::new(Tube::new(center_of_base, axis, radius, material_tube));
+
+        let mut whole = HittableList::new();
+        whole.add(top.clone());
+        whole.add(bottom.clone());
+        whole.add(tube.clone());
 
         Self {
-            tube: Arc::new(tube),
-            top: Arc::new(top),
-            bottom: Arc::new(bottom),
+            tube: tube.clone(),
+            top: top.clone(),
+            bottom: bottom.clone(),
+            whole: Arc::new(whole),
         }
     }
 }

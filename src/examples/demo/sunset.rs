@@ -71,48 +71,34 @@ pub fn make_world() -> HittableList {
         material_rightmost,
     ));
 
-    let Cylinder { tube, top, bottom } = Cylinder::new(
+    let outer_cylinder = Cylinder::new(
         Point3::new(-8., 1., -2.9),
         Direction::new(16., 0., 0.),
         0.5,
         material_ground.clone(),
         material_ground.clone(),
         material_ground.clone(),
-    );
-    let mut cylinder = HittableList::new();
-    cylinder.add(tube);
-    cylinder.add(top);
-    cylinder.add(bottom);
-    let cylinder = Arc::new(cylinder);
-
+    )
+    .whole;
     let density = 0.3;
     let haze_color = Color::new(0., 0., 0.);
-    let haze = Arc::new(ConstantMedium::new(
-        cylinder.clone(),
+    let outer_haze = Arc::new(ConstantMedium::new(
+        outer_cylinder,
         haze_color.clone(),
         density,
     ));
 
-    let Cylinder { tube, top, bottom } = Cylinder::new(
+    let inner_cylinder = Cylinder::new(
         Point3::new(-8., 1., -2.9),
         Direction::new(16., 0., 0.),
         0.3,
         material_ground.clone(),
         material_ground.clone(),
         material_ground.clone(),
-    );
-    let mut cylinder = HittableList::new();
-    cylinder.add(tube);
-    cylinder.add(top);
-    cylinder.add(bottom);
-    let inner_cylinder = Arc::new(cylinder);
-
+    )
+    .whole;
     let density = 0.5;
-    let inner_haze = Arc::new(ConstantMedium::new(
-        inner_cylinder.clone(),
-        haze_color,
-        density,
-    ));
+    let inner_haze = Arc::new(ConstantMedium::new(inner_cylinder, haze_color, density));
 
     let mut world = HittableList::new();
     world.add(ground);
@@ -121,7 +107,7 @@ pub fn make_world() -> HittableList {
     world.add(right);
     world.add(rightmost);
     world.add(light);
-    world.add(haze);
+    world.add(outer_haze);
     world.add(inner_haze);
 
     world

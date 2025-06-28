@@ -14,27 +14,27 @@ pub fn make() -> HittableList {
     let material_bubble = Arc::new(Dielectric::new(1.));
     let material_right = Arc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.));
 
-    let ground = Box::new(Sphere::new(
+    let ground = Arc::new(Sphere::new(
         Point3::new(0., -100.5, -1.),
         100.,
         material_ground.clone(),
     ));
-    let center = Box::new(Sphere::new(
+    let center = Arc::new(Sphere::new(
         Point3::new(0.0, 0., -1.),
         0.5,
         material_center.clone(),
     ));
-    let left = Box::new(Sphere::new(
+    let left = Arc::new(Sphere::new(
         Point3::new(-1., 0., -1.),
         0.5,
         material_left.clone(),
     ));
-    let bubble = Box::new(Sphere::new(
+    let bubble = Arc::new(Sphere::new(
         Point3::new(-1., 0., -1.),
         0.4,
         material_bubble.clone(),
     ));
-    let right = Box::new(Sphere::new(
+    let right = Arc::new(Sphere::new(
         Point3::new(1., 0., -1.),
         0.5,
         material_right.clone(),

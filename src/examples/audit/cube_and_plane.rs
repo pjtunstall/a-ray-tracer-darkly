@@ -53,13 +53,13 @@ fn make_world() -> HittableList {
     let ground_material = Arc::new(Metal::new(ground_color, 0.2));
     let cube_material = Arc::new(Metal::new(cube_color, 0.1));
 
-    let ground = Box::new(Plane::new(
+    let ground = Arc::new(Plane::new(
         Point3::new(0., -0.5, 0.),
         Direction::new(0., 1., 0.),
         ground_material,
     ));
 
-    let cube = Box::new(Cube::new_oriented(
+    let cube = Arc::new(Cube::new_oriented(
         Point3::new(0.0, 0., -5.),
         0.3,
         &Basis::new_orthonormal(),

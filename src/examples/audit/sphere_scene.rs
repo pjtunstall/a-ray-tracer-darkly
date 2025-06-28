@@ -46,15 +46,15 @@ pub fn make_world() -> HittableList {
     let right_material = Arc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.1));
     let rightmost_material = Arc::new(Dielectric::new(1.5));
 
-    let ground = Box::new(Plane::new(
+    let ground = Arc::new(Plane::new(
         Point3::new(0., -0.5, 0.),
         Direction::new(0., 1., 0.),
         ground_material,
     ));
-    let center = Box::new(Sphere::new(Point3::new(0., 0., -2.5), 0.5, center_material));
-    let left = Box::new(Sphere::new(Point3::new(-0.5, 0., -3.), 0.5, left_material));
-    let right = Box::new(Sphere::new(Point3::new(1., 0., -1.5), 0.5, right_material));
-    let rightmost = Box::new(Sphere::new(
+    let center = Arc::new(Sphere::new(Point3::new(0., 0., -2.5), 0.5, center_material));
+    let left = Arc::new(Sphere::new(Point3::new(-0.5, 0., -3.), 0.5, left_material));
+    let right = Arc::new(Sphere::new(Point3::new(1., 0., -1.5), 0.5, right_material));
+    let rightmost = Arc::new(Sphere::new(
         Point3::new(1.3, 0., -0.5),
         0.5,
         rightmost_material,

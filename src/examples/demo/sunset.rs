@@ -3,7 +3,9 @@ use std::{io, path::PathBuf, sync::Arc};
 use crate::{
     camera::{Camera, CameraParameters},
     color::{self, Color},
-    hittables::{HittableList, plane::Plane, sphere::Sphere},
+    hittables::{
+        HittableList, cylinder::Cylinder, plane::Plane, sphere::Sphere, volumes::ConstantMedium,
+    },
     materials::{Dielectric, Lambertian, Light, Metal},
     ray::Ray,
     vec3::{Direction, Point3},
@@ -54,31 +56,62 @@ pub fn make_world() -> HittableList {
     let material_rightmost = Arc::new(Dielectric::new(1.5));
     let material_light = Arc::new(Light::new(Color::new(4., 0.5, 0.)));
 
-    let light = Box::new(Sphere::new(Point3::new(0., 1.5, -2.5), 0.3, material_light));
-    let ground = Box::new(Plane::new(
+    let light = Arc::new(Sphere::new(Point3::new(0., 1.5, -3.0), 0.4, material_light));
+    let ground = Arc::new(Plane::new(
         Point3::new(0., -0.5, 0.),
         Direction::new(0., 1., 0.),
-        material_ground,
+        material_ground.clone(),
     ));
-    let center = Box::new(Sphere::new(
-        Point3::new(0., 0., -2.5),
-        0.5,
-        material_center.clone(),
-    ));
-    let left = Box::new(Sphere::new(
-        Point3::new(-0.5, 0., -3.),
-        0.5,
-        material_left.clone(),
-    ));
-    let right = Box::new(Sphere::new(
-        Point3::new(1., 0., -1.5),
-        0.5,
-        material_right.clone(),
-    ));
-    let rightmost = Box::new(Sphere::new(
+    let center = Arc::new(Sphere::new(Point3::new(0., 0., -2.5), 0.5, material_center));
+    let left = Arc::new(Sphere::new(Point3::new(-0.5, 0., -3.), 0.5, material_left));
+    let right = Arc::new(Sphere::new(Point3::new(1., 0., -1.5), 0.5, material_right));
+    let rightmost = Arc::new(Sphere::new(
         Point3::new(1.3, 0., -0.5),
         0.5,
-        material_rightmost.clone(),
+        material_rightmost,
+    ));
+
+    let Cylinder { tube, top, bottom } = Cylinder::new(
+        Point3::new(-8., 1., -2.9),
+        Direction::new(16., 0., 0.),
+        0.5,
+        material_ground.clone(),
+        material_ground.clone(),
+        material_ground.clone(),
+    );
+    let mut cylinder = HittableList::new();
+    cylinder.add(tube);
+    cylinder.add(top);
+    cylinder.add(bottom);
+    let cylinder = Arc::new(cylinder);
+
+    let density = 0.3;
+    let haze_color = Color::new(0., 0., 0.);
+    let haze = Arc::new(ConstantMedium::new(
+        cylinder.clone(),
+        density,
+        haze_color.clone(),
+    ));
+
+    let Cylinder { tube, top, bottom } = Cylinder::new(
+        Point3::new(-8., 1., -2.9),
+        Direction::new(16., 0., 0.),
+        0.3,
+        material_ground.clone(),
+        material_ground.clone(),
+        material_ground.clone(),
+    );
+    let mut cylinder = HittableList::new();
+    cylinder.add(tube);
+    cylinder.add(top);
+    cylinder.add(bottom);
+    let inner_cylinder = Arc::new(cylinder);
+
+    let density = 0.5;
+    let inner_haze = Arc::new(ConstantMedium::new(
+        inner_cylinder.clone(),
+        density,
+        haze_color,
     ));
 
     let mut world = HittableList::new();
@@ -88,6 +121,8 @@ pub fn make_world() -> HittableList {
     world.add(right);
     world.add(rightmost);
     world.add(light);
+    world.add(haze);
+    world.add(inner_haze);
 
     world
 }

@@ -39,7 +39,7 @@ fn make() -> HittableList {
     let mut world = HittableList::new();
 
     let ground_material = Arc::new(Lambertian::new(Color::new(0.5, 0.5, 0.5)));
-    world.add(Box::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point3::new(0., -1000., 0.),
         1000.,
         ground_material.clone(),
@@ -59,38 +59,38 @@ fn make() -> HittableList {
                     // diffuse
                     let albedo = Color::random(0.0..1.0) * Color::random(0.0..1.0);
                     sphere_material = Arc::new(Lambertian::new(albedo));
-                    world.add(Box::new(Sphere::new(center, 0.2, sphere_material)));
+                    world.add(Arc::new(Sphere::new(center, 0.2, sphere_material)));
                 } else if choose_mat < 0.95 {
                     // metal
                     let albedo = Color::random(0.5..1.0);
                     let fuzz = rand::random_range(0.0..0.5);
                     let sphere_material = Arc::new(Metal::new(albedo, fuzz));
-                    world.add(Box::new(Sphere::new(center, 0.2, sphere_material)));
+                    world.add(Arc::new(Sphere::new(center, 0.2, sphere_material)));
                 } else {
                     // glass
                     let sphere_material = Arc::new(Dielectric::new(1.5));
-                    world.add(Box::new(Sphere::new(center, 0.2, sphere_material)));
+                    world.add(Arc::new(Sphere::new(center, 0.2, sphere_material)));
                 }
             }
         }
     }
 
     let material_1 = Arc::new(Dielectric::new(1.5));
-    world.add(Box::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point3::new(0., 1., 0.),
         1.0,
         material_1.clone(),
     )));
 
     let material_2 = Arc::new(Lambertian::new(Color::new(0.4, 0.2, 0.1)));
-    world.add(Box::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point3::new(-4., 1., 0.),
         1.0,
         material_2.clone(),
     )));
 
     let material_3 = Arc::new(Metal::new(Color::new(0.7, 0.6, 0.5), 0.0));
-    world.add(Box::new(Sphere::new(
+    world.add(Arc::new(Sphere::new(
         Point3::new(4., 1., 0.),
         1.0,
         material_3.clone(),

@@ -55,7 +55,7 @@ impl<T: Hittable + ?Sized> Hittable for Arc<T> {
 }
 
 pub struct HittableList {
-    pub objects: Vec<Box<dyn Hittable>>,
+    pub objects: Vec<Arc<dyn Hittable>>,
 }
 
 impl HittableList {
@@ -63,7 +63,7 @@ impl HittableList {
         Self { objects: vec![] }
     }
 
-    pub fn add(&mut self, object: Box<dyn Hittable>) {
+    pub fn add(&mut self, object: Arc<dyn Hittable>) {
         self.objects.push(object);
     }
 }

@@ -55,13 +55,13 @@ fn create_world() -> HittableList {
         Direction::new(0.0, 1.0, 0.0),
         ground_material,
     );
-    let ground = Box::new(plane);
+    let ground = Arc::new(plane);
 
     let sphere_color = Color::new(0.8, 0.4, 0.4);
     let sphere_material = Arc::new(Lambertian::new(sphere_color));
     let center = Point3::new(0.0, 0.0, -2.5);
     let radius = 0.5;
-    let sphere = Box::new(Sphere::new(center, radius, sphere_material.clone()));
+    let sphere = Arc::new(Sphere::new(center, radius, sphere_material.clone()));
 
     let mut world = HittableList::new();
     world.add(ground);

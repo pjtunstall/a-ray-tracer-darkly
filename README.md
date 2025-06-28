@@ -112,7 +112,7 @@ fn create_world() -> HittableList {
         Direction::new(0.0, 1.0, 0.0), // A vector normal (i.e. at right angles)
         ground_material,               // to the plane. It must be nonzero.
     );
-    let ground = Box::new(plane);
+    let ground = Arc::new(plane);
 
     let mut world = HittableList::new(); // A list of all visible objects.
     world.add(ground);
@@ -243,7 +243,7 @@ fn create_world() -> HittableList {
     let sphere_material = Arc::new(Lambertian::new(sphere_color));
     let center = Point3::new(0.0, 0.0, -2.5);
     let radius = 0.5;
-    let sphere = Box::new(Sphere::new(
+    let sphere = Arc::new(Sphere::new(
         center,
         radius,
         sphere_material.clone(),
@@ -264,7 +264,7 @@ And that's the essence of it. To add other shapes, you just need to know the par
 A quad is a parallelogram, defined by a point, a pair of direction vectors (representing the sides of the parallelogram), and a material. Import it with `use hittables::quad::Quad;`, and similarly for other shapes.
 
 ```rust
-let quad = Box::new(Quad::new(
+let quad = Arc::new(Quad::new(
     Point3::new(0.5, 0.2, -1.), // A corner.
     Direction::new(1., 0., -1.),
     Direction::new(0., 1., 0.),
@@ -277,7 +277,7 @@ let quad = Box::new(Quad::new(
 There are two options for defining a cube. You can supply a basis to orient the cube however you like.
 
 ```rust
-let cube = Box::new(Cube::new_oriented(
+let cube = Arc::new(Cube::new_oriented(
     Point3::new(0.0, 0., -5.),          // A corner.
     0.3,                                // Size: half edge length.
     &Basis::new_orthonormal(),          // Custom orientation.
@@ -292,7 +292,7 @@ Or you can omit the basis with `Cube::new` for a cube aligned with the camera co
 A disk is defined with same parameters as a quad, together with a radius. In this case, the length of the vectors is not important, only their directions, which define the plane that contains the disk.
 
 ```rust
-let disk = Box::new(Disk::new(
+let disk = Arc::new(Disk::new(
     Point3::new(0., 0.3, -1.),      // Center.
     0.8,                            // Radius.
     Direction::new(1., 0., 0.),
@@ -306,7 +306,7 @@ let disk = Box::new(Disk::new(
 A hollow, finite cylinder with no cap. The length of the tune is that of the axis vector.
 
 ```rust
-let tube = Box::new(Tube::new(
+let tube = Arc::new(Tube::new(
     center_of_base,                 // A `Point3`.
     axis,                           // A `Direction`.
     radius,                         // `f64`.

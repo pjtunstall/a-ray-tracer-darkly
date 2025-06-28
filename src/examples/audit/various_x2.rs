@@ -70,28 +70,28 @@ fn make_world() -> HittableList {
     let material_right = Arc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.1));
     let glass = Arc::new(Dielectric::new(1.5));
 
-    let ground = Box::new(Plane::from_span(
+    let ground = Arc::new(Plane::from_span(
         Point3::new(0., -0.5, 0.),
         Direction::new(1., 0., 0.),
         Direction::new(0., 0., 1.),
         material_ground.clone(),
     ));
-    let left = Box::new(Sphere::new(
+    let left = Arc::new(Sphere::new(
         Point3::new(-0.5, 0.3, -3.),
         0.5,
         material_left.clone(),
     ));
-    let right = Box::new(Sphere::new(
+    let right = Arc::new(Sphere::new(
         Point3::new(1., 0.5, -1.5),
         0.5,
         material_right.clone(),
     ));
-    let rightmost = Box::new(Sphere::new(
+    let rightmost = Arc::new(Sphere::new(
         Point3::new(0.5, 0.1, -0.5),
         0.5,
         material_rightmost.clone(),
     ));
-    let cube = Box::new(Cube::new_oriented(
+    let cube = Arc::new(Cube::new_oriented(
         Point3::new(2., 0.0, -2.),
         0.3,
         &Basis::new_orthonormal(),

@@ -7,9 +7,9 @@ use crate::{
 };
 
 pub struct Cylinder {
-    pub tube: Box<Tube>,
-    pub top: Box<Disk>,
-    pub bottom: Box<Disk>,
+    pub tube: Arc<Tube>,
+    pub top: Arc<Disk>,
+    pub bottom: Arc<Disk>,
 }
 
 impl Cylinder {
@@ -35,9 +35,9 @@ impl Cylinder {
         let tube = Tube::new(center_of_base, axis, radius, material_tube);
 
         Self {
-            tube: Box::new(tube),
-            top: Box::new(top),
-            bottom: Box::new(bottom),
+            tube: Arc::new(tube),
+            top: Arc::new(top),
+            bottom: Arc::new(bottom),
         }
     }
 }

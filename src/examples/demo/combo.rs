@@ -61,33 +61,33 @@ fn make_world() -> HittableList {
     let metal = Arc::new(Metal::new(Color::new(1., 1., 1.), 0.1));
     let glass = Arc::new(Dielectric::new(1.5));
 
-    let ground = Box::new(Sphere::new(
+    let ground = Arc::new(Sphere::new(
         Point3::new(0., -666.5, -1.),
         666.,
         earth.clone(),
     ));
-    let cube = Box::new(Cube::new_oriented(
+    let cube = Arc::new(Cube::new_oriented(
         Point3::new(-0.5, 0., -1.),
         0.3,
         &Basis::new_orthonormal(),
         metal.clone(),
     ));
-    let sphere = Box::new(Sphere::new(Point3::new(0., 0., -1.), 0.3, metal.clone()));
-    let disk1 = Box::new(Disk::new(
+    let sphere = Arc::new(Sphere::new(Point3::new(0., 0., -1.), 0.3, metal.clone()));
+    let disk1 = Arc::new(Disk::new(
         Point3::new(0., 0.3, -1.),
         0.8,
         Direction::new(1., 0., 0.),
         Direction::new(0., 0., 1.),
         glass.clone(),
     ));
-    let disk2 = Box::new(Disk::new(
+    let disk2 = Arc::new(Disk::new(
         Point3::new(0., 1.3, -1.),
         0.5,
         Direction::new(1., 0., 0.),
         Direction::new(0., 1., 0.),
         earth.clone(),
     ));
-    let quad = Box::new(Quad::new(
+    let quad = Arc::new(Quad::new(
         Point3::new(0.5, 0.2, -1.),
         Direction::new(1., 0., -1.),
         Direction::new(0., 1., 0.),

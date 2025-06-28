@@ -18,6 +18,7 @@
     - [Tube](#tube)
     - [Cylinder](#cylinder)
   - [Materials](#materials)
+  - [Particles](#particles)
   - [Image quality parameters](#image-quality-parameters)
   - [Converting images to PNG, JPG, etc.](#convert-images-to-png-jpg,-etc.)
   - [vec3](#vec3)
@@ -346,6 +347,22 @@ There are four materials, represented by the `Material` trait.
 `Dielectric` is for clear materials like glass or water. Light rays are both reflected and refracted (bent as they enter the material). The refractive index is relative. Thus set it to 1.5 for a glass object in air, and 1/1.5 for an air bubble embedded in glass. Water in air is 1.33. Other values are easily looked up.
 
 `Light` is for light-emiting materials. The components of the `Color` passed to `Light::new` should be greater than 1.0. In their [example](https://raytracing.github.io/books/RayTracingTheNextWeek.html#lights/turningobjectsintolights) in _Ray Tracing: The Next Week_, Shirley et al. set them all to 4.0. They say, "This allows it to be bright enough to light things."
+
+### Particles
+
+At present, the library provides just one sort of diffuse/particulate object, `hittables::volumes::ComstantMedium`. (Such objects are sometimes called "volumes" or "participating media".) It's defined by shape, color, and density.
+
+```rust
+let density = 0.3;
+let smoke_color = Color::new(0., 0., 0.);
+let smoke = Arc::new(ConstantMedium::new(
+    sphere,
+    smoke_color,
+    density,
+));
+```
+
+Internally, it makes itself consist of a `Material` called `Isotropic`.
 
 ### Image quality parameters
 

@@ -89,8 +89,8 @@ pub fn make_world() -> HittableList {
     let haze_color = Color::new(0., 0., 0.);
     let haze = Arc::new(ConstantMedium::new(
         cylinder.clone(),
-        density,
         haze_color.clone(),
+        density,
     ));
 
     let Cylinder { tube, top, bottom } = Cylinder::new(
@@ -110,8 +110,8 @@ pub fn make_world() -> HittableList {
     let density = 0.5;
     let inner_haze = Arc::new(ConstantMedium::new(
         inner_cylinder.clone(),
-        density,
         haze_color,
+        density,
     ));
 
     let mut world = HittableList::new();

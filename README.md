@@ -76,17 +76,17 @@ See below for a more detailed [guide](#guide) on how to use the library.
 
 ## Guide
 
-Here is a guide to using the library. We'll draw a scene with some objects. They'll be saved in PPM (portable pixmap) format. Search for PPM viewers. There are several VS Code extensions.
+Here is a guide to using the library. We'll draw a scene with some objects. They'll be saved in PPM (portable pixmap) format. Free PPM viewers can be found online. There are extensions for IDEs. I've been using PBM/PPM/PGM Viewer by ngtystr for VS Code, which has a handy save as PNG option.
 
 ### Camera
 
 First, we'll need to set up a camera.
 
 ```rust
-fn set_up_camera() -> Camera {
+fn set_up_camera(image_width: u32) -> Camera {
     let params = CameraParameters {
         aspect_ratio: 16.0 / 9.0,
-        image_width: 800,
+        image_width,
         look_from: Point3::new(0.0, 0.2, 4.0), // x: right, y: up, z: backwards, relative to
         look_at: Point3::new(0.0, 0.0, -1.0), // the direction the camera is looking.
         up: Direction::new(0.0, 1.0, 0.0),
@@ -123,15 +123,36 @@ fn create_world() -> HittableList {
 
 A `Hittable` is a visible object, so called because it's "hittable" by light rays. A `HittableList` is a collection of such objects. In particular, `world` stores all (potentially) visible objects in our scene.
 
-`Arc` is the thread-safe version of `Rc`, a reference-counting smart pointer. Reference counting allows multiple shapes to share ownership of the same material. Thread-safety is needed because calculations are parallelized across all avilable CPU cores for speed.
+`Arc` is the thread-safe version of `Rc`, a reference-counting smart pointer. Reference counting allows multiple shapes to share ownership of the same material, for example. Thread-safety is needed because calculations are parallelized across all avilable CPU cores for speed.
 
 ### World and plane in context
 
 And here it all is in context. There's a lot of info in this next snippet, so feel free to skip some and come back to it later. The full example (plane together with a [sphere from the next section](#sphere)) can be found in `examples/demo/basic.rs`. To try it, uncomment the corresponding line in `main.rs` and run `cargo run --release`. Note that, in `basic.rs`, the import statements refer to the library as `crate` because `basic.rs` itself belongs to the library. If you're importing items into a separate crate, you should refer to it as `rt`, as in the snippets below.
 
 ```rust
-// `PathBuf` to write the file, `io` to handle errors.
-// `Arc` for shared ownership with thread-safety.
+// main.rs
+
+use std::io;
+
+main () -> io::Result<()> {
+    // Maximum number of recursions before we stop calculating the contribution each collision of
+    // a light ray makes to the color of the pixel. More recursions make for subtler ambient light.
+    let max_depth = 50;
+
+    // Number of rays fired per pixel. More rays give a smoother, less pixelated look.
+    let samples_per_pixel = 50;
+
+    let image_width = 100; // `u32`
+
+    examples::demo::basic::render(max_depth, samples_per_pixel, image_width)?;
+    Ok(())
+}
+```
+
+```rust
+// examples::demo::basic.rs
+
+// `PathBuf` to write the file, `io` to handle errors, `Arc` for shared ownership with thread-safety.
 use std::{io, path::PathBuf, sync::Arc};
 
 use rt::{
@@ -143,34 +164,14 @@ use rt::{
   vec3::{Direction, Point3}
 };
 
-fn main() -> io::Result<()> { // Alias for `Result<(), std::io::Error>`; because writing to a
-                              // file is fallible. If there's an error, the question mark at
-                              // after the call to `camera.render` propagates any I/O error.
-                              // The program will panic and the error message is printed.
-  let camera = set_up_camera();
-  let world = create_world();
-  let background = sky;
+fn render(max_depth: usize, samples_per_pixel: usize, image_width: u32) -> io::Result<()> {
+    let camera = set_up_camera(image_width);
+    let world = create_world();
+    let background = sky;
 
-  // Maximum number of recursions before we stop calculating the contribution each collision of
-  // a light ray makes to the quality of the pixel. In scenes dominated by indirect lighting,
-  // it contributes to realism: deeper soft shadows, color bleeding, subtle ambient effects.
-  // For scenes dominated by direct lighting, raising the depth beyond 1–2 may not show obvious
-  // differences.
-  let max_depth = 50;
+    let brightness = 1.0; // No dimming.
 
-  // To compensate for the discreteness of pixels, we take samples from the area surrounding
-  // the pixel and average the resulting light (color) values together.  Higher values (more
-  // samples) give a smoother, less pixelated look.
-  let samples_per_pixel = 10;
-
-  // Raising the value of either of the previous two paramers makes for a higher-quality image
-  // at the cost of longer calulation time.
-
-  // A value between 1.0 and 0.0, representing the factor by which each collision affects the
-  // brightness.
-  let brightness = 1.0;
-
-  camera.render(
+    camera.render(
         &world,
         PathBuf::from("demo").join("basic"), // Where the image will be saved.
         max_depth,
@@ -179,10 +180,10 @@ fn main() -> io::Result<()> { // Alias for `Result<(), std::io::Error>`; because
         brightness,
     )?;
 
-    Ok(()) // If we reach this line, no I/O error occurred, so we return an `Ok` result.
+    Ok(()) // If we reach this line, no I/O error occurred, so return an `Ok` result.
 }
 
-// The background function could be more complex, but here we just return a constant color.
+// The background function can be as complex as you like, but here we just return a constant color.
 fn sky(_ray: &Ray) -> Color {
     Color::new(0.8, 0.8, 0.9)
 }
@@ -361,6 +362,8 @@ This is simple with a tool like ImageMagic.
 ```sh
 convert path/to/where-the-ppm-lives/image.ppm path/to/where-you-want-to-save-the-png/image.png
 ```
+
+Your PPM viewer may have a save as PNG option too.
 
 ### vec3
 

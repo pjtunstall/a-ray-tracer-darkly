@@ -109,7 +109,7 @@ impl Camera {
         max_depth: usize,
         samples_per_pixel: usize,
         background: fn(&Ray) -> Color,
-        brightness: f64,
+        mut brightness: f64,
     ) -> io::Result<()> {
         let mut writer = file::writer(&image_path)?;
         writeln!(
@@ -117,6 +117,8 @@ impl Camera {
             "P3\n{} {}\n255",
             self.image.width, self.image.height
         )?;
+
+        brightness = brightness.clamp(0.0, 1.0);
 
         let pixels =
             self.generate_pixels(world, max_depth, samples_per_pixel, background, brightness);

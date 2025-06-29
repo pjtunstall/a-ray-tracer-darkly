@@ -280,7 +280,7 @@ There are two options for defining a cube. You can supply a basis to orient the 
 
 ```rust
 let cube = Arc::new(Cube::new_oriented(
-    Point3::new(0.0, 0., -5.),          // A corner.
+    Point3::new(0.0, 0., -5.),          // Center.
     0.3,                                // Size: half edge length.
     &Basis::new_orthonormal(),          // Custom orientation.
     cube_material,                      // `Arc<dyn Material>`.

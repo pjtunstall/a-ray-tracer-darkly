@@ -60,8 +60,12 @@ impl Cube {
         ]
     }
 
-    fn direction_to_local(&self, dir: &Direction) -> [f64; 3] {
-        [self.u.dot(dir), self.v.dot(dir), self.w.dot(dir)]
+    fn direction_to_local(&self, direction: &Direction) -> [f64; 3] {
+        [
+            self.u.dot(direction),
+            self.v.dot(direction),
+            self.w.dot(direction),
+        ]
     }
 
     /* This function contains a slick way of writing the change of basis more plainly expresssed as follows.
@@ -86,54 +90,67 @@ impl Hittable for Cube {
         let local_origin = self.world_to_local(&ray.origin);
         let local_direction = self.direction_to_local(&ray.direction);
 
-        let mut t_min = ray_t.min;
-        let mut t_max = ray_t.max;
-        let mut hit_axis = None;
-        let mut hit_dir_sign = 0.0;
+        // Start with infinite bounds: find ALL intersections first.
+        let mut t_min = f64::NEG_INFINITY;
+        let mut t_max = f64::INFINITY;
+        let mut min_axis = None;
+        let mut max_axis = None;
+        let mut min_direction_sign = 0.0;
+        let mut max_direction_sign = 0.0;
 
-        for (axis, (&origin, &dir)) in local_origin.iter().zip(&local_direction).enumerate() {
-            if dir.abs() < 1e-8 {
+        for (axis, (&origin, &direction)) in local_origin.iter().zip(&local_direction).enumerate() {
+            if direction.abs() < 1e-8 {
                 if origin.abs() > self.size {
-                    return None; // Parallel and outside slab.
+                    return None; // Parallel and outside the slab.
                 }
                 continue;
             }
 
-            let inv_dir = 1.0 / dir;
-            let t1 = (-self.size - origin) * inv_dir;
-            let t2 = (self.size - origin) * inv_dir;
-            let (t_near, t_far) = if t1 < t2 { (t1, t2) } else { (t2, t1) };
+            let inverse_direction = 1.0 / direction;
+            let t1 = (-self.size - origin) * inverse_direction;
+            let t2 = (self.size - origin) * inverse_direction;
+            let (slab_min, slab_max) = if t1 < t2 { (t1, t2) } else { (t2, t1) };
 
-            if t_near > t_min {
-                t_min = t_near;
-                hit_axis = Some(axis);
-                hit_dir_sign = dir.signum();
+            if slab_min > t_min {
+                t_min = slab_min;
+                min_axis = Some(axis);
+                min_direction_sign = if t1 < t2 {
+                    -direction.signum()
+                } else {
+                    direction.signum()
+                };
             }
-
-            if t_far < t_max {
-                t_max = t_far;
+            if slab_max < t_max {
+                t_max = slab_max;
+                max_axis = Some(axis);
+                max_direction_sign = if t1 < t2 {
+                    direction.signum()
+                } else {
+                    -direction.signum()
+                };
             }
 
             if t_min > t_max {
-                return None; // Slabs don't overlap.
+                return None; // Slabs do not overlap.
             }
         }
 
-        if !ray_t.contains(t_min) {
-            return None;
-        }
+        // Now find which hit is within the requested ray_t interval.
+        let (t, axis, direction_sign) = if ray_t.contains(t_min) {
+            (t_min, min_axis, min_direction_sign)
+        } else if ray_t.contains(t_max) {
+            (t_max, max_axis, max_direction_sign)
+        } else {
+            return None; // No intersection within the requested interval.
+        };
 
-        let t = t_min;
         let point = ray.at(t);
-
-        // Determine normal in local space.
         let mut normal_local = Direction::new(0., 0., 0.);
-        if let Some(axis) = hit_axis {
-            normal_local[axis] = -hit_dir_sign;
+        if let Some(axis) = axis {
+            normal_local[axis] = direction_sign;
         }
 
         let world_normal = self.direction_to_world(&normal_local);
-
         Some(HitRecord::new(
             point,
             world_normal,

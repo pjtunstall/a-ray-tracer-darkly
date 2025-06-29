@@ -61,7 +61,7 @@ fn create_world() -> HittableList {
     let sphere_material = Arc::new(Lambertian::new(sphere_color));
     let center = Point3::new(0.0, 0.0, -2.5);
     let radius = 0.5;
-    let sphere = Arc::new(Sphere::new(center, radius, sphere_material.clone()));
+    let sphere = Arc::new(Sphere::new(center, radius, sphere_material));
 
     let mut world = HittableList::new();
     world.add(ground);

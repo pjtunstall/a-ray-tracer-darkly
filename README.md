@@ -350,7 +350,7 @@ There are four materials, represented by the `Material` trait.
 
 ### Particles
 
-At present, the library provides just one sort of diffuse/particulate object, `hittables::volumes::ConstantMedium`. (Such objects are sometimes called "volumes" or "participating media".) This is defined by a shape (representing the boundary of the diffuse object), color, and density.
+At present, the library provides just one sort of diffuse/particulate object, `hittables::volumes::ConstantMedium`. (Such objects are sometimes called "volumes" or "participating media".) This is defined by a `Hittable` (a shape representing the boundary of the diffuse object), a `Color`, and an `f64` (density).
 
 ```rust
 let density = 0.3;
@@ -362,7 +362,7 @@ let smoke = Arc::new(ConstantMedium::new(
 ));
 ```
 
-Internally, it makes itself consist of a pseudo `Material` called `Isotropic`.
+You can give any material to the bounding shape; it doesn't matter. This material, and hence also the color, of the boundary is not used. Internally, `ConstantMedium` makes itself consist of a pseudo `Material` called `Isotropic`. Its color is the one supplied to the constructor.
 
 Shirley et al. note that their code (on which mine is based)
 

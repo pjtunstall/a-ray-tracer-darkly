@@ -61,8 +61,8 @@ impl Hittable for ConstantMedium {
         Some(HitRecord {
             t,
             point,
-            normal: Direction::new(1.0, 0.0, 0.0), // arbitrary
-            front_face: true,                      // arbitrary
+            normal: Direction::new(1.0, 0.0, 0.0), // Arbitrary.
+            front_face: true,                      // Arbitrary.
             material: self.phase_function.clone(),
         })
     }

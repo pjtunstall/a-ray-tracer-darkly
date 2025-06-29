@@ -371,7 +371,7 @@ Shirley et al. note that their code (on which mine is based)
 
 ### Particles
 
-The `particles` module offers a `swarm` function to produce a swarm of discrete particles.
+The `particles` module offers a `swarm` function to produce a swarm of spheres.
 
 ```rust
 pub fn swarm(
@@ -379,12 +379,29 @@ pub fn swarm(
     swarm_radius: f64,
     particle_radius: f64,
     material: Arc<dyn Material>,
-    size: usize, // The number of particles in the swarm.
-    density: f64, // How closely they clump towards the center.
+    size: usize,
+    sampler: impl Fn(&mut SmallRng) -> f64, // A radial distribution function.
 ) -> HittableList {
     // ...
 }
 ```
+
+`sampler` can be a closure, allowing it to capture whatever values it needs. You can pass a function of your own ...
+
+```rust
+let exponent = 2.0;
+let sampler = move |rng: &mut SmallRng| rng.random::<f64>().powf(exponent);
+```
+
+... or use one of the readymade random samplers in the `particles` module.
+
+```rust
+let swarm_radius = 16.;
+let lambda = 1.5;
+let sampler = particles::exp_falloff_sampler(lambda, swarm_radius);
+```
+
+To see this in action, take a look at `src/examples/demo/balloons.rs`.
 
 ### Image quality parameters
 

@@ -105,10 +105,22 @@ fn make_world() -> HittableList {
     world.add(outer_haze);
     world.add(inner_haze);
 
-    let swarm_center = Point3::new(0., 5., -3.);
+    let center = Point3::new(0., 5., -3.);
+    let swarm_radius = 16.;
+    let particle_radius = 0.1;
     let particle_material = Arc::new(Lambertian::new(Color::new(4., 0.5, 0.)));
-    let fireflies = particles::swarm(swarm_center, 16., 0.1, particle_material, 180, 4.);
-    world.add(Arc::new(fireflies));
+    let bias = 2.0;
+    let sampler = particles::power_center_sampler(bias);
+    let size = 180;
+    let balloons = particles::swarm(
+        center,
+        swarm_radius,
+        particle_radius,
+        particle_material,
+        size,
+        sampler,
+    );
+    world.add(Arc::new(balloons));
 
     world
 }

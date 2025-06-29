@@ -1,6 +1,7 @@
 pub mod demo {
     pub mod basic;
     pub mod combo;
+    pub mod fireflies;
     pub mod smoke;
     pub mod sunset;
     pub mod this_floating_world;

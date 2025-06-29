@@ -1,10 +1,13 @@
 use std::{io, path::PathBuf, sync::Arc};
 
+use rand::{SeedableRng, rngs::SmallRng};
+
 use crate::{
     camera::{Camera, CameraParameters},
     color::{self, Color},
     hittables::{
-        HittableList, cylinder::Cylinder, plane::Plane, sphere::Sphere, volumes::ConstantMedium,
+        Hittable, HittableList, cylinder::Cylinder, plane::Plane, sphere::Sphere,
+        volumes::ConstantMedium,
     },
     materials::{Dielectric, Lambertian, Light, Metal},
     ray::Ray,
@@ -17,14 +20,20 @@ pub fn render(max_depth: usize, samples_per_pixel: usize, image_width: u32) -> i
     let camera = set_up_camera(image_width);
     camera.render(
         &world,
-        PathBuf::from("demo").join("sunset"),
+        PathBuf::from("demo").join("fireflies"),
         max_depth,
         samples_per_pixel,
         background,
         1.,
     )?;
-
     Ok(())
+}
+
+fn sky(ray: &Ray) -> Color {
+    let t = 0.5 * (ray.direction.y + 1.0);
+    let horizon = Color::new(0.8, 0.6, 0.4);
+    let zenith = Color::new(0.2, 0.3, 0.5);
+    color::lerp(horizon, zenith, t)
 }
 
 fn set_up_camera(image_width: u32) -> Camera {
@@ -39,13 +48,6 @@ fn set_up_camera(image_width: u32) -> Camera {
         vertical_fov_in_degrees: 20.,
     };
     Camera::new(params)
-}
-
-fn sky(ray: &Ray) -> Color {
-    let t = 0.5 * (ray.direction.y + 1.0);
-    let horizon = Color::new(0.7, 0.5, 0.0);
-    let zenith = Color::new(0.05, 0.05, 0.3);
-    color::lerp(horizon, zenith, t)
 }
 
 fn make_world() -> HittableList {
@@ -108,5 +110,27 @@ fn make_world() -> HittableList {
     world.add(outer_haze);
     world.add(inner_haze);
 
+    let fireflies = random_spheres(Point3::new(0., 0., 0.), 16.);
+    world.add(Arc::new(fireflies));
+
     world
+}
+
+fn random_spheres(center: Point3, max_radius: f64) -> HittableList {
+    let base_seed = 12345u64;
+    let mut points = Vec::new();
+
+    for i in 0..1000 {
+        let mut rng = SmallRng::seed_from_u64(base_seed + i as u64);
+        let direction = Direction::random_unit(&mut rng);
+        let radius = max_radius * rand::random::<f64>().powf(2.0);
+        let sphere = Arc::new(Sphere::new(
+            center + direction * radius,
+            0.1,
+            Arc::new(Lambertian::new(Color::new(4., 0.5, 0.))),
+        ));
+        points.push(sphere as Arc<dyn Hittable>);
+    }
+
+    HittableList { objects: points }
 }

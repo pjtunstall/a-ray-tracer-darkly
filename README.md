@@ -18,7 +18,7 @@
     - [Tube](#tube)
     - [Cylinder](#cylinder)
   - [Materials](#materials)
-  - [Particles](#particles)
+  - [Smoke](#smoke)
   - [Image quality parameters](#image-quality-parameters)
   - [Converting images to PNG, JPG, etc.](#convert-images-to-png-jpg,-etc.)
   - [vec3](#vec3)
@@ -348,9 +348,9 @@ There are four materials, represented by the `Material` trait.
 
 `Light` is for light-emiting materials. The components of the `Color` passed to `Light::new` should be greater than 1.0. In their [example](https://raytracing.github.io/books/RayTracingTheNextWeek.html#lights/turningobjectsintolights) in _Ray Tracing: The Next Week_, Shirley et al. set them all to 4.0. They say, "This allows it to be bright enough to light things."
 
-### Particles
+### Smoke
 
-At present, the library provides just one sort of diffuse/particulate object, `hittables::volumes::ConstantMedium`. (Such objects are sometimes called "volumes" or "participating media".) This is defined by a `Hittable` (a shape representing the boundary of the diffuse object), a `Color`, and an `f64` (density).
+At present, the library provides just one sort of diffuse, smoky object, `hittables::volumes::ConstantMedium`. (Such objects are sometimes called "volumes" or "participating media".) This is defined by a `Hittable` (a shape representing the boundary of the diffuse object), a `Color`, and an `f64` (density).
 
 ```rust
 let density = 0.3;

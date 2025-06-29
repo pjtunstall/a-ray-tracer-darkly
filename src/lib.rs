@@ -6,6 +6,7 @@ pub mod hittables;
 pub mod image;
 pub mod interval;
 pub mod materials;
+pub mod particles;
 pub mod progress;
 pub mod ray;
 pub mod vec3;

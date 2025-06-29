@@ -18,7 +18,8 @@
     - [Tube](#tube)
     - [Cylinder](#cylinder)
   - [Materials](#materials)
-  - [Smoke](#smoke)
+  - [Volumes](#volumes)
+  - [Particles](#particles)
   - [Image quality parameters](#image-quality-parameters)
   - [Converting images to PNG, JPG, etc.](#convert-images-to-png-jpg,-etc.)
   - [vec3](#vec3)
@@ -348,7 +349,7 @@ There are four materials, represented by the `Material` trait.
 
 `Light` is for light-emiting materials. The components of the `Color` passed to `Light::new` should be greater than 1.0. In their [example](https://raytracing.github.io/books/RayTracingTheNextWeek.html#lights/turningobjectsintolights) in _Ray Tracing: The Next Week_, Shirley et al. set them all to 4.0. They say, "This allows it to be bright enough to light things."
 
-### Smoke
+### Volumes
 
 At present, the library provides just one sort of diffuse, smoky object, `hittables::volumes::ConstantMedium`. (Such objects are sometimes called "volumes" or "participating media".) This is defined by a `Hittable` (a shape representing the boundary of the diffuse object), a `Color`, and an `f64` (density).
 
@@ -367,6 +368,23 @@ You can give any material to the bounding shape; it doesn't matter. This materia
 Shirley et al. note that their code (on which mine is based)
 
 > assumes that once a ray exits the constant medium boundary, it will continue forever outside the boundary. Put another way, it assumes that the boundary shape is convex. So this particular implementation will work for boundaries like boxes or spheres, but will not work with toruses or shapes that contain voids. -- [Ray Tracing: The Next Week](https://raytracing.github.io/books/RayTracingTheNextWeek.html#volumes)
+
+### Particles
+
+The `particles` module offers a `swarm` function to produce a swarm of discrete particles.
+
+```rust
+pub fn swarm(
+    center: Point3,
+    swarm_radius: f64,
+    particle_radius: f64,
+    material: Arc<dyn Material>,
+    size: usize, // The number of particles in the swarm.
+    density: f64, // How closely they clump towards the center.
+) -> HittableList {
+    // ...
+}
+```
 
 ### Image quality parameters
 

@@ -3,7 +3,7 @@ use std::sync::Arc;
 use rand::rngs::SmallRng;
 
 use crate::{
-    hittables::{HitRecord, Hittable, HittableList, disk::Disk, tube::Tube},
+    hittables::{HitRecord, Hittable, disk::Disk, tube::Tube},
     interval::Interval,
     materials::Material,
     ray::Ray,
@@ -11,10 +11,9 @@ use crate::{
 };
 
 pub struct Cylinder {
-    pub tube: Arc<Tube>,
-    pub top: Arc<Disk>,
-    pub bottom: Arc<Disk>,
-    pub whole: Arc<dyn Hittable>,
+    tube: Arc<Tube>,
+    top: Arc<Disk>,
+    bottom: Arc<Disk>,
 }
 
 impl Cylinder {
@@ -39,16 +38,10 @@ impl Cylinder {
         let bottom = Arc::new(Disk::new(center_of_base, radius, u, v, material_bottom));
         let tube = Arc::new(Tube::new(center_of_base, axis, radius, material_tube));
 
-        let mut whole = HittableList::new();
-        whole.add(top.clone());
-        whole.add(bottom.clone());
-        whole.add(tube.clone());
-
         Self {
             tube: tube.clone(),
             top: top.clone(),
             bottom: bottom.clone(),
-            whole: Arc::new(whole),
         }
     }
 }

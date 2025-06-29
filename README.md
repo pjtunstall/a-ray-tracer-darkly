@@ -313,41 +313,22 @@ let tube = Arc::new(Tube::new(
     axis,                           // A `Direction`.
     radius,                         // `f64`.
     tube_material                   // `Arc<dyn Material>`.
-);
+));
 ```
 
 #### Cylinder
 
-Only `Cylinder` is just a bit different. It's is a composite of three shapes: a tube and two disks (top and bottom). It can be destructured into its parts if you want to access them individually. In that case, they should each be added to the world.
+Internally, a `Cylinder` is composed of three shapes: a tube and two disks (top and bottom). You can give each its own material.
 
 ```rust
-let Cylinder { tube, top, bottom, .. } = Cylinder::new(
+let cylinder = Arc::new(Cylinder::new(
     Point3::new(0.2, -0.3, -1.),        // Center of base.
     Direction::new(-0.2, 3., -0.4),     // Axis, specifying length and orientation.
     0.3,                                // Radius.
     tube_material,
     top_material,
     bottom_material,
-);
-
-world.add(tube);
-world.add(top);
-world.add(bottom);
-```
-
-Otherwise, you can simply add the whole cylinder as one item.
-
-```rust
-let cylinder = Cylinder::new(
-    Point3::new(0.2, -0.3, -1.),
-    Direction::new(-0.2, 3., -0.4),
-    0.3,
-    tube_material,
-    top_material,
-    bottom_material,
-).whole;
-
-world.add(cylinder);
+));
 ```
 
 ### Materials

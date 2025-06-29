@@ -63,50 +63,49 @@ fn make_world() -> HittableList {
     let ground_color = Color::new(0.2, 0.4, 0.4);
     let rightmost_color = Color::new(0.9, 0.1, 0.2);
     let cube_color = Color::new(0., 0.7, 0.0);
-    let material_cube = Arc::new(Lambertian::new(cube_color));
-    let material_ground = Arc::new(Lambertian::new(ground_color));
-    let material_rightmost = Arc::new(Lambertian::new(rightmost_color));
-    let material_left = Arc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.));
-    let material_right = Arc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.1));
+
+    let cube_material = Arc::new(Lambertian::new(cube_color));
+    let ground_material = Arc::new(Lambertian::new(ground_color));
+    let rightmost_material = Arc::new(Lambertian::new(rightmost_color));
+    let left_material = Arc::new(Metal::new(Color::new(0.8, 0.8, 0.8), 0.));
+    let right_material = Arc::new(Metal::new(Color::new(0.8, 0.6, 0.2), 0.1));
     let glass = Arc::new(Dielectric::new(1.5));
 
     let ground = Arc::new(Plane::from_span(
         Point3::new(0., -0.5, 0.),
         Direction::new(1., 0., 0.),
         Direction::new(0., 0., 1.),
-        material_ground.clone(),
+        ground_material.clone(),
     ));
     let left = Arc::new(Sphere::new(
         Point3::new(-0.5, 0.3, -3.),
         0.5,
-        material_left.clone(),
+        left_material.clone(),
     ));
     let right = Arc::new(Sphere::new(
         Point3::new(1., 0.5, -1.5),
         0.5,
-        material_right.clone(),
+        right_material.clone(),
     ));
     let rightmost = Arc::new(Sphere::new(
         Point3::new(0.5, 0.1, -0.5),
         0.5,
-        material_rightmost.clone(),
+        rightmost_material.clone(),
     ));
     let cube = Arc::new(Cube::new_oriented(
         Point3::new(2., 0.0, -2.),
         0.3,
         &Basis::new_orthonormal(),
-        material_cube.clone(),
+        cube_material.clone(),
     ));
-
-    let cylinder = Cylinder::new(
+    let cylinder = Arc::new(Cylinder::new(
         Point3::new(0.2, -0.3, -1.),
         Direction::new(-0.2, 3., -0.4),
         0.3,
-        material_left.clone(),
+        left_material.clone(),
         glass.clone(),
-        glass.clone(),
-    )
-    .whole;
+        glass,
+    ));
 
     let mut world = HittableList::new();
     world.add(ground);

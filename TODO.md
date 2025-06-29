@@ -1,10 +1,10 @@
 - SmallRng -> Rng trait in vec3 to be more flexible?
-- Add more tests.
 - Make a Vec3 -> ProjectionOperator function in vec3.
-- Dry out code for Plan, Quad, and Disk. Use quads to make the cube? Make a general planar primitive struct or trait?
 - Allow Disk to be made either from normal or spanning vectors of plane.
 - Tidy names of items in world in `various.rs`.
 - Implement indexing and iteration for `Color`.
 - When texture is implemented, look again at `Isotropic` and add attentuation.
 - Distinguish phase functions as a special sort of `Material`, by analogy with how `ConstantMedium` belongs to the submodule `volumes` of `hittables`?
-- Make submodules for each `Material`.
+- Make submodules for each `Material`?
+- Dry out code for planar primitives such as `Disk` and `Quad`?
+- Make `Cube` out of `Quad`s?

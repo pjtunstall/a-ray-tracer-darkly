@@ -61,27 +61,30 @@ impl Hittable for Tube {
         let t0 = (-h - sqrt_d) / a;
         let t1 = (-h + sqrt_d) / a;
 
+        let mut hit_record: Option<HitRecord> = None;
+
         for &t in &[t0, t1] {
-            if !ray_t.surrounds(t) {
+            if !ray_t.contains(t) {
                 continue;
             }
+
             let point = ray.at(t);
             let center_to_point = point - self.center_of_base;
-            let height_along_axis = center_to_point.dot(&self.axis);
+            let height_along_axis = center_to_point.dot(&axis);
+
             if height_along_axis < 0.0 || height_along_axis > self.height {
                 continue;
             }
-            let projection = self.center_of_base + height_along_axis * self.axis;
+
+            let projection = self.center_of_base + height_along_axis * axis;
             let outward_normal = (point - projection).normalize();
-            return Some(HitRecord::new(
-                point,
-                outward_normal,
-                t,
-                self.material.clone(),
-                ray,
-            ));
+
+            let record = HitRecord::new(point, outward_normal, t, self.material.clone(), ray);
+
+            hit_record = Some(record);
+            break;
         }
 
-        None
+        hit_record
     }
 }

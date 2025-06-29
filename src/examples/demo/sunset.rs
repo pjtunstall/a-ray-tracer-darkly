@@ -71,15 +71,14 @@ pub fn make_world() -> HittableList {
         material_rightmost,
     ));
 
-    let outer_cylinder = Cylinder::new(
+    let outer_cylinder = Arc::new(Cylinder::new(
         Point3::new(-8., 1., -2.9),
         Direction::new(16., 0., 0.),
         0.5,
         material_ground.clone(),
         material_ground.clone(),
         material_ground.clone(),
-    )
-    .whole;
+    ));
     let density = 0.3;
     let haze_color = Color::new(0., 0., 0.);
     let outer_haze = Arc::new(ConstantMedium::new(
@@ -88,15 +87,14 @@ pub fn make_world() -> HittableList {
         density,
     ));
 
-    let inner_cylinder = Cylinder::new(
+    let inner_cylinder = Arc::new(Cylinder::new(
         Point3::new(-8., 1., -2.9),
         Direction::new(16., 0., 0.),
         0.3,
         material_ground.clone(),
         material_ground.clone(),
         material_ground.clone(),
-    )
-    .whole;
+    ));
     let density = 0.5;
     let inner_haze = Arc::new(ConstantMedium::new(inner_cylinder, haze_color, density));
 

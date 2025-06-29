@@ -70,16 +70,25 @@ impl HittableList {
 
 impl Hittable for HittableList {
     fn hit(&self, ray: &Ray, ray_t: &Interval, rng: &mut SmallRng) -> Option<HitRecord> {
-        let mut closest_so_far = ray_t.max;
-        let mut option = None;
+        let mut all_hits = Vec::new();
 
+        // Collect ALL hits from all objects. This is necessary to allow a HittableList to be the boundary of a `ConstantMedium`, which creates its own interval to check entry and exit points in order to calculate the probability of hits within the volume.
         for object in &self.objects {
-            if let Some(record) = object.hit(ray, &Interval::new(ray_t.min, closest_so_far), rng) {
-                closest_so_far = record.t;
-                option = Some(record);
+            if let Some(hit) = object.hit(ray, &Interval::FULL, rng) {
+                all_hits.push(hit);
             }
         }
 
-        option
+        // Sort by t value.
+        all_hits.sort_by(|a, b| a.t.partial_cmp(&b.t).unwrap());
+
+        // Return first hit within the requested interval.
+        for hit in all_hits {
+            if ray_t.contains(hit.t) {
+                return Some(hit);
+            }
+        }
+
+        None
     }
 }

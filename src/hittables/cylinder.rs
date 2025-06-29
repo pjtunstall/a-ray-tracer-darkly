@@ -1,8 +1,12 @@
 use std::sync::Arc;
 
+use rand::rngs::SmallRng;
+
 use crate::{
-    hittables::{Hittable, HittableList, disk::Disk, tube::Tube},
+    hittables::{HitRecord, Hittable, HittableList, disk::Disk, tube::Tube},
+    interval::Interval,
     materials::Material,
+    ray::Ray,
     vec3::{Direction, Point3},
 };
 
@@ -46,6 +50,32 @@ impl Cylinder {
             bottom: bottom.clone(),
             whole: Arc::new(whole),
         }
+    }
+}
+
+impl Hittable for Cylinder {
+    fn hit(&self, ray: &Ray, ray_t: &Interval, rng: &mut SmallRng) -> Option<HitRecord> {
+        let mut closest_hit: Option<HitRecord> = None;
+
+        for part in [
+            &self.tube as &dyn Hittable,
+            &self.top as &dyn Hittable,
+            &self.bottom as &dyn Hittable,
+        ] {
+            if let Some(current_hit) = part.hit(ray, ray_t, rng) {
+                match &closest_hit {
+                    None => {
+                        closest_hit = Some(current_hit);
+                    }
+                    Some(previous_hit) if current_hit.t < previous_hit.t => {
+                        closest_hit = Some(current_hit);
+                    }
+                    _ => {}
+                }
+            }
+        }
+
+        closest_hit
     }
 }
 

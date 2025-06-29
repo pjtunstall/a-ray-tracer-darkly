@@ -4,7 +4,8 @@ use crate::{
     camera::{Camera, CameraParameters},
     color::Color,
     hittables::{
-        Hittable, HittableList, cube::Cube, plane::Plane, sphere::Sphere, volumes::ConstantMedium,
+        Hittable, HittableList, cube::Cube, cylinder::Cylinder, plane::Plane, sphere::Sphere,
+        volumes::ConstantMedium,
     },
     materials::Lambertian,
     ray::Ray,
@@ -51,15 +52,21 @@ fn set_up_camera(image_width: u32) -> Camera {
 
 fn create_world() -> HittableList {
     let ground = ground();
+
     let sphere = sphere();
     let smoke_sphere = smoke(sphere, Color::new(1., 0., 0.), 0.8);
+
     let cube = cube();
     let smoke_cube = smoke(cube, Color::new(0., 1., 0.), 0.999);
+
+    let cylinder = cylinder();
+    let smoke_cylinder = smoke(cylinder, Color::new(0., 0., 1.), 0.9);
 
     let mut world = HittableList::new();
     world.add(ground);
     world.add(smoke_sphere);
     world.add(smoke_cube);
+    world.add(smoke_cylinder);
 
     world
 }
@@ -98,4 +105,18 @@ fn cube() -> Arc<Cube> {
 fn smoke(shell: Arc<dyn Hittable + 'static>, color: Color, density: f64) -> Arc<ConstantMedium> {
     let smoke = Arc::new(ConstantMedium::new(shell, color, density));
     smoke
+}
+
+fn cylinder() -> Arc<Cylinder> {
+    let color = Color::new(6., 0.8, 0.8);
+    let material = Arc::new(Lambertian::new(color));
+    let cylinder = Arc::new(Cylinder::new(
+        Point3::new(0.4, 0.0, -1.),
+        Direction::new(0.4, 0.5, -0.4),
+        0.2,
+        material.clone(),
+        material.clone(),
+        material,
+    ));
+    cylinder
 }

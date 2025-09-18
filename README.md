@@ -21,6 +21,9 @@
   - [Volumes](#volumes)
   - [Particles](#particles)
   - [Image quality parameters](#image-quality-parameters)
+    - [Resolution](#resolution)
+    - [Maximum depth](#maximum-depth)
+    - [Samples per pixel](#samples-per-pixel)
   - [Converting images to PNG, JPG, etc.](#convert-images-to-png-jpg,-etc.)
   - [vec3](#vec3)
 - [Deviations from the book](#deviations-from-the-book)
@@ -405,9 +408,17 @@ To see this in action, take a look at `src/examples/demo/balloons.rs`.
 
 ### Image quality parameters
 
-Two parameters determine image quality. Higher values increase image quality, but the image takes longer to render. This is especially noticeable for more complex scenes.
+Four values determine image quality: `max_depth`, `samples_per_pixel`, `image_width`, and `aspect_ratio`. The bigger the first three and the smaller the last one, the better the image. Higher-quality images take longer to render. This is especially noticeable for more complex scenes.
+
+#### Resolution
+
+Resolution is determined by the `image_width` and `aspect_ratio` fields of the `CameraParameters` passed to `Camera::new`. The height of the image is calculated as `image_width` divided by `aspect_ratio`.
+
+#### Maximum depth
 
 `max_depth` is the maximum number of recursions (bounces) before we stop calculating the contribution each collision of a light ray makes to the color of the pixel. Fewer bounces means less global illumination. In scenes dominated by indirect lighting, it contributes to realism: deeper soft shadows, color bleeding, subtle ambient effects. For scenes dominated by direct lighting, raising the depth beyond 1–2 may not show obvious differences.
+
+#### Samples per pixel
 
 `samples_per_pixel` controls how many rays are fired per pixel. To reduce the jaggedness and noise that result from sampling a single point per pixel, we take multiple samples within the area of each pixel. These rays are slightly randomized--perturbed within the pixel's extent--and their color values are averaged. It's like taking several noisy photos of the same scene and combining them to get a cleaner image. Results are especially evident in complex lighting situations like soft shadows, glossy surfaces, and indirect illumination. The improvement is often dramatic.
 

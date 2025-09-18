@@ -16,6 +16,7 @@ pub mod book {
 }
 pub mod audit {
     pub mod cube_and_plane;
+    pub mod request;
     pub mod sphere_scene;
     pub mod various_x2;
 }

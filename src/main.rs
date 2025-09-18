@@ -17,13 +17,16 @@ fn main() -> io::Result<()> {
     // examples::demo::this_floating_world::render(10, 500, 800)?;
     // examples::demo::balloons::render(10, 500, 800)?;
 
-    // These are the scenes I created to meet the requirements of the 01Founders project.
+    // These are the scenes I created to meet the given requirements of the 01Founders project.
     let max_depth = 50;
     let samples_per_pixel = 500;
     let image_width = 800;
     examples::audit::sphere_scene::render(max_depth, samples_per_pixel, image_width)?; // A scene with a sphere.
     examples::audit::cube_and_plane::render(max_depth, samples_per_pixel, image_width)?; // A cube and plane, darker than the previous image.
     examples::audit::various_x2::render(max_depth, samples_per_pixel, image_width)?; // Two scenes from different points of view with a plane, a sphere, a cube. and a cylinder.
+
+    // This is one I created on request for the 01Founders audit.
+    examples::audit::request::render(10, 500, 800)?;
 
     Ok(())
 }

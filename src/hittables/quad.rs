@@ -12,11 +12,13 @@ use crate::{
 
 pub struct Quad {
     pub point: Point3,
-    pub normal: Direction,
-    pub material: Arc<dyn Material>,
-    pub offset: f64,
     pub u: Direction,
     pub v: Direction,
+    pub material: Arc<dyn Material>,
+    pub normal: Direction,
+    pub offset: f64,
+    w: Direction,
+    inv_area: f64,
 }
 
 impl Quad {
@@ -26,21 +28,26 @@ impl Quad {
             "Spanning vector(s) too close to zero"
         );
 
-        let normal = u.cross(&v).normalize();
+        let w = u.cross(&v);
+        let area_squared = w.length_squared();
         assert!(
-            !normal.near_zero(),
+            area_squared > 1e-16,
             "Normal vector too close to zero: spanning vectors too close to parallel?"
         );
 
+        let normal = w.normalize();
         let offset = normal.dot(&point);
+        let inv_area = 1.0 / area_squared;
 
         Self {
             point,
-            normal,
-            material,
-            offset,
             u,
             v,
+            material,
+            normal,
+            offset,
+            w,
+            inv_area,
         }
     }
 }
@@ -63,9 +70,8 @@ impl Hittable for Quad {
         // Determine if the hit point lies within the planar shape using its plane coordinates.
         let intersection = ray.at(t);
         let p = intersection - self.point;
-        let alpha = self.normal.dot(&p.cross(&self.v));
-        let beta = self.normal.dot(&self.u.cross(&p));
-
+        let alpha = self.w.dot(&p.cross(&self.v)) * self.inv_area;
+        let beta = self.w.dot(&self.u.cross(&p)) * self.inv_area;
         if !Interval::UNIT.contains(alpha) || !Interval::UNIT.contains(beta) {
             return None;
         }

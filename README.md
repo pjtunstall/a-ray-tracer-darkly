@@ -33,7 +33,7 @@
 
 ## Overview
 
-This is a simple ray tracer. It's my response to the third project of the Rust arc in the 01Founders course, called [rt](https://github.com/01-edu/public/tree/master/subjects/rt). I've implemented all the features from the first book of the fantastic [Ray Tracing in One Weekend](https://raytracing.github.io/) series and a few from book two (quad, plane, and light); also a cylinder, as required by 01. The book's examples are in C++, but it proved fairly straightforward to adapt them to Rust.
+This is a simple ray tracer. It's my response to the 01Founders/01Edu project called [rt](https://github.com/01-edu/public/tree/master/subjects/rt). I've implemented all the features from the first book of the fantastic [Ray Tracing in One Weekend](https://raytracing.github.io/) series and a few from book two (quad, plane, and light); also a cylinder, as required by 01. The book's examples are in C++, but it proved straightforward to adapt them to Rust.
 
 ## Usage
 
@@ -45,7 +45,7 @@ git clone https://github.com/pjtunstall/a-ray-tracer-darkly
 
 Then `cd a-ray-tracer-darkly`, and run `cargo run --release` to build and run a program with some examples. (The `--release` flag builds the program in a faster, optimized mode instead of the slower debug mode used by default.)
 
-See below for a more detailed [guide](#guide) on how to use the library.
+See below for a more detailed usage [guide](#guide).
 
 ## Features
 
@@ -81,7 +81,7 @@ See below for a more detailed [guide](#guide) on how to use the library.
 
 ## Guide
 
-Here is a guide to using the library. We'll draw a scene with some objects. They'll be saved in PPM (portable pixmap) format. Free PPM viewers can be found online. There are extensions for IDEs. I've been using PBM/PPM/PGM Viewer by ngtystr for VS Code, which has a handy save as PNG option.
+Over the course of the following sections, we'll see how to draw a scene with some objects. They'll be saved in PPM (portable pixmap) format. Free PPM viewers can be found online. There are extensions for IDEs. I've been using PBM/PPM/PGM Viewer by ngtystr for VS Code, which has a handy save as PNG option.
 
 ### Camera
 
@@ -132,7 +132,7 @@ A `Hittable` is a visible object, so called because it's "hittable" by light ray
 
 ### World and plane in context
 
-And here it all is in context. There's a lot of info in this next snippet, so feel free to skip some and come back to it later. The full example (plane together with a [sphere from the next section](#sphere)) can be found in `examples/demo/basic.rs`. To try it, uncomment the corresponding line in `main.rs` and run `cargo run --release`. Note that, in `basic.rs`, the import statements refer to the library as `crate` because `basic.rs` itself belongs to the library. If you're importing items into a separate crate, you should refer to it as `rt`, as in the snippets below.
+And here it all is in context. There's a lot of info in this next snippet, so feel free to skip some and come back to it later. The full example (plane together with a [sphere from the next section](#sphere)) can be found in `examples/demo/basic.rs`. To try it, uncomment the corresponding line in `main.rs` and run `cargo run --release`. Note that, in `basic.rs`, the import statements refer to my ray-tracing library as `crate` because `basic.rs` itself belongs to this crate. If you're importing items from it into a crate of your own, you should refer to mine as `rt`, as in the snippets below.
 
 ```rust
 // main.rs
@@ -354,7 +354,7 @@ There are four materials, represented by the `Material` trait.
 
 ### Volumes
 
-At present, the library provides just one sort of diffuse, smoky object, `hittables::volumes::ConstantMedium`. (Such objects are sometimes called "volumes" or "participating media".) This is defined by a `Hittable` (a shape representing the boundary of the diffuse object), a `Color`, and an `f64` (density).
+In ray-tracing parlance, diffuse, smoky sorts of object are called "volume" or "participating media". At present, my ray tracer offers just one of these: `hittables::volumes::ConstantMedium`. It's defined by a `Hittable` (a shape representing the boundary of the diffuse object), a `Color`, and an `f64` (density).
 
 ```rust
 let density = 0.3;
